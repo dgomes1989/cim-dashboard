@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Winning Writing — Course Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #faf9f7;
+    --card: #ffffff;
+    --card-hover: #f5f3f0;
+    --accent: #b8860b;
+    --accent2: #c0533a;
+    --accent3: #2a7ab5;
+    --accent4: #3a8a3a;
+    --accent5: #7a4a9a;
+    --text: #1a1a2e;
+    --text-dim: #6b6b80;
+    --border: #e2e0dc;
+    --hero-bg: #1a1a2e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    padding: 70px 40px 50px;
+    text-align: center;
+    overflow: hidden;
+    background: var(--hero-bg);
+    color: #fff;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle at 30% 40%, rgba(184,134,11,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(42,122,181,0.08) 0%, transparent 50%);
+    animation: drift 20s ease-in-out infinite;
+  }
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-30px, 20px); }
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    color: #f0d060;
+    position: relative;
+    letter-spacing: -0.5px;
+  }
+  .hero .subtitle {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.6);
+    margin-top: 10px;
+    position: relative;
+    font-weight: 300;
+  }
+  .hero .byline {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.4);
+    margin-top: 6px;
+    position: relative;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 36px;
+    padding: 24px 20px 10px;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .stat-item { text-align: center; }
+  .stat-number {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: #f0d060;
+  }
+  .stat-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 2px;
+  }
+
+  /* Navigation */
+  .nav-strip {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 16px 20px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250,249,247,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-btn {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+  }
+  .nav-btn:hover { background: #eee; color: var(--text); }
+  .nav-btn.active {
+    background: var(--hero-bg);
+    color: #fff;
+    border-color: var(--hero-bg);
+  }
+  .nav-btn.assistant-btn {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  .nav-btn.assistant-btn:hover { opacity: 0.9; }
+
+  /* Sections */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+  .section {
+    display: none;
+    padding: 44px 0;
+    animation: fadeIn 0.4s ease;
+  }
+  .section.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.9rem;
+    margin-bottom: 6px;
+  }
+  .section-desc {
+    color: var(--text-dim);
+    margin-bottom: 32px;
+    font-size: 0.92rem;
+    max-width: 700px;
+  }
+
+  /* Card grid */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover {
+    background: var(--card-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+  }
+  .card-icon { font-size: 1.4rem; margin-bottom: 12px; display: inline-block; }
+  .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
+  .card p { color: var(--text-dim); font-size: 0.86rem; line-height: 1.7; }
+  .card .tag {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .card .example-text {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: rgba(26,26,46,0.03);
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-style: italic;
+    line-height: 1.65;
+    color: var(--text);
+  }
+
+  /* Colors */
+  .gold { color: var(--accent); }
+  .coral { color: var(--accent2); }
+  .sky { color: var(--accent3); }
+  .green { color: var(--accent4); }
+  .purple { color: var(--accent5); }
+  .bg-gold { background: rgba(184,134,11,0.08); color: var(--accent); }
+  .bg-coral { background: rgba(192,83,58,0.08); color: var(--accent2); }
+  .bg-sky { background: rgba(42,122,181,0.08); color: var(--accent3); }
+  .bg-green { background: rgba(58,138,58,0.08); color: var(--accent4); }
+  .bg-purple { background: rgba(122,74,154,0.08); color: var(--accent5); }
+  .border-gold { border-left: 3px solid var(--accent); }
+  .border-coral { border-left: 3px solid var(--accent2); }
+  .border-sky { border-left: 3px solid var(--accent3); }
+  .border-green { border-left: 3px solid var(--accent4); }
+  .border-purple { border-left: 3px solid var(--accent5); }
+
+  /* Rule rows */
+  .rule-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 22px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    transition: all 0.3s;
+  }
+  .rule-row:hover { background: var(--card-hover); transform: translateX(3px); }
+  .rule-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    min-width: 44px;
+    text-align: center;
+    line-height: 1;
+    padding-top: 3px;
+  }
+  .rule-content h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 5px; }
+  .rule-content p { color: var(--text-dim); font-size: 0.84rem; line-height: 1.65; }
+  .rule-example {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: rgba(26,26,46,0.03);
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-style: italic;
+    line-height: 1.65;
+  }
+
+  /* Compare cards */
+  .compare-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .compare-header {
+    padding: 14px 22px;
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .compare-cols { display: grid; grid-template-columns: 1fr 1fr; }
+  .compare-side { padding: 18px 22px; font-size: 0.86rem; line-height: 1.7; }
+  .compare-side.before {
+    background: rgba(192,83,58,0.04);
+    border-right: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .compare-side.after { background: rgba(58,138,58,0.04); }
+  .compare-side .label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; margin-bottom: 8px; }
+  .compare-side.before .label { color: var(--accent2); }
+  .compare-side.after .label { color: var(--accent4); }
+
+  /* Life grid */
+  .life-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 14px;
+  }
+  .life-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    transition: all 0.3s;
+  }
+  .life-card:hover { background: var(--card-hover); transform: scale(1.01); }
+  .life-card .num { font-family: 'DM Serif Display', serif; font-size: 1.4rem; opacity: 0.2; margin-bottom: 8px; }
+  .life-card h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 6px; line-height: 1.4; }
+  .life-card p { color: var(--text-dim); font-size: 0.8rem; line-height: 1.65; }
+
+  /* Quote block */
+  .quote-block {
+    background: linear-gradient(135deg, rgba(184,134,11,0.05) 0%, rgba(42,122,181,0.03) 100%);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    margin: 22px 0;
+    position: relative;
+  }
+  .quote-block::before {
+    content: '\201C';
+    font-family: 'DM Serif Display', serif;
+    font-size: 4.5rem;
+    color: var(--accent);
+    opacity: 0.12;
+    position: absolute;
+    top: 6px; left: 18px;
+    line-height: 1;
+  }
+  .quote-block p { font-size: 1rem; font-style: italic; padding-left: 28px; line-height: 1.7; }
+  .quote-block .attribution { font-style: normal; color: var(--text-dim); font-size: 0.8rem; margin-top: 10px; padding-left: 28px; }
+
+  /* Checklist */
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(226,224,220,0.6);
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+  .checklist li::before { content: '\2713'; color: var(--accent4); font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+
+  /* Forbidden word badge */
+  .forbidden-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(192,83,58,0.1);
+    color: var(--accent2);
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin: 4px;
+    text-decoration: line-through;
+  }
+
+  /* Jargon table */
+  .jargon-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    background: var(--card);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .jargon-table th {
+    padding: 14px 20px;
+    text-align: left;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border);
+  }
+  .jargon-table td {
+    padding: 12px 20px;
+    font-size: 0.86rem;
+    border-bottom: 1px solid rgba(226,224,220,0.5);
+  }
+  .jargon-table tr:last-child td { border-bottom: none; }
+  .jargon-table .kill { color: var(--accent2); text-decoration: line-through; }
+  .jargon-table .use { color: var(--accent4); font-weight: 500; }
+
+  /* Speaker badge */
+  .speaker-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  /* ============ ASSISTANT ============ */
+  .assistant-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .assistant-intro {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .assistant-intro p { color: var(--text-dim); font-size: 0.92rem; margin-top: 8px; }
+
+  .email-input-area {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 6px;
+    transition: border-color 0.3s;
+  }
+  .email-input-area:focus-within { border-color: var(--accent); }
+  .email-input-area textarea {
+    width: 100%;
+    min-height: 200px;
+    border: none;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    padding: 18px;
+    resize: vertical;
+    background: transparent;
+    color: var(--text);
+  }
+  .email-input-area textarea::placeholder { color: #bbb; }
+
+  .input-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 14px;
+    border-top: 1px solid var(--border);
+  }
+  .char-count { font-size: 0.75rem; color: var(--text-dim); }
+  .analyze-btn {
+    padding: 10px 28px;
+    border-radius: 10px;
+    border: none;
+    background: var(--hero-bg);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .analyze-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+  .analyze-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* Results */
+  .results-area { margin-top: 32px; display: none; }
+  .results-area.visible { display: block; animation: fadeIn 0.5s ease; }
+
+  .score-banner {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 28px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 20px;
+  }
+  .score-ring {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    flex-shrink: 0;
+  }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring .score-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+  }
+  .score-ring .score-label {
+    position: absolute;
+    bottom: 8px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+  }
+  .score-details h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 4px; }
+  .score-details p { color: var(--text-dim); font-size: 0.86rem; line-height: 1.6; }
+
+  .feedback-section { margin-top: 20px; }
+  .feedback-section h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .feedback-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 10px;
+    transition: all 0.2s;
+  }
+  .feedback-item:hover { background: var(--card-hover); }
+  .feedback-item .rule-ref {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+  .feedback-item .fb-text { font-size: 0.86rem; line-height: 1.65; color: var(--text); }
+
+  .pass-item { border-left: 3px solid var(--accent4); }
+  .pass-item .rule-ref { background: rgba(58,138,58,0.1); color: var(--accent4); }
+  .warn-item { border-left: 3px solid var(--accent); }
+  .warn-item .rule-ref { background: rgba(184,134,11,0.1); color: var(--accent); }
+  .fail-item { border-left: 3px solid var(--accent2); }
+  .fail-item .rule-ref { background: rgba(192,83,58,0.1); color: var(--accent2); }
+
+  .rewrite-box {
+    background: var(--card);
+    border: 2px solid var(--accent4);
+    border-radius: 14px;
+    padding: 24px;
+    margin-top: 24px;
+  }
+  .rewrite-box h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent4);
+    margin-bottom: 12px;
+  }
+  .rewrite-box .tips { font-size: 0.86rem; line-height: 1.75; color: var(--text); }
+  .rewrite-box .tips li { margin-bottom: 8px; }
+
+  /* ============ FLASHCARD MODE ============ */
+  .fc-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+  .fc-cat-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 0.76rem;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-weight: 500;
+  }
+  .fc-cat-btn:hover { background: #eee; color: var(--text); }
+  .fc-cat-btn.active { background: var(--hero-bg); color: #fff; border-color: var(--hero-bg); }
+
+  .fc-stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 24px;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+  }
+  .fc-stats-row strong { font-family: 'DM Serif Display', serif; font-size: 1.3rem; display: block; }
+
+  .fc-card-area {
+    perspective: 1000px;
+    max-width: 600px;
+    margin: 0 auto 24px;
+    min-height: 340px;
+  }
+  .fc-card {
+    position: relative;
+    width: 100%;
+    min-height: 320px;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+  }
+  .fc-card.flipped { transform: rotateY(180deg); }
+  .fc-face {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    min-height: 320px;
+    backface-visibility: hidden;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 36px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .fc-front {
+    background: var(--card);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  }
+  .fc-front .fc-cat-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding: 4px 12px;
+    border-radius: 12px;
+  }
+  .fc-front .fc-question {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    line-height: 1.4;
+    color: var(--text);
+  }
+  .fc-front .fc-hint {
+    margin-top: 20px;
+    font-size: 0.76rem;
+    color: var(--text-dim);
+    opacity: 0.6;
+  }
+  .fc-back {
+    background: linear-gradient(145deg, #f8f7f4 0%, #fff 100%);
+    transform: rotateY(180deg);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  .fc-back .fc-answer {
+    font-size: 0.92rem;
+    line-height: 1.75;
+    color: var(--text);
+    max-width: 500px;
+  }
+  .fc-back .fc-answer strong { color: var(--accent); }
+  .fc-back .fc-example {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: rgba(26,26,46,0.04);
+    border-radius: 10px;
+    font-size: 0.84rem;
+    font-style: italic;
+    line-height: 1.6;
+    max-width: 500px;
+    text-align: left;
+  }
+
+  .fc-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .fc-btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .fc-btn:hover { background: var(--card-hover); transform: translateY(-1px); }
+  .fc-btn.primary { background: var(--hero-bg); color: #fff; border-color: var(--hero-bg); }
+  .fc-btn.primary:hover { opacity: 0.85; }
+  .fc-btn.got-it { background: var(--accent4); color: #fff; border-color: var(--accent4); }
+  .fc-btn.got-it:hover { opacity: 0.85; }
+  .fc-btn.learning { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .fc-btn.learning:hover { opacity: 0.85; }
+  .fc-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+  .fc-mark-btns {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .fc-mark-btns.visible { opacity: 1; pointer-events: auto; }
+
+  .fc-progress-bar {
+    max-width: 600px;
+    margin: 0 auto 8px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .fc-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent3), var(--accent5));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+  .fc-counter {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .fc-keyboard-hint {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    opacity: 0.5;
+    margin-top: 12px;
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .compare-cols { grid-template-columns: 1fr; }
+    .compare-side.before { border-right: none; border-bottom: 1px solid var(--border); }
+    .stats-bar { gap: 16px; }
+    .hero { padding: 44px 20px 36px; }
+    .nav-strip { gap: 4px; }
+    .nav-btn { padding: 5px 10px; font-size: 0.7rem; }
+    .score-banner { flex-direction: column; text-align: center; }
+    .jargon-table { font-size: 0.8rem; }
+    .fc-face { padding: 28px 20px; min-height: 280px; }
+    .fc-card-area { min-height: 300px; }
+    .fc-front .fc-question { font-size: 1.2rem; }
+    .fc-controls { gap: 8px; }
+    .fc-btn { padding: 8px 14px; font-size: 0.78rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Winning Writing</h1>
+  <p class="subtitle">Stanford GSB's Course on Professional Writing</p>
+  <p class="byline">Glenn Kramon &middot; Winter 2025</p>
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-number">6</div><div class="stat-label">Sessions</div></div>
+    <div class="stat-item"><div class="stat-number">11</div><div class="stat-label">Cold-Call Rules</div></div>
+    <div class="stat-item"><div class="stat-number">4</div><div class="stat-label">Guest Speakers</div></div>
+    <div class="stat-item"><div class="stat-number">25+</div><div class="stat-label">Model Letters</div></div>
+    <div class="stat-item"><div class="stat-number">120+</div><div class="stat-label">Flashcards</div></div>
+  </div>
+</div>
+
+<!-- NAVIGATION -->
+<div class="nav-strip">
+  <button class="nav-btn active" onclick="showSection('overview', this)">Overview</button>
+  <button class="nav-btn" onclick="showSection('basics', this)">The Basics</button>
+  <button class="nav-btn" onclick="showSection('coldcall', this)">Cold-Call Rules</button>
+  <button class="nav-btn" onclick="showSection('stories', this)">Telling Stories</button>
+  <button class="nav-btn" onclick="showSection('pitch', this)">Pitching</button>
+  <button class="nav-btn" onclick="showSection('media', this)">Media &amp; PR</button>
+  <button class="nav-btn" onclick="showSection('speeches', this)">Speeches</button>
+  <button class="nav-btn" onclick="showSection('humor', this)">Humor</button>
+  <button class="nav-btn" onclick="showSection('feedback', this)">Feedback</button>
+  <button class="nav-btn" onclick="showSection('opinions', this)">Op-Eds</button>
+  <button class="nav-btn" onclick="showSection('linkedin', this)">LinkedIn &amp; Jargon</button>
+  <button class="nav-btn" onclick="showSection('life', this)">Life Lessons</button>
+  <button class="nav-btn" onclick="showSection('flashcards', this)" style="background:linear-gradient(135deg,var(--accent3),var(--accent5));color:#fff;border-color:var(--accent3);font-weight:600;">&#127183; Flashcards</button>
+  <button class="nav-btn assistant-btn" onclick="showSection('assistant', this)">&#9889; Email Coach</button>
+</div>
+
+<div class="container">
+
+<!-- ===== OVERVIEW ===== -->
+<div id="overview" class="section active">
+  <h2 class="section-title gold">Course at a Glance</h2>
+  <p class="section-desc">The essential frameworks from every session, distilled into visual learnings you can reference anytime.</p>
+
+  <div class="quote-block">
+    <p>There are two kinds of critics in life: those who criticize you because they want you to fail, and those who criticize you because they want you to succeed. And people can smell the difference a mile away.</p>
+    <div class="attribution">— Tom Friedman, as quoted by Glenn Kramon</div>
+  </div>
+
+  <div class="card-grid" style="margin-top: 24px;">
+    <div class="card border-gold"><div class="card-icon">&#x270D;</div><h3>The Basics</h3><p>Know your audience. Kill jargon. Use strong verbs. B.L.U.F. — Bottom Line Up Front. The word "currently" is forbidden.</p><span class="tag bg-gold">Foundation</span></div>
+    <div class="card border-coral"><div class="card-icon">&#x1F4E8;</div><h3>Cold-Call Letters</h3><p>11 rules to be 1 <em>in</em> a million, not 1 <em>of</em> a million. Lead with what they don't know. Use "Like you." The Nardwuar Method.</p><span class="tag bg-coral">Outreach</span></div>
+    <div class="card border-sky"><div class="card-icon">&#x1F3AC;</div><h3>Personal Stories</h3><p>Warmth + Competence. Be cinematic. Use dialog. The Abercrombie sweatshirt story. Start with the most dramatic scene.</p><span class="tag bg-sky">Narrative</span></div>
+    <div class="card border-green"><div class="card-icon">&#x26A1;</div><h3>Pitching</h3><p>Josh Constantine's 3-part formula: Problem, Solution, Why You. Target the specific reporter. Offer an exclusive.</p><span class="tag bg-green">Guest: Josh Constantine</span></div>
+    <div class="card border-purple"><div class="card-icon">&#x1F4F0;</div><h3>Media Relations</h3><p>Build relationships with journalists before you need them. The tennis match analogy. Never say "no comment" or "it won't happen again."</p><span class="tag bg-purple">Guest: Andrew Ross Sorkin</span></div>
+    <div class="card border-gold"><div class="card-icon">&#x1F3A4;</div><h3>Speeches &amp; Keynotes</h3><p>Steve Jobs' iPhone launch: simplicity, humor, no jargon. Oprah's cinematic details. The 3 S's: Story + Statistics + Solutions.</p><span class="tag bg-gold">Stage</span></div>
+    <div class="card border-coral"><div class="card-icon">&#x1F604;</div><h3>Humor</h3><p>Self-deprecating wins. George Carlin on airport language. Corporate Bro jargon parodies. "Vinnie from the Bronx."</p><span class="tag bg-coral">Comedy</span></div>
+    <div class="card border-sky"><div class="card-icon">&#x1F4DD;</div><h3>Feedback &amp; Gratitude</h3><p>Say what you like, then what you'd like. Be cinematic in gratitude notes. Show, don't tell, why someone mattered.</p><span class="tag bg-sky">Leadership</span></div>
+    <div class="card border-green"><div class="card-icon">&#x1F4E2;</div><h3>Opinion Pieces</h3><p>Choose an argument, not a topic. "What makes me mad?" Nick Kristof from South Sudan. Your unique angle matters most.</p><span class="tag bg-green">Influence</span></div>
+    <div class="card border-purple"><div class="card-icon">&#x1F4BC;</div><h3>LinkedIn &amp; Jargon</h3><p>Rachel Conrad: Your "About Me" is the single most high-value paragraph in your career. Kill: leverage, synergize, drive, deliverables.</p><span class="tag bg-purple">Guest: Rachel Conrad</span></div>
+  </div>
+
+  <div class="quote-block" style="margin-top:24px;">
+    <p>I'm a professional weight lifter, but my weights are words.</p>
+    <div class="attribution">— Glenn Kramon, LinkedIn About Me</div>
+  </div>
+</div>
+
+<!-- ===== BASICS ===== -->
+<div id="basics" class="section">
+  <h2 class="section-title gold">The Basics</h2>
+  <p class="section-desc">Four fundamental rules that apply to every piece of writing you'll ever do — plus the forbidden words Glenn will punish you for.</p>
+
+  <div class="rule-row border-gold"><div class="rule-num gold">1</div><div class="rule-content"><h4>Know Your Audience</h4><p>What result do I want? How can I persuade the reader to help me achieve it? Write for the "intelligent generalist" — the least knowledgeable member of your audience. If your grandma wouldn't understand it, rewrite it.</p></div></div>
+  <div class="rule-row border-coral"><div class="rule-num coral">2</div><div class="rule-content"><h4>Boil It Down</h4><p>If you boiled it down to one phrase, sentence, or paragraph — what would it say? The shorter, the better.</p><div class="rule-example">"I think you need to be prepared for the possibility of a market crash" &#8594; <strong>"Prepare for a market crash."</strong><br>"Let me know if you're interested and we can go from there" &#8594; <strong>"Are you in?"</strong></div></div></div>
+  <div class="rule-row border-sky"><div class="rule-num sky">3</div><div class="rule-content"><h4>Write as You Speak</h4><p>Avoid jargon. Say it to a friend, then write it as you said it. George Carlin nailed it: airports say "the boarding process" — it's just "boarding." They say "pre-board" — which means getting on before you get on.</p></div></div>
+  <div class="rule-row border-green"><div class="rule-num green">4</div><div class="rule-content"><h4>Get to the Point — Fast (B.L.U.F.)</h4><p>Bottom Line Up Front. Glenn critiqued the Stanford president's email about a hiring freeze — the announcement was buried at the bottom. It should have been the first sentence.</p></div></div>
+
+  <h3 style="margin-top: 36px; margin-bottom: 16px; font-size: 1.05rem;">&#128683; Forbidden Words &amp; Phrases</h3>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px;">
+    <p style="font-size:0.86rem;color:var(--text-dim);margin-bottom:14px;">Glenn enforces escalating punishments for using the word <strong>"currently"</strong> — from warnings to double-secret probation to watching a scary movie. Other forbidden phrases include:</p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+      <span class="forbidden-badge">currently</span>
+      <span class="forbidden-badge">I hope you are well</span>
+      <span class="forbidden-badge">going forward</span>
+      <span class="forbidden-badge">moving forward</span>
+      <span class="forbidden-badge">as I said</span>
+      <span class="forbidden-badge">as I mentioned</span>
+      <span class="forbidden-badge">reach out</span>
+      <span class="forbidden-badge">circle back</span>
+      <span class="forbidden-badge">touch base</span>
+    </div>
+    <p style="font-size:0.82rem;color:var(--accent2);margin-top:12px;font-weight:500;">Why "going forward" is banned: future tense already implies forward. "We will improve security going forward" = "We will improve security." The last two words are dead weight.</p>
+  </div>
+
+  <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem;">&#9874; Dangling Modifiers</h3>
+  <div class="compare-card">
+    <div class="compare-header" style="background:rgba(192,83,58,0.06);color:var(--accent2);">Watch Where Your Modifiers Land</div>
+    <div class="compare-cols">
+      <div class="compare-side before"><div class="label coral">Wrong</div>"As an HBS professor, I'm hoping you can help me..."<br><br><em>(This says YOU are the HBS professor)</em></div>
+      <div class="compare-side after"><div class="label green">Right</div>"As an HBS professor, you have shaped how leaders think about strategy..."<br><br><em>(Now the modifier correctly refers to THEM)</em></div>
+    </div>
+  </div>
+
+  <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem;">&#128170; Strong Verbs Beat Adverbs</h3>
+  <div class="compare-card">
+    <div class="compare-cols">
+      <div class="compare-side before"><div class="label coral">Weak (Adverb)</div>"incredibly smart"<br>"extremely important"<br>"negatively affect"<br>"walking slowly"<br>"tragically, the train derailed"</div>
+      <div class="compare-side after"><div class="label green">Strong (Verb)</div>"brilliant"<br>"crucial"<br>"harm"<br>"strolling"<br>"the train derailed" — we know it's tragic</div>
+    </div>
+  </div>
+  <p style="font-size:0.86rem;color:var(--text-dim);margin-top:12px;">Glenn's favorite strong verbs: <strong>amplify, batter, cower, mimic, sparkle, yank</strong></p>
+
+  <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem;">&#128218; Writer's Block Tips</h3>
+  <div class="card-grid">
+    <div class="card border-gold"><h3>Move Your Body</h3><p>Jog, walk, hike. Physical movement unlocks creative thinking.</p></div>
+    <div class="card border-coral"><h3>Wake an Hour Earlier</h3><p>Write when the world is quiet and your mind is fresh.</p></div>
+    <div class="card border-sky"><h3>Change Locations</h3><p>A new environment sparks new perspectives.</p></div>
+    <div class="card border-green"><h3>Pretend It's an Email</h3><p>Can't write a memo? Pretend you're writing an email to a friend explaining the same thing.</p></div>
+    <div class="card border-purple"><h3>Start in the Middle</h3><p>Don't get stuck on the opening. Write the part you know, then backfill.</p></div>
+    <div class="card border-gold"><h3>Read It Aloud</h3><p>If you stumble reading it, your reader will too. Your ear catches what your eye misses.</p></div>
+  </div>
+
+  <div class="quote-block" style="margin-top:24px;"><p>Use the Miniskirt (or Speedo) Rule: Make it long enough to cover the basics, but short enough to keep it interesting.</p><div class="attribution">— Glenn Kramon</div></div>
+</div>
+
+<!-- ===== COLD-CALL RULES ===== -->
+<div id="coldcall" class="section">
+  <h2 class="section-title coral">Cold-Call Email Rules</h2>
+  <p class="section-desc">Show you're special — 1 <em>in</em> a million, not 1 <em>of</em> a million. 11 rules with real examples from class.</p>
+
+  <div class="quote-block">
+    <p>Glenn's father got a job during the Depression by saying to the interviewer: "I can't imagine how hard it must be to interview starving, desperate men all day." Empathy made him 1 in 100.</p>
+    <div class="attribution">— Glenn Kramon, Session 3</div>
+  </div>
+
+  <div class="rule-row border-coral"><div class="rule-num coral">1</div><div class="rule-content"><h4>Know the Person (The Nardwuar Method)</h4><p>Research them deeply. React to something they've written. Glenn showed a video of rapper interviewer Nardwuar, who knows obscure facts about artists who are initially hostile — then completely wins them over. That's the gold standard of "know your audience."</p><div class="rule-example"><strong>Student example (LVMH CIO pitch):</strong> Right length, no BS, specific about their work. Glenn's note: write in French if they're French, and offer a demo.</div></div></div>
+
+  <div class="rule-row border-gold"><div class="rule-num gold">2</div><div class="rule-content"><h4>Be Who You Are</h4><p>If you're not, you're fooling yourself as well as the recruiter. The "money slide" for any interaction is the combination of <strong>warmth + competence</strong>. You need both.</p><div class="rule-example"><strong>The Money Slide formula:</strong> "By the time I left, I'd taken the company from $X to $2M/year" (competence) + "I was more comfortable interacting with exotic animals at the company picnic petting zoo than any other employee" (warmth).</div></div></div>
+
+  <div class="rule-row border-sky"><div class="rule-num sky">3</div><div class="rule-content"><h4>Lead With Something They Don't Know</h4><p>Don't begin with flattery about how they've "transformed the industry." They know that. Begin with what YOU can do for THEM.</p><div class="rule-example"><strong>Before:</strong> "Dear Mr. Bezos, you've transformed industry after industry..."<br><strong>After:</strong> "I can help Alexa help patients receive personalized follow-up care. Stanford MD/MBA."</div></div></div>
+
+  <div class="rule-row border-green"><div class="rule-num green">4</div><div class="rule-content"><h4>Name Drop (Wisely)</h4><p>Mention someone you both know and respect. Better yet, have that someone introduce you.</p><div class="rule-example">"Herb Grossback suggests I contact you..." — A name in the first sentence changes everything.</div></div></div>
+
+  <div class="rule-row border-purple"><div class="rule-num purple">5</div><div class="rule-content"><h4>"Like You" — The Two Most Important Words</h4><p>Draw a parallel between yourself and the recipient. These two words create an instant bond.</p><div class="rule-example"><strong>Mo Shafi:</strong> "Like you, I've decided to pursue my grad studies in the US. As you know, Arab weddings are big and beautiful."<br><br><strong>Goldman Sachs pitch:</strong> "Like you at Goldman, I'm finally considered the in-house communist at Stanford Business School."</div></div></div>
+
+  <div class="rule-row border-coral"><div class="rule-num coral">6</div><div class="rule-content"><h4>Make Them Smile</h4><p>Tell a story that will make them laugh. Even one sentence of humor puts you in the top 1%.</p><div class="rule-example"><strong>The Obama Letter:</strong> A student who physically resembles Obama packed the email with "like you" parallels and self-deprecating humor, creating a vivid, memorable pitch.<br><br><strong>Emily to Baroness Lane Fox:</strong> "PS: My miniature dachshund Olive contributes nothing to sustainability beyond trying to eat my recycling."</div></div></div>
+
+  <div class="rule-row border-gold"><div class="rule-num gold">7</div><div class="rule-content"><h4>Pick a Lane</h4><p>Don't cover everything on your resume. Give one compelling example. Pick a motif and carry it through the entire email.</p><div class="rule-example"><strong>Amadeus to Richard Branson:</strong> Used a swimming/water motif throughout: "Two years ago, I was staring at Necker Island from a cliff... What if I swim there?... If that sounds good, when's best for me to swim over?" One lane, carried beautifully.</div></div></div>
+
+  <div class="rule-row border-sky"><div class="rule-num sky">8</div><div class="rule-content"><h4>Confident, Not Arrogant</h4><p>Sweet spot between humility and overconfidence. If in doubt, have a friend read it first.</p><div class="rule-example"><strong>Glenn's Rose Bowl example:</strong> A cow once escaped at the Rose Bowl. The rancher nearby was confident, not arrogant: "I'll handle it." He didn't say "I'm the greatest cow wrangler alive."</div></div></div>
+
+  <div class="rule-row border-green"><div class="rule-num green">9</div><div class="rule-content"><h4>Keep It Short &amp; Small Ask</h4><p>Make your ask as small and specific as possible. Make it easy to say yes. Under 200 words.</p><div class="rule-example"><strong>Student Strava CEO pitch feedback:</strong> "This is a great personal connection — but you need to convert it from a fan letter into an ask. What do you actually want?"</div></div></div>
+
+  <div class="rule-row border-purple"><div class="rule-num purple">10</div><div class="rule-content"><h4>Offer Something in Return</h4><p>Maybe you know something, or someone, they don't. Create reciprocity.</p></div></div>
+
+  <div class="rule-row border-coral"><div class="rule-num coral">11</div><div class="rule-content"><h4>Check for Accuracy — Twice</h4><p>If you write to "Mark Andreesen at Sequoia" instead of the right name and firm, don't expect an answer.</p></div></div>
+
+  <h3 style="margin-top:36px;margin-bottom:16px;font-size:1.05rem;">&#127942; Model Cold-Call Emails from Class</h3>
+  <div class="card-grid">
+    <div class="card border-gold"><h3>Leaf's Bonobos Email</h3><p>Pants puns woven throughout. Used ChatGPT for brainstorming + personal journals for voice. Glenn called it a model of how to use AI.</p><div class="example-text">"Signing off with the confidence of a guy in his first pair of Bonobos."</div><span class="tag bg-gold">Best Use of AI</span></div>
+    <div class="card border-coral"><h3>Claude/Anthropic Meta Email</h3><p>A student congratulated Anthropic on launching Claude using Claude itself to brainstorm ideas — delightfully meta.</p><span class="tag bg-coral">Creative</span></div>
+    <div class="card border-sky"><h3>Nigella Lawson Banana Bread</h3><p>Concise, warm, referenced her specific work. Mentioned having 1 million followers — offered something in return.</p><span class="tag bg-sky">Concise</span></div>
+    <div class="card border-green"><h3>Kubernetes + Rajasthan</h3><p>"Like you, I'm from Rajasthan and made my way to Silicon Valley." Perfect use of Rule 5.</p><span class="tag bg-green">Rule 5 Mastery</span></div>
+    <div class="card border-purple"><h3>Emily to Baroness Lane Fox</h3><p>"A decade of delayed courage." Perfect PS with a dog joke. Glenn said it was one of the best he'd seen.</p><span class="tag bg-purple">Courage</span></div>
+  </div>
+
+  <h3 style="margin-top:36px;margin-bottom:16px;font-size:1.05rem;">&#128640; The Heavy Artillery: When Emails Fail</h3>
+  <div class="card" style="max-width:700px;border-left:3px solid var(--accent5);">
+    <h3>The Cameo Technique</h3>
+    <p>Julia Kapoor at Slack sent multiple emails to a prospect — no response. She then paid for a Cameo video from a telenovela star the prospect loved. He replied within minutes. Sometimes you need to go beyond email.</p>
+    <div class="example-text">Also: Ed Cardbook's "selfie technique" — asking a billionaire for a selfie created a personal connection that turned into a business relationship.</div>
+  </div>
+
+  <div class="quote-block" style="margin-top:24px;"><p>Make your ask as easy to do as possible. Read it through from the eyes of the recipient.</p><div class="attribution">— Heidi Roizen</div></div>
+</div>
+
+<!-- ===== STORIES ===== -->
+<div id="stories" class="section">
+  <h2 class="section-title sky">Telling Stories About Yourself</h2>
+  <p class="section-desc">Your goal: Make someone want to have a beer with you — AND hire you. That's warmth + competence.</p>
+
+  <div class="speaker-badge bg-sky">Rachel Conrad &amp; Glenn Kramon &middot; Sessions 4 &amp; 6</div>
+
+  <div class="card-grid">
+    <div class="card border-sky"><h3>Warmth + Competence</h3><p>Two choices for your story: (1) your messiest situation and what you learned, or (2) your most satisfying accomplishment and the lesson. Either way, you need both warmth and competence.</p><span class="tag bg-sky">Framework</span></div>
+    <div class="card border-gold"><h3>Be Cinematic</h3><p>Use dialog, describe the scene, use short sentences for tension. "Picture your favorite movie scene. Describe it in words. That's what you want."</p><span class="tag bg-gold">Technique</span></div>
+    <div class="card border-green"><h3>Say "We" for Success, "I" for Mistakes</h3><p>Credit the team for wins. Take personal responsibility for errors. CEOs value humility and team players.</p><span class="tag bg-green">Adam Bryant</span></div>
+    <div class="card border-coral"><h3>Start With the Most Dramatic Scene</h3><p>Don't start chronologically. The Zuckerberg red-lining story: start with the drama, then backfill context.</p><span class="tag bg-coral">Structure</span></div>
+    <div class="card border-purple"><h3>Use Analogies</h3><p>Make complex ideas click instantly with a comparison everyone understands.</p><div class="example-text"><strong>Cannabis industry:</strong> "Think of it like an apple. When you go to a grocery, you don't just buy apples, you buy Granny Smith or Fuji." Immediately clear.</div><span class="tag bg-purple">Clarity</span></div>
+    <div class="card border-gold"><h3>Write for the Intelligent Generalist</h3><p>No jargon. Use yourself and people you know as characters. If the least knowledgeable person in the room wouldn't understand it, simplify.</p><span class="tag bg-gold">Audience</span></div>
+  </div>
+
+  <h3 style="margin-top:36px;margin-bottom:16px;font-size:1.05rem;">&#127916; Real Stories from Class</h3>
+
+  <div class="compare-card" style="margin-bottom:16px;">
+    <div class="compare-header" style="background:rgba(42,122,181,0.06);color:var(--accent3);">The Abercrombie Sweatshirt Story (Abby Matheson)</div>
+    <div style="padding:22px;font-size:0.88rem;line-height:1.8;">
+      <p>"On December 24, Abercrombie sells one sweatshirt every two seconds. 45,000 in 24 hours. It was my job to get these sweatshirts sewn, shipped and delivered."</p>
+      <p style="margin-top:10px;"><strong>The crisis:</strong> "I had zero sweatshirts made."</p>
+      <p style="margin-top:10px;"><strong>The dialog:</strong> "I'm in trouble... We can't get the order out."</p>
+      <p style="margin-top:10px;"><strong>The decision:</strong> "Lose the pockets." (Cutting pockets saved enough time to make the deadline.)</p>
+      <p style="margin-top:10px;"><strong>The result:</strong> "On Christmas day, there were only two left in all of North America."</p>
+      <p style="margin-top:10px;font-size:0.82rem;color:var(--accent3);font-weight:500;">Why it works: Cinematic, uses dialog, shows teamwork ("we"), has a crisis + resolution, and a satisfying ending. Glenn called this a masterclass in storytelling.</p>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card border-purple"><h3>Joe Barreto's Superhero Story</h3><p>Saw a man sitting on a roof dreaming of working with computers. Discovered 300 unfilled tech positions inside the building below. Founded PowerTech, trained 4,000+ "Donovans." Won a CNN award.</p><div class="example-text">Structure: Dramatic opening &#8594; discovery &#8594; mission &#8594; scale of impact.</div><span class="tag bg-purple">Session 6</span></div>
+    <div class="card border-coral"><h3>The Card-Counting Story</h3><p>Originally told chronologically. Glenn restructured it to lead with the most exciting element:</p><div class="example-text">"We were two scantily clad 20-somethings drinking at the gambling table. Casino operators liked us for more than our looks. They figured we were suckers. In fact, we were card counters."</div><span class="tag bg-coral">Restructured</span></div>
+    <div class="card border-gold"><h3>Ralph the Tow Truck Driver</h3><p>A cinematic story about real estate investment class. Glenn used it to show how vivid, surprising characters make any topic interesting.</p><span class="tag bg-gold">Session 4</span></div>
+  </div>
+
+  <div class="quote-block" style="margin-top:24px;">
+    <p>Don't believe everything you think.</p>
+    <div class="attribution">— Lauren Weinstein, TED Talk (elephant rope metaphor: baby elephants are tied to a rope they can't break free from. As adults, they could easily break it — but they've stopped trying.)</div>
+  </div>
+</div>
+
+<!-- ===== PITCHING ===== -->
+<div id="pitch" class="section">
+  <h2 class="section-title green">Pitching</h2>
+  <p class="section-desc">From elevator pitches to journalist pitches to VC decks — frameworks from Josh Constantine (Signal Fire, ex-TechCrunch) and Glenn Kramon.</p>
+
+  <div class="speaker-badge bg-green">Josh Constantine &middot; Signal Fire VC &middot; Session 5</div>
+
+  <h3 style="margin-bottom:16px;font-size:1.05rem;">&#127919; The 3-Part Pitch Formula</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:28px;">
+    <div class="card" style="border-top:4px solid var(--accent2);text-align:center;"><h3 style="font-size:1.4rem;color:var(--accent2);">1. Problem</h3><p>What's broken? Make the pain vivid and specific. The audience should nod and think "yes, I've felt that."</p></div>
+    <div class="card" style="border-top:4px solid var(--accent3);text-align:center;"><h3 style="font-size:1.4rem;color:var(--accent3);">2. Solution</h3><p>What do you do? In plain English. No jargon. Show, don't tell. Include a real example user.</p></div>
+    <div class="card" style="border-top:4px solid var(--accent4);text-align:center;"><h3 style="font-size:1.4rem;color:var(--accent4);">3. Why You</h3><p>Why are you uniquely qualified? Superhero origin story. Endorsements. Momentum. Customer numbers.</p></div>
+  </div>
+
+  <div class="compare-card">
+    <div class="compare-header" style="background:rgba(58,138,58,0.06);color:var(--accent4);">Uber — The Gold Standard Problem Description</div>
+    <div style="padding:22px;font-size:0.88rem;line-height:1.8;">
+      <p>You stand on the sidewalk. You call a taxi phone number. You hope they show up. The driver takes the wrong route. You need cash. You don't know how much to tip. <strong>Then: one tap and a car comes to you.</strong></p>
+      <p style="margin-top:8px;font-size:0.82rem;color:var(--accent4);font-weight:500;">The problem is so vivid, the solution almost announces itself.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px;margin-bottom:16px;font-size:1.05rem;">&#128221; Pitching to Journalists (Josh's Rules)</h3>
+  <ul class="checklist" style="max-width:800px;margin-bottom:28px;">
+    <li><strong>Target the specific reporter</strong>, not the publication. Use Techmeme to find who covers your beat.</li>
+    <li><strong>Subject line must be descriptive</strong> and curiosity-inducing — not clickbait, not vague.</li>
+    <li><strong>Under 4 paragraphs</strong> for the email body.</li>
+    <li><strong>Offer an exclusive.</strong> Journalists value being first.</li>
+    <li><strong>Be flexible with timing.</strong> Their schedule matters more than yours.</li>
+    <li><strong>Link to a bigger trend.</strong> "Why now?" is the question they need to answer for their editor.</li>
+    <li><strong>Press is good for:</strong> recruiting, mid-funnel conversion, and third-party proof points.</li>
+    <li><strong>Stop thinking about what matters to YOU.</strong> Start thinking about what matters to the AUDIENCE.</li>
+  </ul>
+
+  <h3 style="margin-top:28px;margin-bottom:16px;font-size:1.05rem;">&#127942; Model Pitches from Class</h3>
+  <div class="card-grid">
+    <div class="card border-green"><h3>Facebook's Original Pitch Deck</h3><p>Extreme simplicity. No jargon. Just the compelling fact:</p><div class="example-text">"Classes are being skipped. Work is ignored. Students are spending hours in utter fascination."</div><span class="tag bg-green">Simplicity</span></div>
+    <div class="card border-gold"><h3>Free Will (DIY Wills)</h3><p>Linked to a bigger trend of DIY estate planning. The news hook unlocked NYT coverage.</p><span class="tag bg-gold">News Hook</span></div>
+    <div class="card border-coral"><h3>Synapse (Airport Security AI)</h3><p>"Applies AI to X-ray machines. 99% accuracy vs 5% for human screeners." Vivid stat, clear problem, simple explanation. Got CNBC coverage.</p><span class="tag bg-coral">Stat Punch</span></div>
+    <div class="card border-sky"><h3>DoorDash Thanksgiving Turkeys</h3><p>A vivid problem-solving narrative that showed the company's resourcefulness and culture.</p><span class="tag bg-sky">Storytelling</span></div>
+  </div>
+
+  <h3 style="margin-top:28px;margin-bottom:16px;font-size:1.05rem;">&#9996; Pitch Progressions: Watch Them Shrink</h3>
+  <div class="compare-card"><div class="compare-header" style="background:rgba(184,134,11,0.06);color:var(--accent);">Peer-to-Peer Rentals</div><div class="compare-cols"><div class="compare-side before"><div class="label coral">Before (47 words)</div>I am the co-founder of BorrowBear, a peer-to-peer rental marketplace scaling at 100% month-over-month...</div><div class="compare-side after"><div class="label green">After (17 words)</div>We're the fast-growing Airbnb of ... everything. You can lend anything, and generate substantial income.</div></div></div>
+  <div class="compare-card"><div class="compare-header" style="background:rgba(42,122,181,0.06);color:var(--accent3);">Prenatal Vitamins</div><div class="compare-cols"><div class="compare-side before"><div class="label coral">Before</div>Optimal nutrition shouldn't make you sick, yet prenatal vitamins do just that...</div><div class="compare-side after"><div class="label green">After</div>Pregnant and sick to your stomach? Drink your daily prenatal vitamins in a refreshing 12oz beverage that inhibits nausea.</div></div></div>
+
+  <div class="quote-block" style="margin-top:24px;">
+    <p>Think of it like Paul McCartney. He plays "Yesterday" and "Hey Jude" every single show. He plays them like it's his first time, every time. That's what a great pitch does.</p>
+    <div class="attribution">— Josh Constantine, Signal Fire</div>
+  </div>
+</div>
+
+<!-- ===== MEDIA ===== -->
+<div id="media" class="section">
+  <h2 class="section-title purple">Media &amp; PR</h2>
+  <p class="section-desc">How to work with journalists — from building relationships to surviving hostile interviews. Featuring Andrew Ross Sorkin (NYT, CNBC).</p>
+
+  <div class="speaker-badge bg-purple">Andrew Ross Sorkin &middot; NYT &amp; CNBC &middot; Session 6</div>
+
+  <h3 style="margin-bottom:16px;font-size:1.05rem;">&#128101; Building Journalist Relationships</h3>
+  <div class="card-grid">
+    <div class="card border-purple"><h3>Start Before You Need Them</h3><p>Establish relationships with journalists you respect BEFORE you have news. Andrew's #1 piece of advice. Find them early in your career, become a source.</p><span class="tag bg-purple">Key Insight</span></div>
+    <div class="card border-gold"><h3>When a Journalist Contacts You</h3><p>First: figure out who they are and what they want. Look up their work. Don't immediately forward to PR — your company "may not always have your own interests at heart."</p><span class="tag bg-gold">Self-Protection</span></div>
+    <div class="card border-coral"><h3>The Tennis Match Analogy</h3><p>A good interview is like a tennis match: "The audience wants to see a rally, not you acing them over and over." Let the journalist have their turns — it makes for a better story.</p><span class="tag bg-coral">Sorkin</span></div>
+    <div class="card border-sky"><h3>Use Social Media as a Megaphone</h3><p>You can now respond directly. If a mistake is published, you can go back to the journalist or go public yourself. You have more power than you think.</p><span class="tag bg-sky">Modern Tools</span></div>
+  </div>
+
+  <h3 style="margin-top:36px;margin-bottom:16px;font-size:1.05rem;">&#128680; Responding to Hostile Questions (Crisis Playbook)</h3>
+  <p style="font-size:0.86rem;color:var(--text-dim);margin-bottom:16px;">From the class case study: your company just got hacked and a reporter is calling with tough questions.</p>
+
+  <ul class="checklist" style="max-width:800px;margin-bottom:24px;">
+    <li><strong>Start with "Yes"</strong> to confirm known facts — it shows transparency</li>
+    <li><strong>Focus on the fix, not the problem.</strong> "We're racing to resolve this" not "We're really sorry this happened"</li>
+    <li><strong>Say "We're racing"</strong> not "We're working quickly" — it conveys more urgency</li>
+    <li><strong>Mention insurance</strong> for shareholders — shows you planned ahead</li>
+    <li><strong>Win empathy</strong> — short, lively sound bites. Be human.</li>
+    <li><strong>Try to answer</strong> every question. "No comment" is the worst possible response.</li>
+  </ul>
+
+  <h3 style="margin-top:28px;margin-bottom:16px;font-size:1.05rem;">&#128683; Never Say These to a Reporter</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;">
+    <div class="card" style="border-left:3px solid var(--accent2);"><h3 style="color:var(--accent2);">"It won't happen again"</h3><p>Overpromising. You can't guarantee this. A journalist will hold you to it.</p></div>
+    <div class="card" style="border-left:3px solid var(--accent2);"><h3 style="color:var(--accent2);">"It was our fault"</h3><p>Lawsuit fodder. Acknowledge the situation without accepting legal liability.</p></div>
+    <div class="card" style="border-left:3px solid var(--accent2);"><h3 style="color:var(--accent2);">"As I said" / "As I mentioned"</h3><p>Sounds annoyed and condescending. Every answer should feel fresh.</p></div>
+    <div class="card" style="border-left:3px solid var(--accent2);"><h3 style="color:var(--accent2);">Robotic repetition</h3><p>Glenn showed the Ed Miliband clip: repeating the exact same answer word-for-word to every question destroyed his credibility instantly.</p></div>
+  </div>
+
+  <div class="compare-card" style="margin-top:20px;">
+    <div class="compare-header" style="background:rgba(122,74,154,0.06);color:var(--accent5);">Word Swaps for Media</div>
+    <div class="compare-cols">
+      <div class="compare-side before"><div class="label coral">Avoid</div>"remediate"<br>"We're working quickly"<br>"going forward"<br>"no comment"</div>
+      <div class="compare-side after"><div class="label green">Say Instead</div>"fix"<br>"We're racing"<br>(just use future tense)<br>Try to answer everything</div>
+    </div>
+  </div>
+
+  <div class="quote-block" style="margin-top:24px;">
+    <p>Andrew walked through a blizzard to attend the funeral of Glenn's 96-year-old father, whom he'd never met. "You want to be that kind of person." That's what building real relationships looks like.</p>
+    <div class="attribution">— Glenn Kramon, on Andrew Ross Sorkin</div>
+  </div>
+</div>
+
+<!-- ===== SPEECHES ===== -->
+<div id="speeches" class="section">
+  <h2 class="section-title gold">Great Speeches &amp; Keynotes</h2>
+  <p class="section-desc">What makes Steve Jobs, Oprah, and Lauren Weinstein unforgettable on stage — and how to structure your own.</p>
+
+  <h3 style="margin-bottom:16px;font-size:1.05rem;">&#127911; The 3 S's of a Keynote</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:28px;">
+    <div class="card" style="border-top:4px solid var(--accent);text-align:center;"><h3 style="font-size:1.4rem;color:var(--accent);">Story</h3><p>Open with a personal, vivid narrative. Draw them in before making your point.</p></div>
+    <div class="card" style="border-top:4px solid var(--accent3);text-align:center;"><h3 style="font-size:1.4rem;color:var(--accent3);">Statistics</h3><p>Back up the story with data. Make the stat surprising.</p></div>
+    <div class="card" style="border-top:4px solid var(--accent4);text-align:center;"><h3 style="font-size:1.4rem;color:var(--accent4);">Solutions</h3><p>Don't just identify problems. Give the audience something to do.</p></div>
+  </div>
+
+  <h3 style="margin-bottom:16px;font-size:1.05rem;">&#127822; Steve Jobs iPhone Keynote (2007)</h3>
+  <div class="card" style="max-width:800px;border-left:3px solid var(--accent);">
+    <h3>What Made It Masterful</h3>
+    <p>Glenn did a deep analysis of the iPhone keynote and identified what made it work:</p>
+    <div style="margin-top:12px;display:grid;gap:10px;">
+      <div style="padding:10px 14px;background:rgba(26,26,46,0.03);border-radius:8px;font-size:0.84rem;line-height:1.65;"><strong>Simplicity:</strong> No jargon. No spec sheets. Just "a widescreen iPod with touch controls, a revolutionary mobile phone, and a breakthrough internet communications device... these are not three separate devices."</div>
+      <div style="padding:10px 14px;background:rgba(26,26,46,0.03);border-radius:8px;font-size:0.84rem;line-height:1.65;"><strong>Humor:</strong> "Yuck!" (about styluses). Called Starbucks live on stage: "I'd like to order 4,000 lattes to go... just kidding, wrong number."</div>
+      <div style="padding:10px 14px;background:rgba(26,26,46,0.03);border-radius:8px;font-size:0.84rem;line-height:1.65;"><strong>Visual gimmicks:</strong> Used the stage as a prop. Showed, didn't tell. Made the audience feel the magic.</div>
+      <div style="padding:10px 14px;background:rgba(26,26,46,0.03);border-radius:8px;font-size:0.84rem;line-height:1.65;"><strong>The word "magic":</strong> Jobs used it intentionally. He made the audience feel they were witnessing something extraordinary.</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px;margin-bottom:16px;font-size:1.05rem;">&#127775; Oprah's Speech</h3>
+  <div class="card" style="max-width:800px;border-left:3px solid var(--accent5);">
+    <h3>The Power of Cinematic Detail</h3>
+    <p>Glenn highlighted the specific sensory details that made Oprah's speech unforgettable:</p>
+    <div class="example-text">"Bone tired from cleaning other people's houses." "His tie was white, and of course his skin was black."</div>
+    <p style="margin-top:10px;font-size:0.84rem;color:var(--text-dim);">The lesson: don't say "she worked hard" — show us what hard looked like. Don't say "there was racial tension" — describe the tie and the skin.</p>
+  </div>
+
+  <h3 style="margin-top:28px;margin-bottom:16px;font-size:1.05rem;">&#128161; Speech Essentials</h3>
+  <div class="card-grid">
+    <div class="card border-gold"><h3>Remember Your Audience</h3><p>The Honey Badger Rule: "Why should I care?" If you can't answer this for every paragraph, cut it.</p></div>
+    <div class="card border-coral"><h3>Begin with Humor</h3><p>Self-deprecating. Win them over before the substance. Jobs' "Yuck!" about styluses disarmed the audience immediately.</p></div>
+    <div class="card border-sky"><h3>One Main Thought</h3><p>Summarize early. Repeat it. Use it as your guide. Jobs: "Today, Apple reinvents the phone."</p></div>
+    <div class="card border-green"><h3>Keep It Short</h3><p>The Gettysburg Address: under 300 words, two minutes. If Lincoln can do it in 300 words, so can you.</p></div>
+    <div class="card border-purple"><h3>Nail the Ending</h3><p>The end is more important than the beginning. Lauren Weinstein's TED talk ended with: "Don't believe everything you think."</p></div>
+  </div>
+
+  <div class="quote-block" style="margin-top:24px;"><p>People will forget what you said, people will forget what you did, but people will never forget how you made them feel.</p><div class="attribution">— Maya Angelou</div></div>
+</div>
+
+<!-- ===== HUMOR ===== -->
+<div id="humor" class="section">
+  <h2 class="section-title coral">Using Humor</h2>
+  <p class="section-desc">Humor can be dangerous. But when it works, you become one in a million. Glenn's class is packed with examples.</p>
+
+  <div class="card-grid">
+    <div class="card border-coral"><h3>Never Pre-Announce</h3><p>"This will make you laugh" kills the joke before you make it.</p></div>
+    <div class="card border-gold"><h3>Self-Deprecating Wins</h3><p>Make fun of yourself, not others. Emily's dog Olive who "contributes nothing to sustainability beyond trying to eat my recycling."</p></div>
+    <div class="card border-sky"><h3>Punch Up, Not Down</h3><p>Make sure the target can take it. Humor should build bonds, not burn them.</p></div>
+    <div class="card border-green"><h3>The Rule of Three</h3><p>Two like ideas, then a third incongruent one. Setup, setup, punchline.</p></div>
+    <div class="card border-purple"><h3>Less Is More</h3><p>Carson's Rule: three jokes max on a topic before they get restless.</p></div>
+    <div class="card border-coral"><h3>Reality > Fantasy</h3><p>Just exaggerate a little. Reality is often funnier than anything you can make up.</p></div>
+  </div>
+
+  <h3 style="margin-top:36px;margin-bottom:16px;font-size:1.05rem;">&#128514; Humor Hall of Fame from Class</h3>
+
+  <div class="card-grid">
+    <div class="card border-gold"><h3>Vinnie from the Bronx</h3><p>"Can you tell me where the library's at?" &#8594; "Never end a sentence with a preposition." &#8594; "Can you tell me where the library's at, a**hole?"</p><span class="tag bg-gold">Classic</span></div>
+    <div class="card border-coral"><h3>George Carlin on Airport Language</h3><p>"They say 'the boarding process.' It's just 'boarding.' And 'pre-board' — how do you get on a plane before you get on a plane?"</p><span class="tag bg-coral">Jargon Killer</span></div>
+    <div class="card border-sky"><h3>Corporate Bro on Dating</h3><p>Natalie &amp; Corporate Bro apply business jargon to dating: "You've been an action item on my list." "I don't have the bandwidth." "Let's circle back." "Let's drill down." Delightfully terrible.</p><span class="tag bg-sky">Parody</span></div>
+    <div class="card border-green"><h3>Alexis Gay on Parents &amp; Tech</h3><p>Helping parents with technology: "Have you Googled it?" A gentle reminder that humor doesn't need to be elaborate.</p><span class="tag bg-green">Relatable</span></div>
+    <div class="card border-purple"><h3>Steve Jobs at Starbucks</h3><p>Called Starbucks live on stage during the iPhone keynote: "I'd like to order 4,000 lattes to go... just kidding, wrong number." The audience erupted.</p><span class="tag bg-purple">Live Demo</span></div>
+  </div>
+
+  <h3 style="margin-top:28px;margin-bottom:16px;font-size:1.05rem;">&#128241; Texting: Where Humor Goes to Die</h3>
+  <div class="card" style="max-width:700px;border-left:3px solid var(--accent);">
+    <h3>The Dangers of Texting</h3>
+    <p>93% of communication is non-verbal — and texting strips it all away. Glenn and students explored how text symbols carry unintended meaning:</p>
+    <div class="example-text">
+      <strong>A period now feels aggressive.</strong> "OK." vs "OK" — the first one reads angry.<br>
+      <strong>"K" = you're in trouble.</strong><br>
+      <strong>"inks" ≠ "I appreciate your hard work. Thanks."</strong><br>
+      Be careful with brevity in texting — what feels efficient to you may feel cold to them.
+    </div>
+  </div>
+</div>
+
+<!-- ===== FEEDBACK ===== -->
+<div id="feedback" class="section">
+  <h2 class="section-title sky">Giving Written Feedback &amp; Gratitude</h2>
+  <p class="section-desc">The most important chapter for future leaders — plus how to write gratitude notes people keep forever.</p>
+
+  <h3 style="margin-bottom:16px;font-size:1.05rem;">&#128221; The 6 Rules of Written Feedback</h3>
+  <div class="rule-row border-sky"><div class="rule-num sky">1</div><div class="rule-content"><h4>Convey You Want Them to Succeed</h4><p>If they sense you want them to succeed, they'll take any criticism. Tom Friedman's line: "People can smell the difference a mile away."</p></div></div>
+  <div class="rule-row border-gold"><div class="rule-num gold">2</div><div class="rule-content"><h4>Say What You Like, Then What You'd Like</h4><p>Never say what you dislike — say how to make it better. "I liked X. I'd like to see more of Y."</p></div></div>
+  <div class="rule-row border-coral"><div class="rule-num coral">3</div><div class="rule-content"><h4>Use Vivid Examples</h4><p>The single biggest weakness in feedback is the absence of specific examples. Don't say "good job" — say exactly what was good and why.</p></div></div>
+  <div class="rule-row border-green"><div class="rule-num green">4</div><div class="rule-content"><h4>Write TO Them, Not About Them</h4><p>Conversational letter, not third-person report. "You did X beautifully" not "The employee demonstrated competence in X."</p></div></div>
+  <div class="rule-row border-purple"><div class="rule-num purple">5</div><div class="rule-content"><h4>Focus on Work, Not Personality</h4><p>Review performance, not personality. Avoid psychoanalyzing. Stick to observable actions and outcomes.</p></div></div>
+  <div class="rule-row border-sky"><div class="rule-num sky">6</div><div class="rule-content"><h4>No Surprises &amp; Always Say Thank You</h4><p>Tough news face-to-face first. The review should be a precious souvenir — something they keep.</p></div></div>
+
+  <h3 style="margin-top:36px;margin-bottom:16px;font-size:1.05rem;">&#128140; Writing Gratitude Notes (Show, Don't Tell)</h3>
+  <p style="font-size:0.86rem;color:var(--text-dim);margin-bottom:16px;">From Session 3: Glenn taught that gratitude notes should be cinematic — describe the specific scene where this person impacted you.</p>
+
+  <div class="card-grid">
+    <div class="card border-gold"><h3>The Swim Coach</h3><p>A student wrote about a swim coach who held them accountable — not with generic praise, but by describing the specific 5:30 AM poolside scene, the exact words said, the moment of breakthrough.</p><span class="tag bg-gold">Cinematic</span></div>
+    <div class="card border-coral"><h3>The Nigeria Arrival</h3><p>A student described arriving in Nigeria — the specific sights, sounds, and feelings — and how a particular person made that transition bearable. Vivid detail > vague appreciation.</p><span class="tag bg-coral">Sensory</span></div>
+    <div class="card border-sky"><h3>"Against the Grain" Letter</h3><p>A letter to a difficult boss at Microsoft. Instead of generic thanks, the student described the specific moments of tough-love mentorship that shaped their career.</p><span class="tag bg-sky">Honest</span></div>
+  </div>
+
+  <div class="quote-block" style="margin-top:24px;">
+    <p>AI can write a gratitude note. But it can't write about the potato vending machine on that one street in Poland that changed your life. Only you can write the vivid, personal details that make someone cry.</p>
+    <div class="attribution">— Glenn Kramon, on why AI can't replace personal writing</div>
+  </div>
+</div>
+
+<!-- ===== OPINIONS ===== -->
+<div id="opinions" class="section">
+  <h2 class="section-title green">Writing Opinion Pieces</h2>
+  <p class="section-desc">Tips from Glenn Kramon and a video message from Nick Kristof in South Sudan.</p>
+
+  <div class="card-grid">
+    <div class="card border-green"><h3>Choose an Argument, Not a Topic</h3><p>Start with something contentious — that others might disagree with. "AI in education" is a topic. "MBA programs should require AI courses" is an argument.</p></div>
+    <div class="card border-gold"><h3>Start With a Bang</h3><p>They'll read the headline and half a paragraph. Don't clear your throat. Don't "set the stage." Just begin.</p></div>
+    <div class="card border-coral"><h3>Tell One Person's Story</h3><p>One or two stories + persuasive stats. Not five stories. The reader needs someone to root for.</p></div>
+    <div class="card border-sky"><h3>"Why You?" and "Why Now?"</h3><p>Connect to something timely. Show your unique angle. Why are YOU the person to write this?</p></div>
+    <div class="card border-purple"><h3>Get the Other Side</h3><p>Acknowledge the counterargument. Show you've considered it. Then explain why you're still right.</p></div>
+    <div class="card border-green"><h3>Propose Solutions</h3><p>Give a model of where what you want is already happening. Don't just diagnose — prescribe.</p></div>
+  </div>
+
+  <h3 style="margin-top:36px;margin-bottom:16px;font-size:1.05rem;">&#128240; Op-Ed Topics from Class</h3>
+  <div class="card-grid">
+    <div class="card border-gold"><h3>Chinese AI Policy</h3><p>A student used their unique perspective growing up between China and America to write about AI regulation.</p><span class="tag bg-gold">Unique Angle</span></div>
+    <div class="card border-coral"><h3>Spirituality in the MBA</h3><p>Should MBA curricula include spirituality? A contentious argument that provoked classroom debate.</p><span class="tag bg-coral">Provocative</span></div>
+    <div class="card border-sky"><h3>Video Games as the New MBA</h3><p>An argument that gaming teaches leadership, strategy, and teamwork better than case studies.</p><span class="tag bg-sky">Surprising</span></div>
+    <div class="card border-green"><h3>Childcare Costs in the Bay Area</h3><p>Personal experience + data. A deeply felt argument backed by numbers.</p><span class="tag bg-green">Personal + Data</span></div>
+  </div>
+
+  <div class="quote-block" style="margin-top:24px;"><p>If you're struggling to find a topic, ask yourself: "What makes me mad?"</p><div class="attribution">— Glenn Kramon</div></div>
+</div>
+
+<!-- ===== LINKEDIN & JARGON ===== -->
+<div id="linkedin" class="section">
+  <h2 class="section-title purple">LinkedIn &amp; The War on Jargon</h2>
+  <p class="section-desc">Rachel Conrad on writing your "About Me" — the single most high-value paragraph in your career — and why jargon is killing your writing.</p>
+
+  <div class="speaker-badge bg-purple">Rachel Conrad &middot; Sessions 3 &amp; 4</div>
+
+  <h3 style="margin-bottom:16px;font-size:1.05rem;">&#128100; Your LinkedIn "About Me"</h3>
+  <div class="quote-block">
+    <p>Your LinkedIn About Me section is the single most high-value paragraph in your entire career. It's the first thing investors, recruiters, journalists, and partners read. Make it count.</p>
+    <div class="attribution">— Rachel Conrad</div>
+  </div>
+
+  <h3 style="margin-top:24px;margin-bottom:16px;font-size:1.05rem;">&#127942; Model "About Me" Examples from Class</h3>
+  <div class="card-grid">
+    <div class="card border-purple"><h3>Rachel Conrad</h3><div class="example-text">"I built a team that took Impossible Foods US brand awareness from zero to 56% without a single ad."</div><p style="margin-top:8px;">Leads with a specific, impressive metric. No jargon. Shows both competence and the scale of impact.</p><span class="tag bg-purple">Gold Standard</span></div>
+    <div class="card border-gold"><h3>Glenn Kramon</h3><div class="example-text">"I'm a professional weight lifter, but my weights are words."</div><p style="margin-top:8px;">Unexpected metaphor. Memorable. Warm. Makes you want to know more.</p><span class="tag bg-gold">Metaphor</span></div>
+    <div class="card border-sky"><h3>South Bronx Bridge-Builder</h3><div class="example-text">"I saw firsthand how talent is deeply distributed but opportunity isn't... debating the best anime of all time."</div><p style="margin-top:8px;">Mixing mission with personality. The anime detail makes you real.</p><span class="tag bg-sky">Mission + Personality</span></div>
+    <div class="card border-coral"><h3>Swiss Army Knife</h3><div class="example-text">"I started investment banking in New York during the financial crisis. I've mowed lawns... in search of large meals."</div><p style="margin-top:8px;">Humor + range. The "large meals" detail is human and warm.</p><span class="tag bg-coral">Humor</span></div>
+    <div class="card border-green"><h3>Microsoft Career Pivot</h3><div class="example-text">"Once a programmer... survives on air fryer experiments, still waiting for Liverpool to win every year."</div><p style="margin-top:8px;">Personal interests make the professional story human.</p><span class="tag bg-green">Interests</span></div>
+  </div>
+
+  <div class="card" style="max-width:700px;margin-top:20px;border-left:3px solid var(--accent2);">
+    <h3 style="color:var(--accent2);">What NOT to Write</h3>
+    <p>"Thought partner" — Glenn flagged this for a Singapore policy maker. It's meaningless jargon. Replace it with what you actually DO.</p>
+    <div class="example-text"><strong>"I drive synergies for impact innovation"</strong> — What does this mean? Nothing. No one knows. Not even you.</div>
+  </div>
+
+  <h3 style="margin-top:36px;margin-bottom:16px;font-size:1.05rem;">&#128163; The Jargon Kill List</h3>
+  <p style="font-size:0.86rem;color:var(--text-dim);margin-bottom:16px;">Rachel Conrad's most despised words — and what to say instead. Glenn reinforces: "Show, don't tell. If you say 'proven leader,' give the specific example that proves it."</p>
+
+  <table class="jargon-table">
+    <thead><tr><th style="color:var(--accent2);">&#128683; Kill</th><th style="color:var(--accent4);">&#9989; Say Instead</th></tr></thead>
+    <tbody>
+      <tr><td class="kill">leverage</td><td class="use">use</td></tr>
+      <tr><td class="kill">incentivize</td><td class="use">motivate</td></tr>
+      <tr><td class="kill">mitigate</td><td class="use">reduce</td></tr>
+      <tr><td class="kill">iterate</td><td class="use">improve upon</td></tr>
+      <tr><td class="kill">pain point</td><td class="use">problem</td></tr>
+      <tr><td class="kill">deliverables</td><td class="use">tasks / goals / results</td></tr>
+      <tr><td class="kill">synergize</td><td class="use">(just delete it)</td></tr>
+      <tr><td class="kill">productize</td><td class="use">(describe what you actually built)</td></tr>
+      <tr><td class="kill">strategize</td><td class="use">plan</td></tr>
+      <tr><td class="kill">empower / enable</td><td class="use">help</td></tr>
+      <tr><td class="kill">innovate</td><td class="use">(show what you created)</td></tr>
+      <tr><td class="kill">disrupt</td><td class="use">(show what you changed)</td></tr>
+      <tr><td class="kill">drive</td><td class="use">(most overused word in business — be specific)</td></tr>
+      <tr><td class="kill">remediate</td><td class="use">fix</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:28px;margin-bottom:16px;font-size:1.05rem;">&#128161; The Show, Don't Tell Principle</h3>
+  <div class="compare-card">
+    <div class="compare-cols">
+      <div class="compare-side before"><div class="label coral">Telling</div>"Proven leader with extensive experience driving cross-functional teams"<br><br>"Passionate about innovation and disruption"<br><br>"Results-oriented professional"</div>
+      <div class="compare-side after"><div class="label green">Showing</div>"Led a 12-person team that took Impossible Foods from zero to 56% brand awareness — without a single ad"<br><br>"Built the first AI X-ray scanner for airports. 99% accuracy vs. 5% for humans."<br><br>"Trained 4,000 people from my neighborhood in tech skills after seeing one man on a roof dreaming of a better life"</div>
+    </div>
+  </div>
+
+  <div class="quote-block" style="margin-top:24px;">
+    <p>If your About Me could belong to anyone else in your industry, it's not specific enough. Your potato-vending-machine-in-Poland moment is what makes you unforgettable.</p>
+    <div class="attribution">— Glenn Kramon, combining AI and LinkedIn lessons</div>
+  </div>
+</div>
+
+<!-- ===== LIFE LESSONS ===== -->
+<div id="life" class="section">
+  <h2 class="section-title purple">Save Yourself: 16 Life Lessons</h2>
+  <p class="section-desc">Glenn Kramon's parting wisdom, inspired by Jacob Marley.</p>
+  <div class="life-grid">
+    <div class="life-card" style="border-left:3px solid var(--accent);"><div class="num gold">01</div><h4>Be 1 in a Million</h4><p>Never begin a cold-call with "I hope you are well." Corporate Bro's reaction video says it all.</p></div>
+    <div class="life-card" style="border-left:3px solid var(--accent2);"><div class="num coral">02</div><h4>Don't Care What Others Think</h4><p>"What other people think is none of your damn business."</p></div>
+    <div class="life-card" style="border-left:3px solid var(--accent3);"><div class="num sky">03</div><h4>Know Your Glass Balls</h4><p>Some balls are plastic, some glass. Don't drop the glass ones.</p></div>
+    <div class="life-card" style="border-left:3px solid var(--accent4);"><div class="num green">04</div><h4>Try Not to Say No</h4><p>Stay open to opportunities and experiences. Walk through blizzards for people.</p></div>
+    <div class="life-card" style="border-left:3px solid var(--accent5);"><div class="num purple">05</div><h4>Want What You Have</h4><p>"It's not having what you want. It's wanting what you have."</p></div>
+    <div class="life-card" style="border-left:3px solid var(--accent);"><div class="num gold">06</div><h4>Retain Your Identity</h4><p>Don't become too dependent on someone else for your identity.</p></div>
+    <div class="life-card" style="border-left:3px solid var(--accent2);"><div class="num coral">07</div><h4>Financial Independence</h4><p>Share the load. Don't bet your life on someone else.</p></div>
+    <div class="life-card" style="border-left:3px solid var(--accent3);"><div class="num sky">08</div><h4>Expand, Don't Shrink</h4><p>Get to know people of all ages and backgrounds.</p></div>
+    <div class="life-card" style="border-left:3px solid var(--accent4);"><div class="num green">09</div><h4>Cross-Gender Friendships</h4><p>Your life will be enriched and you will be happier.</p></div>
+    <div class="life-card" style="border-left:3px solid var(--accent5);"><div class="num purple">10</div><h4>Be For Something</h4><p>"Do not lose your enthusiasm." — Ken Burns</p></div>
+    <div class="life-card" style="border-left:3px solid var(--accent);"><div class="num gold">11</div><h4>Stick Together</h4><p>Remember what both parties accomplished together in 1965.</p></div>
+    <div class="life-card" style="border-left:3px solid var(--accent2);"><div class="num coral">12</div><h4>Noblesse Oblige</h4><p>Act with generosity toward those less privileged. Joe Barreto saw a man on a roof and built a training empire.</p></div>
+    <div class="life-card" style="border-left:3px solid var(--accent3);"><div class="num sky">13</div><h4>Let Go of Anger</h4><p>Think positively. Don't dwell on the past. Don't believe everything you think.</p></div>
+    <div class="life-card" style="border-left:3px solid var(--accent4);"><div class="num green">14</div><h4>Expel Toxins</h4><p>Replace 4-5 toxic relationships with 50 uplifting ones.</p></div>
+    <div class="life-card" style="border-left:3px solid var(--accent5);"><div class="num purple">15</div><h4>Appreciate This Time</h4><p>"Once you land on the shore, you'll realize how far you've gone."</p></div>
+    <div class="life-card" style="border-left:3px solid var(--accent);"><div class="num gold">16</div><h4>Scatter Joy</h4><p>"The wish to scatter joy and not pain around us." — Emerson</p></div>
+  </div>
+</div>
+
+<!-- ===== FLASHCARD MODE ===== -->
+<div id="flashcards" class="section">
+  <div style="text-align:center;">
+    <h2 class="section-title" style="color:var(--accent3);">&#127183; Flashcard Mode</h2>
+    <p class="section-desc" style="margin:6px auto 24px;text-align:center;">Test your knowledge of the course material. Click the card to flip, then rate yourself.</p>
+  </div>
+
+  <div class="fc-categories" id="fcCategories">
+    <button class="fc-cat-btn active" onclick="filterCategory('all',this)">All</button>
+    <button class="fc-cat-btn" onclick="filterCategory('basics',this)">Basics</button>
+    <button class="fc-cat-btn" onclick="filterCategory('cold-call',this)">Cold-Call Rules</button>
+    <button class="fc-cat-btn" onclick="filterCategory('stories',this)">Stories</button>
+    <button class="fc-cat-btn" onclick="filterCategory('pitching',this)">Pitching</button>
+    <button class="fc-cat-btn" onclick="filterCategory('media',this)">Media &amp; PR</button>
+    <button class="fc-cat-btn" onclick="filterCategory('speeches',this)">Speeches</button>
+    <button class="fc-cat-btn" onclick="filterCategory('humor',this)">Humor</button>
+    <button class="fc-cat-btn" onclick="filterCategory('jargon',this)">Jargon</button>
+    <button class="fc-cat-btn" onclick="filterCategory('life',this)">Life Lessons</button>
+  </div>
+
+  <div class="fc-stats-row">
+    <div style="text-align:center;"><strong id="fcTotal" class="sky">0</strong>Cards</div>
+    <div style="text-align:center;"><strong id="fcGot" class="green">0</strong>Mastered</div>
+    <div style="text-align:center;"><strong id="fcLeft" class="gold">0</strong>Learning</div>
+  </div>
+
+  <div class="fc-counter" id="fcCounter">Card 1 of 0</div>
+  <div class="fc-progress-bar"><div class="fc-progress-fill" id="fcProgressFill" style="width:0%"></div></div>
+
+  <div class="fc-card-area" id="fcCardArea">
+    <div class="fc-card" id="fcCard" onclick="flipCard()">
+      <div class="fc-face fc-front">
+        <div class="fc-cat-label bg-gold" id="fcCatLabel">Loading...</div>
+        <div class="fc-question" id="fcQuestion">Loading flashcards...</div>
+        <div class="fc-hint">Click to flip</div>
+      </div>
+      <div class="fc-face fc-back">
+        <div class="fc-answer" id="fcAnswer"></div>
+        <div class="fc-example" id="fcExample" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fc-mark-btns" id="fcMarkBtns">
+    <button class="fc-btn got-it" onclick="markCard(true)">&#10003; Got it</button>
+    <button class="fc-btn learning" onclick="markCard(false)">&#9997; Still learning</button>
+  </div>
+
+  <div class="fc-controls">
+    <button class="fc-btn" id="fcPrev" onclick="prevCard()">&#8592; Prev</button>
+    <button class="fc-btn primary" onclick="flipCard()">Flip</button>
+    <button class="fc-btn" id="fcNext" onclick="nextCard()">Next &#8594;</button>
+    <button class="fc-btn" onclick="shuffleDeck()" title="Shuffle cards">&#128256; Shuffle</button>
+  </div>
+
+  <div class="fc-keyboard-hint">Keyboard: &#8592;&#8594; navigate &middot; Space flip &middot; G got it &middot; L learning</div>
+</div>
+
+<!-- ===== EMAIL COACH ASSISTANT ===== -->
+<div id="assistant" class="section">
+  <div class="assistant-wrap">
+    <div class="assistant-intro">
+      <h2 class="section-title" style="color: var(--accent2);">&#9889; Cold Email Coach</h2>
+      <p>Paste your cold email below and get instant feedback based on the 11 rules from Winning Writing, plus jargon detection, forbidden word checks, and the show-don't-tell principle from Rachel Conrad.</p>
+    </div>
+
+    <div class="email-input-area">
+      <textarea id="emailInput" placeholder="Paste your cold email here...&#10;&#10;Example:&#10;Dear Mr. Smith,&#10;&#10;I hope you are well. My name is Alex and I am a student at Stanford GSB. I wanted to reach out because I am very interested in your company and would love to learn more about opportunities. I have a strong background in consulting and finance..."></textarea>
+      <div class="input-footer">
+        <span class="char-count" id="charCount">0 words</span>
+        <button class="analyze-btn" id="analyzeBtn" onclick="analyzeEmail()">Analyze My Email</button>
+      </div>
+    </div>
+
+    <div class="results-area" id="resultsArea">
+      <div class="score-banner" id="scoreBanner">
+        <div class="score-ring">
+          <svg width="90" height="90" viewBox="0 0 90 90">
+            <circle cx="45" cy="45" r="38" fill="none" stroke="#e2e0dc" stroke-width="6"/>
+            <circle id="scoreCircle" cx="45" cy="45" r="38" fill="none" stroke="var(--accent4)" stroke-width="6" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"/>
+          </svg>
+          <div class="score-text" id="scoreText">0</div>
+        </div>
+        <div class="score-details">
+          <h3 id="scoreHeadline">Analyzing...</h3>
+          <p id="scoreSummary"></p>
+        </div>
+      </div>
+
+      <div class="feedback-section" id="strengthsSection">
+        <h3><span style="color:var(--accent4);">&#10003;</span> What's Working</h3>
+        <div id="strengthsList"></div>
+      </div>
+
+      <div class="feedback-section" id="improvementsSection">
+        <h3><span style="color:var(--accent);">&#9888;</span> Opportunities to Improve</h3>
+        <div id="improvementsList"></div>
+      </div>
+
+      <div class="feedback-section" id="issuesSection">
+        <h3><span style="color:var(--accent2);">&#10007;</span> Watch Out</h3>
+        <div id="issuesList"></div>
+      </div>
+
+      <div class="rewrite-box" id="rewriteBox">
+        <h3>&#9997; Suggested Rewrites &amp; Tips</h3>
+        <ul class="tips" id="rewriteTips"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- container -->
+
+<footer style="text-align:center; padding:40px 20px; color:var(--text-dim); font-size:0.78rem; border-top:1px solid var(--border); margin-top:36px;">
+  Winning Writing &middot; Glenn Kramon &middot; Stanford GSB &middot; Dashboard for Doca
+</footer>
+
+<script>
+// ===== FLASHCARD DATA =====
+const allFlashcards = [
+  // === BASICS (15) ===
+  {id:1, cat:'basics', front:'What are the 4 fundamental rules of writing?', back:'<strong>1.</strong> Know your audience <strong>2.</strong> Boil it down <strong>3.</strong> Write as you speak <strong>4.</strong> Get to the point — fast (B.L.U.F.)', example:'', color:'gold'},
+  {id:2, cat:'basics', front:'What does B.L.U.F. stand for?', back:'<strong>Bottom Line Up Front.</strong> Say the most important thing first. Glenn critiqued the Stanford president\'s email where the hiring freeze announcement was buried at the bottom.', example:'', color:'gold'},
+  {id:3, cat:'basics', front:'What is Glenn\'s most forbidden word?', back:'<strong>"Currently."</strong> Escalating punishments: warning, then double-secret probation, then watching a scary movie. The sentence always works without it.', example:'', color:'coral'},
+  {id:4, cat:'basics', front:'Why is "going forward" banned?', back:'Future tense already implies forward. "We will improve security going forward" = "We will improve security." Those last two words are dead weight.', example:'', color:'coral'},
+  {id:5, cat:'basics', front:'What is a dangling modifier?', back:'When the phrase before the comma doesn\'t match the subject after it.', example:'"As an HBS professor, I\'m hoping you can help..." — This accidentally says YOU are the HBS professor.', color:'gold'},
+  {id:6, cat:'basics', front:'Why are strong verbs better than adverbs?', back:'Adverbs weaken writing. Replace adverb + weak verb with a single strong verb.', example:'"incredibly smart" → "brilliant" · "walking slowly" → "strolling" · "extremely important" → "crucial"', color:'gold'},
+  {id:7, cat:'basics', front:'Name 6 of Glenn\'s favorite strong verbs', back:'<strong>Amplify, batter, cower, mimic, sparkle, yank.</strong> Each one paints a picture without needing an adverb.', example:'', color:'gold'},
+  {id:8, cat:'basics', front:'Condense: "I think you need to be prepared for the possibility of a market crash"', back:'<strong>"Prepare for a market crash."</strong> Cut from 16 words to 5.', example:'', color:'green'},
+  {id:9, cat:'basics', front:'Condense: "Let me know if you\'re interested and we can go from there"', back:'<strong>"Are you in?"</strong> Cut from 13 words to 3.', example:'', color:'green'},
+  {id:10, cat:'basics', front:'What is the Miniskirt (or Speedo) Rule?', back:'Make it <strong>long enough to cover the basics, but short enough to keep it interesting.</strong>', example:'— Glenn Kramon', color:'gold'},
+  {id:11, cat:'basics', front:'George Carlin on airport language?', back:'Airports say "the boarding process" — it\'s just <strong>"boarding."</strong> And "pre-board" means getting on before you get on, which is nonsensical.', example:'Write as you speak. Kill unnecessary words.', color:'coral'},
+  {id:12, cat:'basics', front:'What is "write for the intelligent generalist"?', back:'Write for the <strong>least knowledgeable member</strong> of your audience. No jargon. If your grandma wouldn\'t understand it, rewrite it.', example:'', color:'gold'},
+  {id:13, cat:'basics', front:'Name 5 tips for overcoming writer\'s block', back:'<strong>1.</strong> Move your body (jog/walk) <strong>2.</strong> Wake an hour earlier <strong>3.</strong> Change locations <strong>4.</strong> Pretend you\'re writing an email to a friend <strong>5.</strong> Start in the middle, not the beginning', example:'Also: read it aloud, keep a daily journal', color:'sky'},
+  {id:14, cat:'basics', front:'Why can\'t AI replace personal writing?', back:'AI can write generic text but can\'t write vivid personal details. Only YOU can describe the <strong>potato vending machine on that one street in Poland</strong> that changed your life.', example:'— Glenn on why gratitude notes must be human', color:'purple'},
+  {id:15, cat:'basics', front:'Name 5 forbidden opening phrases', back:'<strong>1.</strong> "I hope you are well" <strong>2.</strong> "I wanted to reach out" <strong>3.</strong> "As I mentioned" <strong>4.</strong> "Circle back" <strong>5.</strong> "Touch base"', example:'Corporate Bro made a reaction video about "I hope you are well" — it\'s that bad.', color:'coral'},
+
+  // === COLD-CALL RULES (20) ===
+  {id:16, cat:'cold-call', front:'Cold-Call Rule 1: Know the Person', back:'Research them deeply. React to something they\'ve written. The gold standard is the <strong>Nardwuar Method</strong> — know obscure facts that show you\'ve done real homework.', example:'Nardwuar knows details about rappers that stun them. Initially hostile artists completely won over by his deep research.', color:'coral'},
+  {id:17, cat:'cold-call', front:'Cold-Call Rule 2: Be Who You Are', back:'Authenticity is non-negotiable. The <strong>"money slide"</strong> for any interaction = warmth + competence. You need BOTH.', example:'"I took the company from $X to $2M/year" (competence) + "I was more comfortable with exotic animals at the company picnic" (warmth)', color:'gold'},
+  {id:18, cat:'cold-call', front:'Cold-Call Rule 3: Lead With Something New', back:'Begin with something <strong>they don\'t know</strong>, not something they already know. Don\'t start with flattery about how they\'ve "transformed the industry."', example:'Before: "Dear Mr. Bezos, you\'ve transformed industry after industry..." → After: "I can help Alexa help patients receive personalized follow-up care."', color:'sky'},
+  {id:19, cat:'cold-call', front:'Cold-Call Rule 4: Name Drop (Wisely)', back:'Mention someone you <strong>both know and respect.</strong> Better yet, have that person introduce you. A name in the first sentence changes everything.', example:'"Herb Grossback suggests I contact you..."', color:'green'},
+  {id:20, cat:'cold-call', front:'Cold-Call Rule 5: "Like You"', back:'The <strong>two most important words</strong> in a cold-call letter. Draw a parallel between yourself and the recipient to create instant rapport.', example:'"Like you at Goldman, I\'m finally considered the in-house communist at Stanford Business School."', color:'purple'},
+  {id:21, cat:'cold-call', front:'Cold-Call Rule 6: Make Them Smile', back:'Tell a story that makes them <strong>laugh or smile.</strong> Even one sentence of humor puts you in the top 1% of cold emails.', example:'Emily\'s P.S.: "My dachshund Olive contributes nothing to sustainability beyond trying to eat my recycling."', color:'coral'},
+  {id:22, cat:'cold-call', front:'Cold-Call Rule 7: Pick a Lane', back:'Don\'t cover everything on your resume. Pick <strong>ONE compelling motif</strong> and carry it through the entire email.', example:'Amadeus to Richard Branson: swimming/water motif throughout — "What if I swim there?... When\'s best for me to swim over?"', color:'gold'},
+  {id:23, cat:'cold-call', front:'Cold-Call Rule 8: Confident, Not Arrogant', back:'Sweet spot between humility and overconfidence. Delete all apologetic hedging language like "I\'m sorry to bother you."', example:'Rose Bowl cow story: the rancher said "I\'ll handle it" — not "I\'m the greatest cow wrangler alive."', color:'sky'},
+  {id:24, cat:'cold-call', front:'Cold-Call Rule 9: Keep It Short, Small Ask', back:'Under <strong>200 words.</strong> Make your ask as small and specific as possible. Make it easy to say yes.', example:'Glenn\'s feedback on Strava CEO pitch: "Great personal connection — but convert it from a fan letter into an ask."', color:'green'},
+  {id:25, cat:'cold-call', front:'Cold-Call Rule 10: Offer Something in Return', back:'Create <strong>reciprocity.</strong> Maybe you know something, or someone, they don\'t.', example:'Nigella Lawson pitch mentioned having 1M followers — showing value in return.', color:'purple'},
+  {id:26, cat:'cold-call', front:'Cold-Call Rule 11: Check for Accuracy — Twice', back:'If you write to "Mark Andreesen at Sequoia" instead of the right name and firm, <strong>don\'t expect an answer.</strong>', example:'', color:'coral'},
+  {id:27, cat:'cold-call', front:'What is the Cameo Technique?', back:'When multiple emails fail, try something creative. Julia Kapoor at Slack paid for a <strong>Cameo video</strong> from a telenovela star the prospect loved. He replied within minutes.', example:'Sometimes you need to go beyond email.', color:'purple'},
+  {id:28, cat:'cold-call', front:'What is the Selfie Technique?', back:'Ed Cardbook asked billionaire Robert Smith for a <strong>selfie</strong> — creating a personal connection that turned into a business relationship.', example:'A creative icebreaker that feels low-stakes but builds rapport.', color:'gold'},
+  {id:29, cat:'cold-call', front:'What did Glenn\'s father do to get a job during the Depression?', back:'Instead of talking about himself, he said: <strong>"I can\'t imagine how hard it must be to interview starving, desperate men all day."</strong> Empathy made him 1 in 100.', example:'', color:'sky'},
+  {id:30, cat:'cold-call', front:'Why was Leaf\'s Bonobos email a model?', back:'Used <strong>ChatGPT for brainstorming + personal journals for voice.</strong> Pants puns woven throughout. Glenn called it a model of how to use AI — let AI generate ideas, but your personality writes the words.', example:'"Signing off with the confidence of a guy in his first pair of Bonobos."', color:'gold'},
+  {id:31, cat:'cold-call', front:'Mo Shafi\'s "Like You" immigration email', back:'Used Rule 5 perfectly: <strong>"Like you, I\'ve decided to pursue my grad studies in the US."</strong> Then added a warm cultural detail: "As you know, Arab weddings are big and beautiful."', example:'Parallel + warmth + cultural authenticity = memorable.', color:'purple'},
+  {id:32, cat:'cold-call', front:'What made the Kubernetes/Rajasthan email great?', back:'<strong>"Like you, I\'m from Rajasthan and made my way to Silicon Valley."</strong> Perfect Rule 5 — a shared hometown creates instant connection across professional boundaries.', example:'', color:'green'},
+  {id:33, cat:'cold-call', front:'Emily\'s "Decade of Delayed Courage" email', back:'Emily wrote to Baroness Lane Fox about having waited 10 years to send this email. The vulnerability and honesty made it <strong>one of the best Glenn had ever seen.</strong>', example:'P.S. about dog named Olive sealed it with humor.', color:'coral'},
+  {id:34, cat:'cold-call', front:'LVMH CIO pitch — Glenn\'s feedback?', back:'<strong>Right length, no BS, specific about their work.</strong> Glenn\'s notes: write in French if they\'re French, and offer a demo. Show you understand their world.', example:'', color:'sky'},
+  {id:35, cat:'cold-call', front:'What was wrong with the Sam Altman pitch?', back:'<strong>Too long.</strong> The business description was buried. Glenn\'s fix: move the most interesting thing about you up front. Don\'t make them wade through context.', example:'', color:'coral'},
+
+  // === STORIES (10) ===
+  {id:36, cat:'stories', front:'What is the Warmth + Competence framework?', back:'90%+ of the impression you make comes from these two qualities. Your story must make someone want to <strong>have a beer with you AND hire you.</strong>', example:'Two choices: your messiest situation + lesson, OR most satisfying accomplishment + lesson.', color:'sky'},
+  {id:37, cat:'stories', front:'What\'s the #1 storytelling rule for structure?', back:'<strong>Start with the most dramatic scene.</strong> Don\'t start chronologically. The Zuckerberg red-lining story: open with the crisis, then backfill context.', example:'', color:'coral'},
+  {id:38, cat:'stories', front:'Tell the Abercrombie Sweatshirt Story', back:'On Dec 24, Abercrombie sells <strong>one sweatshirt every 2 seconds. 45,000 in 24 hours.</strong> It was Abby\'s job to get them made. She had zero. Solution: "Lose the pockets." Result: On Christmas, only 2 left in North America.', example:'Why it works: cinematic, uses dialog, teamwork, crisis + resolution.', color:'sky'},
+  {id:39, cat:'stories', front:'How was the Card-Counting Story restructured?', back:'Originally told chronologically. Glenn restructured to lead with the most exciting element:', example:'"We were two scantily clad 20-somethings drinking at the gambling table. Casino operators figured we were suckers. In fact, we were card counters."', color:'coral'},
+  {id:40, cat:'stories', front:'Who is Joe Barreto and his superhero story?', back:'Saw a man on a roof dreaming of working with computers. Discovered <strong>300 unfilled tech positions</strong> in the building below. Founded PowerTech. Trained 4,000+ people. Won a CNN award.', example:'Structure: dramatic opening → discovery → mission → scale of impact.', color:'purple'},
+  {id:41, cat:'stories', front:'What is the cannabis analogy?', back:'<strong>"Think of it like an apple."</strong> When you go to a grocery, you don\'t just buy apples — you buy Granny Smith or Fuji. Instantly makes a complex industry understandable.', example:'Good analogies make the unfamiliar feel familiar in one sentence.', color:'green'},
+  {id:42, cat:'stories', front:'Guidelines for "Say We, Not Just I"', back:'Use <strong>"we" for successes</strong> (shows teamwork) and <strong>"I" for mistakes</strong> (shows accountability). CEOs value humility and team players.', example:'', color:'gold'},
+  {id:43, cat:'stories', front:'What does "be cinematic" mean?', back:'Use <strong>dialog, describe the scene, use short sentences</strong> for tension. Picture your favorite movie scene. Describe it in words. That\'s what you want your story to feel like.', example:'Oprah: "bone tired from cleaning other people\'s houses" — not "she worked hard."', color:'sky'},
+  {id:44, cat:'stories', front:'Lauren Weinstein\'s elephant rope metaphor', back:'Baby elephants are tied to a rope they can\'t break. As adults, they could easily break it — but they\'ve stopped trying. <strong>"Don\'t believe everything you think."</strong>', example:'From her TED talk — used as the powerful closing line.', color:'purple'},
+  {id:45, cat:'stories', front:'What is the "intelligent generalist" rule?', back:'Write for someone who is smart but not an expert. <strong>No jargon.</strong> Use yourself and people you know as characters. If the least knowledgeable person in the room wouldn\'t get it, simplify.', example:'', color:'gold'},
+
+  // === PITCHING (10) ===
+  {id:46, cat:'pitching', front:'Josh Constantine\'s 3-Part Pitch Formula?', back:'<strong>1. Problem</strong> (What\'s broken? Make the pain vivid.) <strong>2. Solution</strong> (What you do, in plain English.) <strong>3. Why You</strong> (Why you\'re uniquely qualified — superhero origin story, momentum, endorsements.)', example:'From Josh Constantine, Signal Fire VC / ex-TechCrunch', color:'green'},
+  {id:47, cat:'pitching', front:'Why is the Uber problem description a model pitch?', back:'It makes the pain so vivid that the solution announces itself: "You stand on the sidewalk. Call a taxi number. Hope they show up. Driver takes wrong route. Need cash. Don\'t know how much to tip. <strong>Then: one tap.</strong>"', example:'', color:'green'},
+  {id:48, cat:'pitching', front:'What\'s the #1 rule for pitching journalists?', back:'<strong>Target the specific reporter, not the publication.</strong> Use Techmeme to find who covers your beat. Know their recent work. Pitch THEM, not their outlet.', example:'', color:'sky'},
+  {id:49, cat:'pitching', front:'How long should a pitch email be?', back:'<strong>Under 4 paragraphs.</strong> Descriptive subject line. Offer an exclusive. Be flexible with timing. Link to a bigger trend ("Why now?").', example:'— Josh Constantine', color:'green'},
+  {id:50, cat:'pitching', front:'What is press good for?', back:'<strong>1.</strong> Recruiting <strong>2.</strong> Mid-funnel conversion <strong>3.</strong> Third-party proof points. Stop thinking about what matters to YOU — think about what matters to the AUDIENCE.', example:'', color:'gold'},
+  {id:51, cat:'pitching', front:'Why was Facebook\'s original pitch deck great?', back:'Extreme simplicity. No jargon. Just one compelling fact:', example:'"Classes are being skipped. Work is ignored. Students are spending hours in utter fascination."', color:'green'},
+  {id:52, cat:'pitching', front:'How did Synapse pitch airport security AI?', back:'<strong>"Applies AI to X-ray machines. 99% accuracy vs 5% for human screeners."</strong> Vivid stat, clear problem, simple explanation. Got CNBC coverage.', example:'One comparison stat can make an entire pitch.', color:'coral'},
+  {id:53, cat:'pitching', front:'The Paul McCartney analogy for pitching?', back:'He plays "Yesterday" and "Hey Jude" <strong>every single show</strong> — and plays them like it\'s his first time, every time. That\'s what a great pitch does. Fresh energy, every time.', example:'— Josh Constantine', color:'purple'},
+  {id:54, cat:'pitching', front:'How did Free Will get NYT coverage?', back:'Linked their DIY wills product to a <strong>bigger trend</strong> — the rise of DIY estate planning. The news hook (timeliness + broader context) unlocked major press.', example:'Always answer: "Why now?" for the journalist.', color:'gold'},
+  {id:55, cat:'pitching', front:'What\'s the "Why You" element of a pitch?', back:'Your <strong>superhero origin story:</strong> endorsements, customer numbers, investor names, momentum. Show why YOU are uniquely positioned to solve this problem.', example:'', color:'green'},
+
+  // === MEDIA (10) ===
+  {id:56, cat:'media', front:'Andrew Ross Sorkin\'s #1 advice for dealing with journalists?', back:'<strong>Establish relationships with journalists you respect BEFORE you need them.</strong> Find them early in your career. Become a source before you need coverage.', example:'', color:'purple'},
+  {id:57, cat:'media', front:'What is the Tennis Match Analogy?', back:'A good interview is like a tennis match: <strong>"The audience wants to see a rally."</strong> You don\'t want to ace them over and over. Let the journalist have their turns — it makes a better story.', example:'— Andrew Ross Sorkin', color:'purple'},
+  {id:58, cat:'media', front:'When a journalist contacts you, what do you do first?', back:'<strong>Figure out who they are</strong> and what they want. Look up their work. Don\'t immediately forward to PR — your company "may not always have your own interests at heart."', example:'', color:'gold'},
+  {id:59, cat:'media', front:'Crisis Rule: What word should you start answers with?', back:'<strong>"Yes."</strong> Confirm known facts. It shows transparency. Then pivot to what you\'re doing to fix it.', example:'', color:'sky'},
+  {id:60, cat:'media', front:'Say "We\'re ____" not "We\'re working quickly"', back:'<strong>"We\'re racing."</strong> It conveys far more urgency than "working quickly." Word choice matters in crisis communication.', example:'', color:'green'},
+  {id:61, cat:'media', front:'Never say "It won\'t happen again" — why?', back:'<strong>Overpromising.</strong> You can\'t guarantee this. A journalist will hold you to it. Acknowledge the situation without making promises you can\'t keep.', example:'', color:'coral'},
+  {id:62, cat:'media', front:'Never say "It was our fault" — why?', back:'<strong>Lawsuit fodder.</strong> Acknowledge the situation. Show what you\'re doing to fix it. But don\'t hand opposing counsel a quote.', example:'', color:'coral'},
+  {id:63, cat:'media', front:'Why is "As I said" / "As I mentioned" forbidden?', back:'Sounds <strong>annoyed and condescending.</strong> Every answer should feel fresh, even if you\'ve already covered the topic. The audience hasn\'t heard it before.', example:'', color:'gold'},
+  {id:64, cat:'media', front:'What destroyed Ed Miliband\'s credibility?', back:'<strong>Robotic repetition</strong> of the exact same answer word-for-word to every question. Glenn showed the clip — it instantly killed trust.', example:'Lesson: vary your answers, even if the core message stays the same.', color:'purple'},
+  {id:65, cat:'media', front:'Andrew\'s blizzard funeral story — what\'s the lesson?', back:'Sorkin walked through a blizzard to attend the funeral of Glenn\'s 96-year-old father, whom he\'d never met. <strong>"You want to be that kind of person."</strong> Relationships are built by showing up.', example:'', color:'sky'},
+
+  // === SPEECHES (8) ===
+  {id:66, cat:'speeches', front:'What are the 3 S\'s of a Keynote?', back:'<strong>1. Story</strong> (Personal, vivid opening) <strong>2. Statistics</strong> (Surprising data to back it up) <strong>3. Solutions</strong> (Give the audience something to do)', example:'', color:'gold'},
+  {id:67, cat:'speeches', front:'What made Steve Jobs\' iPhone keynote masterful?', back:'<strong>Simplicity</strong> (no jargon, no spec sheets), <strong>humor</strong> ("Yuck!" about styluses, Starbucks prank call), <strong>visual demos</strong>, and repeated use of the word <strong>"magic."</strong>', example:'Called Starbucks live: "4,000 lattes to go... just kidding, wrong number."', color:'gold'},
+  {id:68, cat:'speeches', front:'What makes Oprah\'s speeches powerful?', back:'<strong>Cinematic sensory details</strong> instead of abstractions. She doesn\'t say "she worked hard" — she says "bone tired from cleaning other people\'s houses."', example:'"His tie was white, and of course his skin was black." — One detail conveys an entire era.', color:'purple'},
+  {id:69, cat:'speeches', front:'What is the Honey Badger Rule for speeches?', back:'For every paragraph ask: <strong>"Why should I care?"</strong> If you can\'t answer it for the audience, cut that section.', example:'', color:'coral'},
+  {id:70, cat:'speeches', front:'How short was the Gettysburg Address?', back:'Under <strong>300 words. Two minutes.</strong> If Lincoln can do it in 300 words, so can you.', example:'', color:'sky'},
+  {id:71, cat:'speeches', front:'What\'s more important: the beginning or the ending?', back:'<strong>The ending.</strong> The end is more important than the beginning. Make it the best part. Lauren Weinstein ended her TED talk with: "Don\'t believe everything you think."', example:'', color:'green'},
+  {id:72, cat:'speeches', front:'How should you begin a speech?', back:'<strong>With humor.</strong> Self-deprecating works best. Win them over before the substance. Jobs opened with "Yuck!" — disarming the audience immediately.', example:'', color:'gold'},
+  {id:73, cat:'speeches', front:'93% of communication is ___', back:'<strong>Non-verbal.</strong> And texting strips it all away. From Olivia\'s keynote in class. This is why tone is so hard to convey in text.', example:'"inks" ≠ "I appreciate your hard work. Thanks."', color:'coral'},
+
+  // === HUMOR (8) ===
+  {id:74, cat:'humor', front:'Why should you never pre-announce a joke?', back:'<strong>"This will make you laugh"</strong> kills the joke before you make it. Let the humor land on its own.', example:'', color:'coral'},
+  {id:75, cat:'humor', front:'What is the Rule of Three in comedy?', back:'Two like ideas, then a <strong>third incongruent one.</strong> Setup, setup, punchline. The pattern creates expectation; the break creates the laugh.', example:'', color:'gold'},
+  {id:76, cat:'humor', front:'Carson\'s Rule?', back:'<strong>Three jokes max</strong> on a single topic before the audience gets restless. Less is more. Move on.', example:'', color:'sky'},
+  {id:77, cat:'humor', front:'Tell the Vinnie from the Bronx joke', back:'"Can you tell me where the library\'s at?" → "Never end a sentence with a preposition." → <strong>"Can you tell me where the library\'s at, a**hole?"</strong>', example:'', color:'coral'},
+  {id:78, cat:'humor', front:'Why does a period now feel aggressive in texting?', back:'<strong>"OK." reads angry</strong>. "OK" reads neutral. "K" = you\'re in trouble. Brevity that feels efficient to you may feel cold to the recipient.', example:'', color:'purple'},
+  {id:79, cat:'humor', front:'What is the Corporate Bro jargon dating parody?', back:'Natalie & Corporate Bro apply business jargon to dating: <strong>"You\'ve been an action item on my list." "I don\'t have the bandwidth." "Let\'s circle back." "Let\'s drill down."</strong>', example:'Delightfully terrible — and exactly how jargon sounds to normal humans.', color:'gold'},
+  {id:80, cat:'humor', front:'Reality vs. Fantasy in humor?', back:'<strong>Reality is often funnier than fantasy.</strong> Just exaggerate a little. Don\'t invent wild scenarios — find the absurdity in real life.', example:'', color:'green'},
+  {id:81, cat:'humor', front:'Punch up or punch down?', back:'<strong>Punch up, not down.</strong> Make fun of yourself (self-deprecating wins), not others. Or make fun of both of you to strengthen the bond.', example:'', color:'sky'},
+
+  // === JARGON (18) ===
+  {id:82, cat:'jargon', front:'What should you say instead of "leverage"?', back:'<strong>Use.</strong> Just say "use."', example:'Rachel Conrad\'s jargon kill list', color:'purple'},
+  {id:83, cat:'jargon', front:'What should you say instead of "incentivize"?', back:'<strong>Motivate.</strong>', example:'', color:'purple'},
+  {id:84, cat:'jargon', front:'What should you say instead of "mitigate"?', back:'<strong>Reduce.</strong>', example:'', color:'purple'},
+  {id:85, cat:'jargon', front:'What should you say instead of "iterate"?', back:'<strong>Improve upon.</strong>', example:'', color:'purple'},
+  {id:86, cat:'jargon', front:'What should you say instead of "pain point"?', back:'<strong>Problem.</strong> Just say "problem."', example:'', color:'purple'},
+  {id:87, cat:'jargon', front:'What should you say instead of "deliverables"?', back:'<strong>Tasks, goals, or results.</strong> Pick the one that fits.', example:'', color:'purple'},
+  {id:88, cat:'jargon', front:'What should you say instead of "synergize"?', back:'<strong>Nothing. Just delete it.</strong> There is no good replacement because the word never meant anything.', example:'', color:'coral'},
+  {id:89, cat:'jargon', front:'What should you say instead of "empower" or "enable"?', back:'<strong>Help.</strong>', example:'', color:'purple'},
+  {id:90, cat:'jargon', front:'What should you say instead of "remediate"?', back:'<strong>Fix.</strong> Andrew Ross Sorkin\'s media word swap.', example:'', color:'green'},
+  {id:91, cat:'jargon', front:'Why is "drive" the most overused word in business?', back:'<strong>"I drive synergies for impact innovation"</strong> — What does this mean? Nothing. No one knows. Not even you. Be specific about what you actually did.', example:'— Rachel Conrad', color:'coral'},
+  {id:92, cat:'jargon', front:'What\'s wrong with "proven leader"?', back:'It\'s <strong>telling, not showing.</strong> Don\'t tell them you\'re a proven leader — give the specific example that proves it.', example:'"I led a 12-person team that took brand awareness from zero to 56% — without a single ad."', color:'gold'},
+  {id:93, cat:'jargon', front:'What\'s wrong with "thought partner"?', back:'<strong>Meaningless jargon.</strong> Glenn flagged it for a Singapore policy maker. Replace it with what you actually DO.', example:'', color:'coral'},
+  {id:94, cat:'jargon', front:'Rachel Conrad\'s LinkedIn About Me example?', back:'<strong>"I built a team that took Impossible Foods US brand awareness from zero to 56% without a single ad."</strong> Leads with a specific metric. No jargon. Shows competence and scale.', example:'', color:'green'},
+  {id:95, cat:'jargon', front:'Glenn\'s LinkedIn About Me?', back:'<strong>"I\'m a professional weight lifter, but my weights are words."</strong> Unexpected metaphor. Memorable. Warm. Makes you want to know more.', example:'', color:'gold'},
+  {id:96, cat:'jargon', front:'What makes a great LinkedIn About Me?', back:'Rachel Conrad: it\'s the <strong>single most high-value paragraph in your career.</strong> First thing investors, recruiters, journalists read. Must be specific to YOU — if anyone else in your industry could claim it, it\'s not good enough.', example:'', color:'purple'},
+  {id:97, cat:'jargon', front:'South Bronx About Me — what made it work?', back:'Mixed <strong>mission with personality:</strong> "I saw firsthand how talent is deeply distributed but opportunity isn\'t... debating the best anime of all time." The anime detail makes you real.', example:'', color:'sky'},
+  {id:98, cat:'jargon', front:'Show, Don\'t Tell: "passionate about innovation"', back:'Replace with what you actually built: <strong>"Built the first AI X-ray scanner for airports. 99% accuracy vs. 5% for humans."</strong>', example:'Every "passionate about" and "results-oriented" should become a specific story.', color:'green'},
+  {id:99, cat:'jargon', front:'What should you say instead of "strategize"?', back:'<strong>Plan.</strong> Just say plan.', example:'', color:'purple'},
+
+  // === LIFE LESSONS (16) ===
+  {id:100, cat:'life', front:'Life Lesson 1: Be 1 in a ____', back:'<strong>Be 1 in a million,</strong> not 1 of a million. Never begin a cold-call with "I hope you are well."', example:'', color:'gold'},
+  {id:101, cat:'life', front:'Life Lesson 2: Don\'t care what ____', back:'<strong>"What other people think is none of your damn business."</strong>', example:'', color:'coral'},
+  {id:102, cat:'life', front:'Life Lesson 3: Know Your Glass Balls', back:'Some balls are <strong>plastic, some glass.</strong> You\'re juggling many balls in life. The plastic ones bounce back if dropped. Don\'t drop the glass ones.', example:'', color:'sky'},
+  {id:103, cat:'life', front:'Life Lesson 4: Try Not to Say ____', back:'<strong>No.</strong> Stay open to opportunities and experiences. Walk through blizzards for people.', example:'', color:'green'},
+  {id:104, cat:'life', front:'Life Lesson 5: Want What You ____', back:'<strong>"It\'s not having what you want. It\'s wanting what you have."</strong>', example:'', color:'purple'},
+  {id:105, cat:'life', front:'Life Lesson 6: Retain Your ____', back:'<strong>Identity.</strong> Don\'t become too dependent on someone else for your identity.', example:'', color:'gold'},
+  {id:106, cat:'life', front:'Life Lesson 7: Financial ____', back:'<strong>Independence.</strong> Share the load. Don\'t bet your life on someone else.', example:'', color:'coral'},
+  {id:107, cat:'life', front:'Life Lesson 8: Expand, Don\'t ____', back:'<strong>Shrink.</strong> Get to know people of all ages and backgrounds.', example:'', color:'sky'},
+  {id:108, cat:'life', front:'Life Lesson 9: Cross-Gender Friendships', back:'Your life will be <strong>enriched and you will be happier</strong> with friendships across gender lines.', example:'', color:'green'},
+  {id:109, cat:'life', front:'Life Lesson 10: Be For Something', back:'<strong>"Do not lose your enthusiasm."</strong> — Ken Burns', example:'', color:'purple'},
+  {id:110, cat:'life', front:'Life Lesson 11: Stick Together', back:'Remember what both parties <strong>accomplished together</strong> in 1965.', example:'', color:'gold'},
+  {id:111, cat:'life', front:'Life Lesson 12: Noblesse Oblige', back:'Act with <strong>generosity toward those less privileged.</strong> Joe Barreto saw a man on a roof and built a training empire.', example:'', color:'coral'},
+  {id:112, cat:'life', front:'Life Lesson 13: Let Go of ____', back:'<strong>Anger.</strong> Think positively. Don\'t dwell on the past. Don\'t believe everything you think.', example:'', color:'sky'},
+  {id:113, cat:'life', front:'Life Lesson 14: Expel Toxins', back:'Replace <strong>4-5 toxic relationships with 50 uplifting ones.</strong>', example:'', color:'green'},
+  {id:114, cat:'life', front:'Life Lesson 15: Appreciate This Time', back:'<strong>"Once you land on the shore, you\'ll realize how far you\'ve gone."</strong>', example:'', color:'purple'},
+  {id:115, cat:'life', front:'Life Lesson 16: Scatter ____', back:'<strong>Joy.</strong> "The wish to scatter joy and not pain around us." — Emerson', example:'', color:'gold'},
+];
+
+// ===== FLASHCARD STATE =====
+let currentDeck = [...allFlashcards];
+let currentIndex = 0;
+let knownCards = new Set();
+let learningCards = new Set();
+
+function initFlashcards() {
+  currentDeck = [...allFlashcards];
+  currentIndex = 0;
+  renderCard();
+  updateFCProgress();
+}
+
+function filterCategory(cat, btn) {
+  document.querySelectorAll('.fc-cat-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  currentDeck = cat === 'all' ? [...allFlashcards] : allFlashcards.filter(c => c.cat === cat);
+  currentIndex = 0;
+  unflipCard();
+  renderCard();
+  updateFCProgress();
+}
+
+function renderCard() {
+  if (currentDeck.length === 0) {
+    document.getElementById('fcQuestion').textContent = 'No cards in this category';
+    document.getElementById('fcAnswer').innerHTML = '';
+    document.getElementById('fcExample').style.display = 'none';
+    return;
+  }
+  const card = currentDeck[currentIndex];
+  const catNames = {'basics':'Basics','cold-call':'Cold-Call Rules','stories':'Stories','pitching':'Pitching','media':'Media & PR','speeches':'Speeches','humor':'Humor','jargon':'Jargon & LinkedIn','life':'Life Lessons'};
+  const colorMap = {'gold':'bg-gold','coral':'bg-coral','sky':'bg-sky','green':'bg-green','purple':'bg-purple'};
+
+  document.getElementById('fcCatLabel').className = 'fc-cat-label ' + (colorMap[card.color] || 'bg-gold');
+  document.getElementById('fcCatLabel').textContent = catNames[card.cat] || card.cat;
+  document.getElementById('fcQuestion').textContent = card.front;
+  document.getElementById('fcAnswer').innerHTML = card.back;
+
+  const exEl = document.getElementById('fcExample');
+  if (card.example) {
+    exEl.textContent = card.example;
+    exEl.style.display = 'block';
+  } else {
+    exEl.style.display = 'none';
+  }
+
+  // Update button states
+  document.getElementById('fcPrev').disabled = currentIndex === 0;
+  document.getElementById('fcNext').disabled = currentIndex >= currentDeck.length - 1;
+}
+
+function flipCard() {
+  const card = document.getElementById('fcCard');
+  card.classList.toggle('flipped');
+  document.getElementById('fcMarkBtns').classList.toggle('visible', card.classList.contains('flipped'));
+}
+
+function unflipCard() {
+  document.getElementById('fcCard').classList.remove('flipped');
+  document.getElementById('fcMarkBtns').classList.remove('visible');
+}
+
+function nextCard() {
+  if (currentIndex < currentDeck.length - 1) {
+    currentIndex++;
+    unflipCard();
+    setTimeout(() => { renderCard(); updateFCProgress(); }, 80);
+  }
+}
+
+function prevCard() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    unflipCard();
+    setTimeout(() => { renderCard(); updateFCProgress(); }, 80);
+  }
+}
+
+function shuffleDeck() {
+  for (let i = currentDeck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [currentDeck[i], currentDeck[j]] = [currentDeck[j], currentDeck[i]];
+  }
+  currentIndex = 0;
+  unflipCard();
+  renderCard();
+  updateFCProgress();
+}
+
+function markCard(known) {
+  const card = currentDeck[currentIndex];
+  if (known) {
+    knownCards.add(card.id);
+    learningCards.delete(card.id);
+  } else {
+    learningCards.add(card.id);
+    knownCards.delete(card.id);
+  }
+  updateFCProgress();
+  // Auto-advance
+  if (currentIndex < currentDeck.length - 1) {
+    setTimeout(nextCard, 300);
+  } else {
+    unflipCard();
+  }
+}
+
+function updateFCProgress() {
+  const total = currentDeck.length;
+  const pct = total > 0 ? ((currentIndex + 1) / total) * 100 : 0;
+  document.getElementById('fcProgressFill').style.width = pct + '%';
+  document.getElementById('fcCounter').textContent = total > 0 ? 'Card ' + (currentIndex + 1) + ' of ' + total : 'No cards';
+  document.getElementById('fcTotal').textContent = total;
+  document.getElementById('fcGot').textContent = knownCards.size;
+  document.getElementById('fcLeft').textContent = learningCards.size;
+}
+
+// Keyboard shortcuts for flashcards
+document.addEventListener('keydown', function(e) {
+  const fcSection = document.getElementById('flashcards');
+  if (!fcSection.classList.contains('active')) return;
+  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+
+  if (e.code === 'ArrowRight') { e.preventDefault(); nextCard(); }
+  else if (e.code === 'ArrowLeft') { e.preventDefault(); prevCard(); }
+  else if (e.code === 'Space') { e.preventDefault(); flipCard(); }
+  else if (e.code === 'KeyG') { e.preventDefault(); if (document.getElementById('fcCard').classList.contains('flipped')) markCard(true); }
+  else if (e.code === 'KeyL') { e.preventDefault(); if (document.getElementById('fcCard').classList.contains('flipped')) markCard(false); }
+});
+
+// Initialize flashcards when page loads
+window.addEventListener('DOMContentLoaded', initFlashcards);
+
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: document.querySelector('.nav-strip').offsetTop, behavior: 'smooth' });
+}
+
+// Word counter
+const emailInput = document.getElementById('emailInput');
+const charCount = document.getElementById('charCount');
+emailInput.addEventListener('input', () => {
+  const words = emailInput.value.trim().split(/\s+/).filter(w => w.length > 0).length;
+  charCount.textContent = words + ' word' + (words !== 1 ? 's' : '');
+});
+
+// ===== ENHANCED EMAIL ANALYZER =====
+function analyzeEmail() {
+  const text = emailInput.value.trim();
+  if (!text) return;
+
+  const words = text.split(/\s+/).filter(w => w.length > 0);
+  const wordCount = words.length;
+  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+  const lower = text.toLowerCase();
+
+  const strengths = [];
+  const improvements = [];
+  const issues = [];
+  const tips = [];
+  let score = 50;
+
+  // RULE 1: Know the person
+  const hasPersonRef = /\byour (book|talk|article|post|speech|work|podcast|interview|presentation|company|team|fund|firm|writing|piece|column|show|episode|report|research)\b/i.test(text)
+    || /\bI (read|saw|heard|watched|attended|followed|noticed|admired|appreciated|loved|enjoyed)\b/i.test(text)
+    || /\byou (said|wrote|mentioned|described|discussed|shared|published|launched|built|created|founded)\b/i.test(text);
+  if (hasPersonRef) {
+    strengths.push({ rule: 'Rule 1 — Know the Person', text: 'You reference something specific about the recipient. Nardwuar-level research is the gold standard — but any specific reference puts you ahead of 99% of cold emails.' });
+    score += 8;
+  } else {
+    improvements.push({ rule: 'Rule 1 — Know the Person', text: 'Add a specific reference to their work. Think Nardwuar: know obscure details that show you\'ve done real homework, not just skimmed their LinkedIn.' });
+    tips.push('Open with something specific: "Your piece on X changed how I think about..." or "I noticed your company just launched Y..."');
+  }
+
+  // RULE 2: Authenticity
+  const hasPersonalStory = /\bI grew up\b|\bmy (journey|story|path|experience|background)\b|\bwhen I was\b|\bI remember\b|\bI once\b|\bmy (mom|dad|mother|father|family|grandmother|grandfather)\b|\bback (in|when)\b|\byears ago\b/i.test(text);
+  if (hasPersonalStory) {
+    strengths.push({ rule: 'Rule 2 — Be Authentic', text: 'You share personal details that make you feel real. Like Mo Shafi\'s Arab wedding reference or Amadeus\'s swimming story — authenticity is magnetic.' });
+    score += 5;
+  }
+
+  // RULE 3: Lead with something new
+  const badOpeners = /^(dear\s+\w+[,:]?\s*)?(I hope you('re| are) (well|doing well|having)|hope this (finds you|email finds|message finds)|I hope all is well|I wanted to reach out|I am writing to|I('m| am) reaching out)/i;
+  const firstParagraph = text.split(/\n\n/)[0] || text.substring(0, 200);
+  if (badOpeners.test(firstParagraph)) {
+    issues.push({ rule: 'Rule 3 — Lead With Something New', text: '"I hope you are well" is the #1 forbidden opener. Glenn showed a Corporate Bro reaction video about this — it\'s what 1-of-a-million emails look like. Start with what they DON\'T know.' });
+    score -= 10;
+    tips.push('Delete your opening line. Replace with what YOU can do for THEM. Like: "I can help Alexa help patients receive personalized follow-up care." — that\'s a Rule 3 opener.');
+  } else {
+    const flattery = /\byou have (transformed|revolutionized|changed|disrupted|innovated|built|created an amazing)\b/i.test(firstParagraph)
+      || /\byour (incredible|amazing|extraordinary|impressive|remarkable) (company|work|career|success|achievement)\b/i.test(firstParagraph);
+    if (flattery) {
+      improvements.push({ rule: 'Rule 3 — Lead With Something New', text: 'Your opening flatters them with things they already know. As Glenn says: "Dear Mr. Bezos, you\'ve transformed industry after industry..." — he knows that! Start with what YOU bring.' });
+      score -= 5;
+      tips.push('Replace flattery with a value proposition. What do you bring that they don\'t have?');
+    } else {
+      strengths.push({ rule: 'Rule 3 — Lead With Something New', text: 'Good — you avoid the "hope you are well" trap and don\'t lead with obvious flattery.' });
+      score += 6;
+    }
+  }
+
+  // RULE 4: Name drop
+  const hasNameDrop = /\b(suggested I (contact|reach out|write|email)|recommended (I|that I)|introduced me|mentioned you|speaks highly of you|told me (to|about|I should))\b/i.test(text);
+  if (hasNameDrop) {
+    strengths.push({ rule: 'Rule 4 — Name Drop', text: 'You mention a mutual connection. Like "Herb Grossback suggests I contact you" — a name in the first sentence changes everything.' });
+    score += 8;
+  } else {
+    improvements.push({ rule: 'Rule 4 — Name Drop', text: 'Can you mention a mutual connection? If you don\'t have one, consider the Cameo technique (Julia Kapoor) or the selfie technique (Ed Cardbook) to create one.' });
+  }
+
+  // RULE 5: "Like you" parallel
+  const hasParallel = /\blike you\b|\bwe (both|share)\b|\bsimilar (to|path|journey|background)\b|\bas you (did|have|know)\b|\bjust as you\b|\bfellow\b/i.test(text);
+  if (hasParallel) {
+    strengths.push({ rule: 'Rule 5 — "Like You"', text: '"Like you" are the two most important words in a cold-call letter. You\'ve drawn a parallel — this builds instant rapport. Like Mo Shafi\'s "Like you, I\'ve decided to pursue my grad studies in the US."' });
+    score += 7;
+  } else {
+    improvements.push({ rule: 'Rule 5 — "Like You"', text: 'Try the magic words "Like you, I..." — Glenn calls these the two most important words in a cold-call letter. Find a genuine parallel between your story and theirs.' });
+    tips.push('Add "Like you, I..." somewhere in your email. Find a shared experience, value, or background.');
+  }
+
+  // RULE 6: Humor / smile
+  const hasAnecdote = /\bI remember\b|\bone (day|time|night|morning)\b|\blast (year|summer|week|month)\b|\bback (in|when)\b|\btwo years ago\b|\bthree years ago\b/i.test(text);
+  const hasPS = /\bP\.?S\.?\b/i.test(text);
+  if (hasAnecdote || hasPS) {
+    strengths.push({ rule: 'Rule 6 — Make Them Smile', text: 'You include a personal touch. ' + (hasPS ? 'Great use of a P.S. — like Emily\'s dachshund Olive who "contributes nothing to sustainability beyond trying to eat my recycling."' : 'A personal anecdote makes your email memorable.') });
+    score += 6;
+  } else {
+    improvements.push({ rule: 'Rule 6 — Make Them Smile', text: 'Can you add a brief story, a P.S., or a moment of humor? Even one sentence puts you in the top 1%. Think Emily\'s dog joke or Leaf\'s pants puns.' });
+  }
+
+  // RULE 7: Pick a lane
+  const resumeDump = (text.match(/\b(at|for|with) (Google|McKinsey|Goldman|Bain|BCG|JPMorgan|Facebook|Meta|Amazon|Apple|Microsoft|Deloitte|Morgan Stanley|BlackRock|Tesla|OpenAI|Anthropic|Netflix)\b/gi) || []).length;
+  if (resumeDump >= 4) {
+    issues.push({ rule: 'Rule 7 — Pick a Lane', text: 'You mention ' + resumeDump + ' company names — this reads like a resume dump. Think of Amadeus to Richard Branson: one swimming motif carried throughout the entire email. Pick ONE lane.' });
+    score -= 6;
+    tips.push('Choose your single most relevant experience and tell it as a brief story. Link to LinkedIn for the rest.');
+  } else if (resumeDump <= 1) {
+    strengths.push({ rule: 'Rule 7 — Pick a Lane', text: 'Good focus. You\'re not trying to cover your entire resume. Like Amadeus\'s swimming motif — one lane, carried beautifully.' });
+    score += 4;
+  }
+
+  // RULE 8: Confidence vs arrogance
+  const timidPhrases = (text.match(/\bI('m| am) (not sure|sorry to|sorry for)\b|\bI don't know if you remember\b|\bI apologize for\b|\bI understand you('re| are) busy\b|\bI know this is a long shot\b|\bI hate to bother\b|\bsorry to (bug|bother|disturb)\b/gi) || []).length;
+  const arrogantPhrases = (text.match(/\bI('m| am) the (best|top|greatest|most)\b|\bno one else can\b|\bunmatched\b|\bunparalleled\b|\bworld-class\b/gi) || []).length;
+  if (timidPhrases > 0) {
+    issues.push({ rule: 'Rule 8 — Confident, Not Arrogant', text: 'Hedging language detected. Glenn\'s Rose Bowl cow story: the rancher said "I\'ll handle it" — not "I\'m sorry to bother you but maybe I could try to help." Delete all apologies.' });
+    score -= 4;
+    tips.push('Delete every apologetic phrase. Replace "I\'m sorry to bother you" with a direct, confident opener.');
+  } else if (arrogantPhrases > 0) {
+    issues.push({ rule: 'Rule 8 — Confident, Not Arrogant', text: 'Language like "the best" or "unmatched" crosses into arrogance. Be the Rose Bowl rancher: confident and quiet about it.' });
+    score -= 4;
+  } else {
+    score += 3;
+  }
+
+  // RULE 9: Length & ask
+  if (wordCount > 300) {
+    issues.push({ rule: 'Rule 9 — Keep It Short', text: 'At ' + wordCount + ' words, your email is way too long. Josh Constantine says under 4 paragraphs. The best cold emails are under 200 words.' });
+    score -= 8;
+    tips.push('Cut to under 200 words. For each sentence ask: "Does the recipient need this?" If not, it\'s dead weight.');
+  } else if (wordCount > 200) {
+    improvements.push({ rule: 'Rule 9 — Keep It Short', text: 'At ' + wordCount + ' words, this is on the long side. Can you trim to under 200? Use the Miniskirt Rule: long enough to cover the basics, short enough to keep it interesting.' });
+    score -= 3;
+  } else if (wordCount >= 50) {
+    strengths.push({ rule: 'Rule 9 — Keep It Short', text: 'Good length at ' + wordCount + ' words. Concise and respectful of their time.' });
+    score += 5;
+  }
+
+  // Clear ask check
+  const hasAsk = /\b(can we|could we|would you|could I|may I|do you have time|let me know|schedule|call|meet|coffee|chat|talk|minutes|available)\b/i.test(text);
+  const hasSpecificAsk = /\b(\d+[\s-]?minutes?|quick (call|chat|coffee)|brief (call|chat|conversation))\b/i.test(text);
+  if (hasSpecificAsk) {
+    strengths.push({ rule: 'Rule 9 — Clear Ask', text: 'You have a specific, time-bounded ask. This makes it easy to say yes — exactly what Glenn teaches.' });
+    score += 6;
+  } else if (hasAsk) {
+    improvements.push({ rule: 'Rule 9 — Clear Ask', text: 'You have an ask, but make it smaller and more specific. "A 15-minute call about X" beats "Would love to chat sometime." Make it easy to say yes.' });
+    tips.push('Make the ask tiny: "Could I have 10 minutes this week to ask about X?"');
+    score += 2;
+  } else {
+    issues.push({ rule: 'Rule 9 — Clear Ask', text: 'No clear ask detected. Every cold email needs a specific request. The Strava CEO pitch failed because it was a "fan letter" not an "ask letter."' });
+    score -= 6;
+    tips.push('End with a clear, small ask: "Do you have 15 minutes for a quick call this week?"');
+  }
+
+  // RULE 10: Offer something
+  const hasOffer = /\bI('d| would) (be happy to|love to) share\b|\bI can (share|offer|send|help|show|introduce)\b|\bin return\b|\bmy findings\b|\bour research\b|\bI('ll| will) send\b|\bhappy to share\b|\bmight (find|be) (useful|helpful|interesting|valuable)\b/i.test(text);
+  if (hasOffer) {
+    strengths.push({ rule: 'Rule 10 — Offer Something', text: 'You offer something in return. Like the Nigella Lawson pitch that mentioned "1 million followers" — showing what you bring to the table.' });
+    score += 6;
+  } else {
+    improvements.push({ rule: 'Rule 10 — Offer Something', text: 'Can you offer something back? Knowledge, an introduction, your audience? It creates reciprocity.' });
+    tips.push('Add: "I\'d be happy to share our findings on X" or "I have some ideas on Y that might be useful."');
+  }
+
+  // FORBIDDEN WORD: "currently"
+  if (lower.includes('currently')) {
+    issues.push({ rule: 'Forbidden Word — "Currently"', text: 'Glenn\'s most forbidden word! Escalating punishments: warning → double secret probation → watching a scary movie. Just delete it. The sentence works without it.' });
+    score -= 5;
+    tips.push('Delete "currently" — the sentence always works without it. Glenn will put you on double secret probation.');
+  }
+
+  // JARGON CHECK (Enhanced with Rachel Conrad's kill list)
+  const jargonWords = ['utilize', 'facilitate', 'leverage', 'synergy', 'synergize', 'incentivize', 'implement', 'commence', 'actionable', 'disrupt', 'ecosystem', 'paradigm', 'circle back', 'touch base', 'reach out to you', 'space', 'productize', 'strategize', 'empower', 'enable', 'deliverables', 'pain point', 'thought leader', 'thought partner', 'move the needle', 'low-hanging fruit', 'drill down', 'bandwidth', 'iterate', 'mitigate', 'remediate'];
+  const foundJargon = jargonWords.filter(j => lower.includes(j));
+  if (foundJargon.length >= 2) {
+    issues.push({ rule: 'Rachel Conrad — Kill the Jargon', text: 'Jargon detected: "' + foundJargon.join('", "') + '". Rachel Conrad\'s kill list is ruthless. Corporate Bro used these in a dating parody — that\'s how ridiculous they sound.' });
+    score -= 5;
+    tips.push('Replace "' + foundJargon[0] + '" with a simpler word. If "I drive synergies for impact innovation" could describe your email, rewrite everything.');
+  } else if (foundJargon.length === 1) {
+    improvements.push({ rule: 'Rachel Conrad — Kill the Jargon', text: 'Minor jargon: "' + foundJargon[0] + '". Check the jargon kill list — there\'s always a simpler word.' });
+    score -= 2;
+  }
+
+  // SHOW DON'T TELL check
+  const tellingPhrases = /\b(proven leader|extensive experience|passionate about|results-oriented|track record of success|strong background|dynamic professional|seasoned|innovative thinker)\b/i;
+  if (tellingPhrases.test(text)) {
+    issues.push({ rule: 'Rachel Conrad — Show, Don\'t Tell', text: 'Telling phrases detected ("proven leader," "passionate about," etc.). Rachel says: don\'t tell them you\'re a proven leader — give the specific example that proves it. Like "I took brand awareness from zero to 56%."' });
+    score -= 4;
+    tips.push('Replace every "proven leader" with a specific accomplishment. What did you actually DO? Use numbers, names, outcomes.');
+  }
+
+  // DANGLING MODIFIER check
+  const hasDangling = /^As a (renowned|experienced|respected|successful|leading|seasoned|accomplished)/im.test(text);
+  if (hasDangling) {
+    issues.push({ rule: 'Basics — Dangling Modifier', text: 'Watch out: "As a renowned..." — make sure the noun after the comma refers to the right person. Glenn\'s example: "As an HBS professor, I\'m hoping..." accidentally says YOU are the professor.' });
+    score -= 3;
+  }
+
+  // ADVERB check
+  const adverbs = (text.match(/\b\w+ly\b/g) || []).filter(a => !['family','really','early','only','apply','rally','recently','certainly','friendly','daily','weekly','monthly','supply','rely','july','reply','previously','especially'].includes(a.toLowerCase()));
+  if (adverbs.length > 5) {
+    improvements.push({ rule: 'Basics — Strong Verbs > Adverbs', text: 'You use ' + adverbs.length + ' adverbs. Glenn says: "incredibly smart" → "brilliant." "extremely important" → "crucial." Strong verbs beat adverb + weak verb every time.' });
+    score -= 2;
+  }
+
+  // "Going forward" / "moving forward" check
+  if (/\b(going forward|moving forward)\b/i.test(text)) {
+    improvements.push({ rule: 'Forbidden Phrase', text: '"Going forward" / "moving forward" — future tense already implies forward. Just delete these two words.' });
+    score -= 2;
+  }
+
+  // Clamp score
+  score = Math.max(10, Math.min(98, score));
+
+  // Determine headline
+  let headline, color;
+  if (score >= 80) { headline = 'Excellent — Glenn would be proud!'; color = 'var(--accent4)'; }
+  else if (score >= 65) { headline = 'Strong Foundation — A Few Tweaks Away'; color = 'var(--accent3)'; }
+  else if (score >= 45) { headline = 'Good Start — Room to Improve'; color = 'var(--accent)'; }
+  else { headline = 'Needs Work — Apply the Rules'; color = 'var(--accent2)'; }
+
+  const summaryText = `Your email scores ${score}/100 based on the 11 cold-call rules, Rachel Conrad's jargon kill list, and Glenn's forbidden words. ${strengths.length} strength${strengths.length !== 1 ? 's' : ''} identified, ${improvements.length + issues.length} area${improvements.length + issues.length !== 1 ? 's' : ''} to improve.`;
+
+  // Render results
+  const resultsArea = document.getElementById('resultsArea');
+  resultsArea.classList.add('visible');
+
+  // Score animation
+  const circle = document.getElementById('scoreCircle');
+  const circumference = 2 * Math.PI * 38;
+  const offset = circumference - (score / 100) * circumference;
+  circle.style.stroke = color;
+  circle.style.transition = 'stroke-dashoffset 1s ease';
+  setTimeout(() => { circle.style.strokeDashoffset = offset; }, 100);
+
+  document.getElementById('scoreText').textContent = score;
+  document.getElementById('scoreText').style.color = color;
+  document.getElementById('scoreHeadline').textContent = headline;
+  document.getElementById('scoreSummary').textContent = summaryText;
+
+  // Render feedback
+  function renderItems(container, items, cls) {
+    const el = document.getElementById(container);
+    el.innerHTML = items.map(i => `<div class="feedback-item ${cls}"><div class="rule-ref">${i.rule}</div><div class="fb-text">${i.text}</div></div>`).join('');
+    el.parentElement.style.display = items.length ? 'block' : 'none';
+  }
+  renderItems('strengthsList', strengths, 'pass-item');
+  renderItems('improvementsList', improvements, 'warn-item');
+  renderItems('issuesList', issues, 'fail-item');
+
+  // Tips
+  const tipsEl = document.getElementById('rewriteTips');
+  if (tips.length > 0) {
+    tipsEl.innerHTML = tips.map(t => `<li>${t}</li>`).join('');
+    document.getElementById('rewriteBox').style.display = 'block';
+  } else {
+    document.getElementById('rewriteBox').style.display = 'none';
+  }
+
+  // Scroll to results
+  resultsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>

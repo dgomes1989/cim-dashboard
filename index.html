@@ -1,2820 +1,818 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Difficult Conversations — Learning Dashboard v2</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
-
-  :root {
-    --bg: #f8f9fb;
-    --surface: #ffffff;
-    --surface2: #f0f1f5;
-    --border: #e2e4ea;
-    --text: #1a1d2b;
-    --text-muted: #5f6577;
-    --accent1: #5f46e5;
-    --accent1-soft: rgba(95,70,229,0.1);
-    --accent2: #e07d06;
-    --accent2-soft: rgba(224,125,6,0.1);
-    --accent3: #059669;
-    --accent3-soft: rgba(5,150,105,0.1);
-    --accent4: #db2777;
-    --accent4-soft: rgba(219,39,119,0.1);
-    --accent5: #8b35f0;
-    --accent5-soft: rgba(139,53,240,0.1);
-    --accent6: #0891b2;
-    --accent6-soft: rgba(8,145,178,0.1);
-    --radius: 16px;
-    --radius-sm: 10px;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-    --gold: #f59e0b;
-  }
-
-  [data-theme="dark"] {
-    --bg: #0f172a;
-    --surface: #1e293b;
-    --surface2: #334155;
-    --border: #475569;
-    --text: #f1f5f9;
-    --text-muted: #cbd5e1;
-    --accent1: #7c6eff;
-    --accent1-soft: rgba(124,110,255,0.15);
-    --accent2: #fbbf24;
-    --accent2-soft: rgba(251,191,36,0.15);
-    --accent3: #10b981;
-    --accent3-soft: rgba(16,185,129,0.15);
-    --accent4: #f472b6;
-    --accent4-soft: rgba(244,114,182,0.15);
-    --accent5: #a78bfa;
-    --accent5-soft: rgba(167,139,250,0.15);
-    --accent6: #06b6d4;
-    --accent6-soft: rgba(6,182,212,0.15);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Inter', -apple-system, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-    overflow-x: hidden;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-
-  /* Hero */
-  .hero {
-    position: relative;
-    padding: 80px 40px 60px;
-    text-align: center;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -20%;
-    width: 140%;
-    height: 200%;
-    background: radial-gradient(ellipse at 30% 50%, var(--accent1-soft) 0%, transparent 60%),
-                radial-gradient(ellipse at 70% 50%, var(--accent2-soft) 0%, transparent 60%);
-    pointer-events: none;
-  }
-  .hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2.2rem, 5vw, 3.6rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    background: linear-gradient(135deg, var(--accent1) 0%, var(--accent2) 50%, var(--accent4) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 12px;
-    animation: fadeInDown 0.8s ease-out;
-  }
-  .hero .subtitle {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    font-weight: 400;
-    max-width: 600px;
-    margin: 0 auto 24px;
-    animation: fadeInUp 0.8s ease-out 0.2s both;
-  }
-  .hero .meta-pills {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    animation: fadeInUp 0.8s ease-out 0.4s both;
-  }
-  .meta-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    font-size: 0.82rem;
-    color: var(--text-muted);
-  }
-  .meta-pill .dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    display: inline-block;
-  }
-
-  @keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Nav bar with glass morphism */
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(248,249,251,0.8);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 40px;
-    display: flex;
-    gap: 4px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    align-items: center;
-  }
-
-  [data-theme="dark"] .nav-bar {
-    background: rgba(15,23,42,0.7);
-  }
-
-  .nav-bar::-webkit-scrollbar { display: none; }
-  
-  .nav-tabs-container {
-    display: flex;
-    gap: 4px;
-    flex: 1;
-  }
-
-  .nav-tab {
-    padding: 16px 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--text-muted);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
-    transition: all 0.2s;
-    -webkit-tap-highlight-color: transparent;
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-  }
-  .nav-tab:hover { color: var(--text); }
-  .nav-tab.active {
-    color: var(--accent1);
-    border-bottom-color: var(--accent1);
-  }
-
-  .nav-controls {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    margin-left: auto;
-    padding-left: 12px;
-    border-left: 1px solid var(--border);
-  }
-
-  .search-box {
-    position: relative;
-    width: 220px;
-  }
-
-  .search-input {
-    width: 100%;
-    padding: 8px 12px 8px 32px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--surface);
-    color: var(--text);
-    font-size: 0.85rem;
-    outline: none;
-    transition: all 0.2s;
-  }
-
-  .search-input:focus {
-    border-color: var(--accent1);
-    box-shadow: 0 0 0 3px var(--accent1-soft);
-  }
-
-  .search-icon {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-muted);
-    pointer-events: none;
-  }
-
-  .search-results {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    margin-top: 4px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    box-shadow: var(--shadow-md);
-    max-height: 400px;
-    overflow-y: auto;
-    display: none;
-    z-index: 1000;
-  }
-
-  .search-results.active { display: block; }
-
-  .search-result {
-    padding: 12px;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-
-  .search-result:last-child { border-bottom: none; }
-
-  .search-result:hover {
-    background: var(--surface2);
-  }
-
-  .search-result-title {
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: var(--text);
-    margin-bottom: 4px;
-  }
-
-  .search-result-section {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .search-result-text {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-top: 4px;
-    line-height: 1.4;
-  }
-
-  .search-result .highlight {
-    background: var(--accent1-soft);
-    color: var(--accent1);
-    font-weight: 600;
-    padding: 2px 4px;
-    border-radius: 3px;
-  }
-
-  .btn-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--surface);
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 1.1rem;
-  }
-
-  .btn-icon:hover {
-    color: var(--accent1);
-    border-color: var(--accent1);
-    background: var(--accent1-soft);
-  }
-
-  /* Sections */
-  .section {
-    display: none;
-    padding: 40px;
-    max-width: 1400px;
-    margin: 0 auto;
-    animation: fadeUp 0.4s ease;
-  }
-  .section.active { display: block; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.8rem;
-    margin-bottom: 8px;
-  }
-  .section-desc {
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    margin-bottom: 32px;
-    max-width: 700px;
-  }
-
-  /* Cards with enhanced design */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 28px;
-    box-shadow: var(--shadow-sm);
-    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
-    position: relative;
-  }
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
-  }
-
-  .card.reveal {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-
-  .card.reveal.visible {
-    animation: revealCard 0.6s ease-out forwards;
-  }
-
-  @keyframes revealCard {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .card.bookmarked {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 2px var(--gold), var(--shadow-sm);
-  }
-
-  .bookmark-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: none;
-    border: none;
-    font-size: 1.3rem;
-    cursor: pointer;
-    opacity: 0.4;
-    transition: opacity 0.2s;
-  }
-
-  .bookmark-btn:hover {
-    opacity: 1;
-  }
-
-  .bookmark-btn.active {
-    opacity: 1;
-    color: var(--gold);
-  }
-
-  /* Principle Grid */
-  .principle-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
-  }
-  .principle-card {
-    position: relative;
-    overflow: hidden;
-  }
-  .principle-card .icon-badge {
-    width: 44px; height: 44px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3rem;
-    margin-bottom: 16px;
-  }
-  .principle-card h3 {
-    font-size: 1.05rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
-  .principle-card p {
-    font-size: 0.88rem;
-    color: var(--text-muted);
-    line-height: 1.65;
-  }
-  .principle-card .source-tag {
-    display: inline-block;
-    margin-top: 12px;
-    font-size: 0.72rem;
-    padding: 3px 10px;
-    border-radius: 100px;
-    background: var(--surface2);
-    color: var(--text-muted);
-  }
-
-  /* Case study cards */
-  .case-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-    gap: 20px;
-  }
-  .case-card {
-    border-left: 3px solid var(--accent1);
-  }
-  .case-card .case-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-    padding-right: 30px;
-  }
-  .case-card .case-label {
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 100px;
-  }
-  .case-card h3 {
-    font-size: 1.05rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-  .case-card .case-context {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    margin-bottom: 14px;
-    font-style: italic;
-  }
-  .case-card .takeaways {
-    list-style: none;
-    padding: 0;
-  }
-  .case-card .takeaways li {
-    font-size: 0.86rem;
-    color: var(--text-muted);
-    padding: 6px 0 6px 20px;
-    position: relative;
-    line-height: 1.55;
-  }
-  .case-card .takeaways li::before {
-    content: '→';
-    position: absolute;
-    left: 0;
-    color: var(--accent1);
-    font-weight: 600;
-  }
-
-  /* Quote cards */
-  .quote-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 20px;
-  }
-  .quote-card {
-    position: relative;
-    padding-left: 20px;
-    border-left: 3px solid;
-  }
-  .quote-card .quote-text {
-    font-size: 1rem;
-    font-style: italic;
-    line-height: 1.7;
-    margin-bottom: 12px;
-  }
-  .quote-card .quote-attr {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    font-weight: 500;
-  }
-
-  /* Framework visual */
-  .framework-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
-    margin-bottom: 40px;
-  }
-  .framework-box {
-    padding: 32px;
-    border-radius: var(--radius);
-    position: relative;
-    overflow: hidden;
-  }
-  .framework-box::after {
-    content: '';
-    position: absolute;
-    top: 0; right: 0;
-    width: 120px; height: 120px;
-    border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.3;
-    pointer-events: none;
-  }
-  .framework-box h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.35rem;
-    margin-bottom: 6px;
-  }
-  .framework-box .fw-subtitle {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    margin-bottom: 18px;
-  }
-  .framework-box ul {
-    list-style: none;
-    padding: 0;
-  }
-  .framework-box ul li {
-    padding: 8px 0;
-    font-size: 0.9rem;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  .framework-box ul li:last-child { border-bottom: none; }
-  .fw-num {
-    min-width: 26px;
-    height: 26px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-
-  /* Final lessons numbered */
-  .final-lessons {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-    gap: 16px;
-  }
-  .final-lesson {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-    padding: 20px;
-  }
-  .lesson-num {
-    min-width: 36px; height: 36px;
-    border-radius: 10px;
-    background: var(--accent1-soft);
-    color: var(--accent1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 0.9rem;
-    flex-shrink: 0;
-  }
-  .final-lesson .lesson-text {
-    font-size: 0.88rem;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
-  .final-lesson .lesson-text strong {
-    color: var(--text);
-    display: block;
-    margin-bottom: 2px;
-  }
-
-  /* Session timeline */
-  .timeline {
-    position: relative;
-    padding-left: 32px;
-  }
-  .timeline::before {
-    content: '';
-    position: absolute;
-    left: 11px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: linear-gradient(to bottom, var(--accent1), var(--accent2), var(--accent3));
-    border-radius: 2px;
-  }
-  .timeline-item {
-    position: relative;
-    margin-bottom: 28px;
-    padding: 20px 24px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-sm);
-  }
-  .timeline-item::before {
-    content: '';
-    position: absolute;
-    left: -27px;
-    top: 24px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 2px solid var(--accent1);
-    background: var(--bg);
-  }
-  .timeline-item .session-num {
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--accent1);
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-  .timeline-item h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-  .timeline-item p {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
-  .timeline-item .topics {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 10px;
-  }
-  .topic-chip {
-    font-size: 0.72rem;
-    padding: 3px 10px;
-    border-radius: 100px;
-    background: var(--surface2);
-    color: var(--text-muted);
-    border: 1px solid var(--border);
-  }
-
-  /* Stats row */
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 16px;
-    margin-bottom: 40px;
-  }
-  .stat-card {
-    text-align: center;
-    padding: 24px 16px;
-  }
-  .stat-card .stat-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.4rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--accent1), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .stat-card .stat-label {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    margin-top: 4px;
-  }
-
-  /* AI Advisor chat */
-  .advisor-container {
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  .api-key-bar {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-  .api-key-bar input {
-    flex: 1;
-    min-width: 200px;
-    padding: 12px 16px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--surface);
-    color: var(--text);
-    font-size: 0.88rem;
-    font-family: inherit;
-    outline: none;
-  }
-  .api-key-bar input:focus { border-color: var(--accent1); }
-  .api-key-bar .key-status {
-    font-size: 0.78rem;
-    padding: 6px 14px;
-    border-radius: 100px;
-    font-weight: 500;
-  }
-  .chat-messages {
-    min-height: 200px;
-    max-height: 60vh;
-    overflow-y: auto;
-    padding: 4px;
-    margin-bottom: 16px;
-  }
-  .chat-msg {
-    margin-bottom: 16px;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-  .chat-msg .msg-avatar {
-    min-width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-  .chat-msg.user .msg-avatar {
-    background: var(--accent1-soft);
-    color: var(--accent1);
-  }
-  .chat-msg.ai .msg-avatar {
-    background: var(--accent2-soft);
-    color: var(--accent2);
-  }
-  .chat-msg .msg-body {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px 18px;
-    font-size: 0.9rem;
-    line-height: 1.7;
-    color: var(--text);
-    max-width: 100%;
-    box-shadow: var(--shadow-sm);
-  }
-  .chat-msg .msg-body p { margin-bottom: 8px; }
-  .chat-msg .msg-body p:last-child { margin-bottom: 0; }
-  .chat-msg .msg-body strong { color: var(--text); }
-  .chat-msg .msg-body ul { padding-left: 18px; margin: 6px 0; }
-  .chat-msg .msg-body li { margin-bottom: 4px; }
-  .chat-input-bar {
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-  }
-  .chat-input-bar textarea {
-    flex: 1;
-    padding: 14px 16px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--surface);
-    color: var(--text);
-    font-size: 0.9rem;
-    font-family: inherit;
-    resize: none;
-    outline: none;
-    min-height: 52px;
-    max-height: 150px;
-    line-height: 1.5;
-  }
-  .chat-input-bar textarea:focus { border-color: var(--accent1); }
-  .chat-input-bar button {
-    padding: 14px 24px;
-    background: var(--accent1);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-sm);
-    font-size: 0.88rem;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-    min-height: 52px;
-    font-family: inherit;
-    transition: background 0.2s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .chat-input-bar button:hover { background: #4338ca; }
-  .chat-input-bar button:disabled { opacity: 0.5; cursor: not-allowed; }
-  .suggestion-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 20px;
-  }
-  .suggestion-chip {
-    padding: 10px 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s;
-    -webkit-tap-highlight-color: transparent;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-  }
-  .suggestion-chip:hover {
-    border-color: var(--accent1);
-    color: var(--accent1);
-    background: var(--accent1-soft);
-  }
-  .typing-indicator {
-    display: inline-flex;
-    gap: 4px;
-    padding: 8px 0;
-  }
-  .typing-indicator span {
-    width: 7px; height: 7px;
-    background: var(--text-muted);
-    border-radius: 50%;
-    animation: bounce 1.4s infinite ease-in-out both;
-  }
-  .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-  .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-  @keyframes bounce {
-    0%, 80%, 100% { transform: scale(0); }
-    40% { transform: scale(1); }
-  }
-
-  /* Expandable case cards */
-  .case-card { cursor: pointer; }
-  .case-card .expand-hint {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 14px;
-    font-size: 0.78rem;
-    color: var(--accent1);
-    font-weight: 500;
-  }
-  .case-card .expand-hint .arrow {
-    transition: transform 0.3s;
-    display: inline-block;
-  }
-  .case-card.expanded .expand-hint .arrow {
-    transform: rotate(90deg);
-  }
-  .case-detail {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease, opacity 0.3s ease;
-    opacity: 0;
-  }
-  .case-card.expanded .case-detail {
-    max-height: 2000px;
-    opacity: 1;
-  }
-  .case-detail-inner {
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-    margin-top: 16px;
-  }
-  .detail-section {
-    margin-bottom: 18px;
-  }
-  .detail-section:last-child { margin-bottom: 0; }
-  .detail-section h4 {
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-weight: 600;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .detail-section p {
-    font-size: 0.86rem;
-    color: var(--text-muted);
-    line-height: 1.65;
-    margin-bottom: 6px;
-  }
-  .practice-list {
-    list-style: none;
-    padding: 0;
-  }
-  .practice-list li {
-    font-size: 0.86rem;
-    color: var(--text-muted);
-    padding: 6px 0 6px 22px;
-    position: relative;
-    line-height: 1.6;
-  }
-  .practice-list li::before {
-    content: '✓';
-    position: absolute;
-    left: 0;
-    font-weight: 700;
-  }
-  .convo-list {
-    list-style: none;
-    padding: 0;
-  }
-  .convo-list li {
-    font-size: 0.86rem;
-    color: var(--text-muted);
-    padding: 6px 0 6px 22px;
-    position: relative;
-    line-height: 1.6;
-  }
-  .convo-list li::before {
-    content: '💬';
-    position: absolute;
-    left: 0;
-    font-size: 0.8rem;
-  }
-
-  /* Flashcard modal */
-  .flashcard-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 2000;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.3s ease;
-  }
-
-  .flashcard-modal.active {
-    display: flex;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  .flashcard-container {
-    background: var(--surface);
-    border-radius: var(--radius);
-    padding: 40px;
-    max-width: 600px;
-    width: 90%;
-    position: relative;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  }
-
-  .flashcard-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: var(--text-muted);
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-  .flashcard-close:hover {
-    background: var(--surface2);
-    color: var(--text);
-  }
-
-  .flashcard {
-    perspective: 1000px;
-    height: 300px;
-    cursor: pointer;
-    margin-bottom: 24px;
-  }
-
-  .flashcard-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transition: transform 0.6s;
-    transform-style: preserve-3d;
-  }
-
-  .flashcard.flipped .flashcard-inner {
-    transform: rotateY(180deg);
-  }
-
-  .flashcard-face {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-    text-align: center;
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    font-size: 1.3rem;
-    font-weight: 600;
-  }
-
-  .flashcard-front {
-    background: linear-gradient(135deg, var(--accent1-soft), var(--accent2-soft));
-    color: var(--text);
-  }
-
-  .flashcard-back {
-    background: linear-gradient(135deg, var(--accent3-soft), var(--accent4-soft));
-    color: var(--text);
-    transform: rotateY(180deg);
-    font-size: 0.95rem;
-    font-weight: 400;
-    line-height: 1.6;
-  }
-
-  .flashcard-controls {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-
-  .flashcard-btn {
-    padding: 10px 20px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.2s;
-  }
-
-  .flashcard-btn:hover {
-    background: var(--border);
-    color: var(--accent1);
-  }
-
-  .flashcard-btn.primary {
-    background: var(--accent1);
-    color: white;
-    border-color: var(--accent1);
-  }
-
-  .flashcard-btn.primary:hover {
-    background: #4338ca;
-  }
-
-  .flashcard-progress {
-    text-align: center;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    margin-bottom: 16px;
-  }
-
-  /* Responsive — mobile first touch targets */
-  @media (max-width: 768px) {
-    .hero { padding: 48px 20px 32px; }
-    .hero h1 { font-size: 1.8rem; }
-    .hero .subtitle { font-size: 0.95rem; }
-    .meta-pills { gap: 8px; }
-    .meta-pill { padding: 8px 14px; font-size: 0.78rem; }
-
-    .nav-bar {
-      padding: 0 12px;
-      gap: 0;
-    }
-
-    .nav-controls {
-      padding-left: 8px;
-      border-left: none;
-      gap: 8px;
-    }
-
-    .search-box {
-      display: none;
-    }
-
-    .nav-tab {
-      padding: 14px 16px;
-      font-size: 0.82rem;
-      min-height: 52px;
-    }
-
-    .section { padding: 20px 16px; }
-    .section-title { font-size: 1.4rem; }
-    .section-desc { font-size: 0.88rem; margin-bottom: 24px; }
-
-    .card { padding: 22px 18px; }
-
-    .principle-grid,
-    .case-grid,
-    .quote-grid,
-    .final-lessons {
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-    .framework-container {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
-    .principle-card h3 { font-size: 1rem; }
-    .principle-card p { font-size: 0.86rem; }
-    .principle-card .icon-badge {
-      width: 40px; height: 40px;
-      font-size: 1.15rem;
-    }
-
-    .case-card .case-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-    }
-    .case-card .takeaways li {
-      padding: 8px 0 8px 22px;
-      font-size: 0.85rem;
-      line-height: 1.6;
-    }
-
-    .framework-box { padding: 22px 18px; }
-    .framework-box h3 { font-size: 1.15rem; }
-    .framework-box ul li { padding: 10px 0; font-size: 0.86rem; }
-
-    .final-lesson { padding: 18px 16px; gap: 14px; }
-    .lesson-num { min-width: 34px; height: 34px; font-size: 0.85rem; }
-
-    .stats-row {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    .stat-card { padding: 18px 12px; }
-    .stat-card .stat-num { font-size: 1.8rem; }
-
-    .timeline { padding-left: 28px; }
-    .timeline-item { padding: 16px 18px; }
-    .timeline-item h3 { font-size: 0.95rem; }
-    .timeline-item p { font-size: 0.83rem; }
-    .topic-chip { padding: 5px 12px; font-size: 0.72rem; }
-
-    .quote-card .quote-text { font-size: 0.92rem; }
-
-    .flashcard-container {
-      padding: 24px;
-      max-width: 90vw;
-    }
-
-    .flashcard {
-      height: 200px;
-    }
-
-    .flashcard-face {
-      padding: 24px;
-      font-size: 1rem;
-    }
-
-    .flashcard-back {
-      font-size: 0.85rem;
-    }
-  }
-
-  @media (max-width: 380px) {
-    .hero h1 { font-size: 1.5rem; }
-    .stats-row { grid-template-columns: 1fr; }
-    .nav-tab { padding: 12px 12px; font-size: 0.78rem; }
-  }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSB Class Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* CSS Variables for Light/Dark Mode */
+        :root {
+            --bg-primary: #FAF8F5;
+            --bg-surface: #FFFFFF;
+            --text-primary: #1C1917;
+            --text-secondary: #5F5B57;
+            --accent-cardinal: #8B1A1A;
+            --accent-gold: #C8963E;
+            --accent-sage: #6B8F71;
+            --border-subtle: #E5E0DB;
+            --shadow-sm: 0 2px 8px rgba(28, 25, 23, 0.08);
+            --shadow-md: 0 4px 16px rgba(28, 25, 23, 0.12);
+            --shadow-lg: 0 12px 32px rgba(28, 25, 23, 0.16);
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            --bg-primary: #141211;
+            --bg-surface: #1E1C1A;
+            --text-primary: #E7E5E0;
+            --text-secondary: #A89F99;
+            --border-subtle: #3A3733;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.4s ease, color 0.4s ease;
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Grain Texture Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Content Layer */
+        body > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'DM Serif Display', Georgia, serif;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: clamp(1.5rem, 5vw, 2.2rem);
+            letter-spacing: -0.01em;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .label {
+            font-size: 0.875rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 6rem 2rem 4rem;
+            text-align: center;
+            animation: fadeUp 0.8s ease 0.1s both;
+        }
+
+        .hero h1 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .hero-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            opacity: 0.6;
+        }
+
+        .divider-line {
+            flex: 1;
+            max-width: 100px;
+            height: 1px;
+            background-color: var(--text-secondary);
+        }
+
+        .divider-icon {
+            font-size: 1.5rem;
+            color: var(--accent-cardinal);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 2rem;
+            padding: 3rem 2rem;
+            max-width: 1000px;
+            margin: 0 auto 2rem;
+            animation: fadeUp 0.8s ease 0.2s both;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'DM Serif Display', Georgia, serif;
+            font-size: 2.5rem;
+            color: var(--accent-gold);
+            font-weight: 400;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        /* Class Modules Section */
+        .modules-section {
+            padding: 4rem 2rem;
+            animation: fadeUp 0.8s ease 0.3s both;
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header .label {
+            display: inline-block;
+        }
+
+        /* Grid Layout */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Module Card */
+        .module-card {
+            background-color: var(--bg-surface);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+        }
+
+        .module-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .module-card-accent {
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-cardinal), var(--accent-gold));
+        }
+
+        .module-card-accent.writing {
+            background: linear-gradient(90deg, #b8860b, #d4a843);
+        }
+
+        .module-card-accent.pmf {
+            background: linear-gradient(90deg, #6c5ce7, #00a89d);
+        }
+
+        .module-code.writing { color: #b8860b; }
+        .module-code.pmf { color: #6c5ce7; }
+
+        .module-card-content {
+            padding: 2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .module-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .module-code {
+            font-family: 'DM Serif Display', Georgia, serif;
+            font-size: 0.875rem;
+            color: var(--accent-cardinal);
+            font-weight: 400;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .module-badge {
+            display: inline-block;
+            padding: 0.375rem 0.75rem;
+            background-color: rgba(107, 143, 113, 0.15);
+            color: var(--accent-sage);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .module-title {
+            font-family: 'DM Serif Display', Georgia, serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+
+        .module-instructors {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .module-quarter {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .module-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .module-stats {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .stat-chip {
+            padding: 0.5rem 0.75rem;
+            background-color: var(--bg-primary);
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .module-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            background-color: var(--accent-cardinal);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid var(--accent-cardinal);
+            font-size: 0.95rem;
+            align-self: flex-start;
+        }
+
+        .module-button:hover {
+            background-color: transparent;
+            color: var(--accent-cardinal);
+        }
+
+        /* Coming Soon Card */
+        .module-card.coming-soon {
+            border: 2px dashed var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            cursor: default;
+            background-color: var(--bg-primary);
+        }
+
+        .module-card.coming-soon:hover {
+            transform: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .coming-soon-content {
+            text-align: center;
+        }
+
+        .coming-soon-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .coming-soon-text {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            font-style: italic;
+        }
+
+        /* Quick Reference Section */
+        .quick-reference {
+            padding: 4rem 2rem;
+            background-color: var(--bg-surface);
+            animation: fadeUp 0.8s ease 0.4s both;
+        }
+
+        .quick-reference-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .concept-card {
+            padding: 1.5rem;
+            background-color: var(--bg-primary);
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .concept-card:hover {
+            transform: scale(1.02);
+            border-color: var(--accent-cardinal);
+            box-shadow: 0 0 0 3px rgba(139, 26, 26, 0.1);
+        }
+
+        .concept-title {
+            font-family: 'DM Serif Display', Georgia, serif;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+            color: var(--text-primary);
+        }
+
+        .concept-description {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            animation: fadeUp 0.8s ease 0.5s both;
+        }
+
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .footer-line {
+            margin: 0.5rem 0;
+        }
+
+        .footer-built {
+            margin-top: 1rem;
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background-color: var(--accent-cardinal);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .dark-mode-toggle:active {
+            transform: scale(0.95);
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 4rem 2rem 2rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+                padding: 2rem;
+            }
+
+            .modules-section,
+            .quick-reference {
+                padding: 2.5rem 2rem;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .module-card {
+                max-width: none;
+            }
+
+            .quick-reference-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dark-mode-toggle {
+                width: 45px;
+                height: 45px;
+                bottom: 1.5rem;
+                right: 1.5rem;
+                font-size: 1.25rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            h2 {
+                font-size: 1.25rem;
+            }
+
+            .hero-divider {
+                gap: 0.75rem;
+            }
+
+            .divider-line {
+                max-width: 60px;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+                padding: 1.5rem 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .modules-section,
+            .quick-reference {
+                padding: 2rem 1.5rem;
+            }
+
+            .module-card-content {
+                padding: 1.5rem;
+            }
+
+            .dark-mode-toggle {
+                width: 48px;
+                height: 48px;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<!-- HERO -->
-<div class="hero">
-  <h1>Difficult Conversations</h1>
-  <p class="subtitle">Stanford GSB — STRAMGT 510 &nbsp;·&nbsp; Taught by Irv Grousbeck &amp; Tony</p>
-  <div class="meta-pills">
-    <span class="meta-pill"><span class="dot" style="background:var(--accent1)"></span> 9 Sessions</span>
-    <span class="meta-pill"><span class="dot" style="background:var(--accent2)"></span> 12 Case Studies</span>
-    <span class="meta-pill"><span class="dot" style="background:var(--accent3)"></span> 6 Core Frameworks</span>
-    <span class="meta-pill"><span class="dot" style="background:var(--accent4)"></span> 15 Final Lessons</span>
-  </div>
-</div>
-
-<!-- NAV -->
-<div class="nav-bar">
-  <div class="nav-tabs-container">
-    <div class="nav-tab active" data-tab="overview">Overview</div>
-    <div class="nav-tab" data-tab="principles">Core Principles</div>
-    <div class="nav-tab" data-tab="frameworks">Frameworks</div>
-    <div class="nav-tab" data-tab="cases">Case Studies</div>
-    <div class="nav-tab" data-tab="sessions">Session Timeline</div>
-    <div class="nav-tab" data-tab="final">Final Lessons</div>
-    <div class="nav-tab" data-tab="quotes">Memorable Quotes</div>
-    <div class="nav-tab" data-tab="advisor" style="color:var(--accent2);font-weight:600;">AI Advisor</div>
-  </div>
-
-  <div class="nav-controls">
-    <div class="search-box">
-      <input type="text" class="search-input" id="searchInput" placeholder="Search...">
-      <span class="search-icon">🔍</span>
-      <div class="search-results" id="searchResults"></div>
-    </div>
-    <button class="btn-icon" id="flashcardBtn" title="Study Flashcards">📇</button>
-    <button class="btn-icon" id="darkModeBtn" title="Toggle Dark Mode">🌙</button>
-  </div>
-</div>
-
-<!-- FLASHCARD MODAL -->
-<div class="flashcard-modal" id="flashcardModal">
-  <div class="flashcard-container">
-    <button class="flashcard-close" onclick="closeFlashcards()">✕</button>
-    <div class="flashcard-progress" id="flashcardProgress">Card 1 of 33</div>
-    <div class="flashcard" id="flashcard">
-      <div class="flashcard-inner">
-        <div class="flashcard-face flashcard-front" id="flashcardFront">
-          Click to reveal
+    <!-- Hero Section -->
+    <section class="hero container">
+        <h1>GSB Class Dashboard</h1>
+        <div class="hero-divider">
+            <div class="divider-line"></div>
+            <div class="divider-icon">🌲</div>
+            <div class="divider-line"></div>
         </div>
-        <div class="flashcard-face flashcard-back" id="flashcardBack">
-          Back side
+        <p class="subtitle">My favorite classes, key frameworks, and leadership lessons — all in one place.</p>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="stats-bar container">
+        <div class="stat-item">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Class Modules</div>
         </div>
-      </div>
-    </div>
-    <div class="flashcard-controls">
-      <button class="flashcard-btn" onclick="previousCard()">← Previous</button>
-      <button class="flashcard-btn primary" onclick="toggleFlip()">Flip (Space)</button>
-      <button class="flashcard-btn" onclick="nextCard()">Next →</button>
-      <button class="flashcard-btn" onclick="shuffleCards()">Shuffle</button>
-    </div>
-  </div>
-</div>
-
-<!-- OVERVIEW -->
-<div class="section active" id="overview">
-  <div class="stats-row">
-    <div class="card stat-card">
-      <div class="stat-num">9</div>
-      <div class="stat-label">Class Sessions</div>
-    </div>
-    <div class="card stat-card">
-      <div class="stat-num">12</div>
-      <div class="stat-label">Cases &amp; Role Plays</div>
-    </div>
-    <div class="card stat-card">
-      <div class="stat-num">6</div>
-      <div class="stat-label">Core Frameworks</div>
-    </div>
-    <div class="card stat-card">
-      <div class="stat-num">15</div>
-      <div class="stat-label">Final Takeaways</div>
-    </div>
-    <div class="card stat-card">
-      <div class="stat-num">2</div>
-      <div class="stat-label">Guest Speakers</div>
-    </div>
-  </div>
-
-  <h2 class="section-title">The Big Idea</h2>
-  <p class="section-desc" style="margin-bottom:28px;">This course distills the art of leadership into its most human dimension: how we communicate in the moments that matter most. Through case studies, role plays, and candid discussion, Irv and Tony build a practical toolkit for the difficult conversations every leader will face.</p>
-
-  <div class="framework-container">
-    <div class="framework-box card reveal" style="border-top:3px solid var(--accent1);">
-      <h3 style="color:var(--accent1);">Foundation</h3>
-      <p class="fw-subtitle">What leadership is built on</p>
-      <ul>
-        <li><span class="fw-num" style="background:var(--accent1-soft);color:var(--accent1);">1</span> Trust-based relationships — built slowly, broken instantly</li>
-        <li><span class="fw-num" style="background:var(--accent1-soft);color:var(--accent1);">2</span> You can't fake care — people see through it</li>
-        <li><span class="fw-num" style="background:var(--accent1-soft);color:var(--accent1);">3</span> Vulnerability is a leadership strength, not a weakness</li>
-      </ul>
-    </div>
-    <div class="framework-box card reveal" style="border-top:3px solid var(--accent2);">
-      <h3 style="color:var(--accent2);">Voice</h3>
-      <p class="fw-subtitle">What your leadership voice truly is</p>
-      <ul>
-        <li><span class="fw-num" style="background:var(--accent2-soft);color:var(--accent2);">1</span> Listening — hear before you speak</li>
-        <li><span class="fw-num" style="background:var(--accent2-soft);color:var(--accent2);">2</span> Preparation — know what good looks like</li>
-        <li><span class="fw-num" style="background:var(--accent2-soft);color:var(--accent2);">3</span> Clarity — fewer words carry more power</li>
-      </ul>
-    </div>
-    <div class="framework-box card reveal" style="border-top:3px solid var(--accent3);">
-      <h3 style="color:var(--accent3);">A-B-C of Management</h3>
-      <p class="fw-subtitle">Irv's distillation of leadership</p>
-      <ul>
-        <li><span class="fw-num" style="background:var(--accent3-soft);color:var(--accent3);">A</span> Put A-players in key seats</li>
-        <li><span class="fw-num" style="background:var(--accent3-soft);color:var(--accent3);">B</span> Care for them — praise, teach, coach, share</li>
-        <li><span class="fw-num" style="background:var(--accent3-soft);color:var(--accent3);">C</span> Keep the culture — address punctures immediately</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-
-<!-- PRINCIPLES -->
-<div class="section" id="principles">
-  <h2 class="section-title">Core Leadership Principles</h2>
-  <p class="section-desc">The recurring themes woven through every session, case, and role play.</p>
-
-  <div style="margin-bottom: 24px;">
-    <label style="font-size: 0.9rem; color: var(--text-muted);">
-      <input type="checkbox" id="bookmarkFilter" onchange="filterBookmarks('principles')">
-      Show only bookmarked items
-    </label>
-  </div>
-
-  <div class="principle-grid" id="principlesGrid">
-
-    <div class="card principle-card reveal" data-searchable="Directness Is Respect|Ambiguity is not kindness. Being clear about where someone stands — even when it's uncomfortable — is the most respectful gift a leader can give. People suffer more from uncertainty than from hard truths.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="icon-badge" style="background:var(--accent1-soft);color:var(--accent1);">🎯</div>
-      <h3>Directness Is Respect</h3>
-      <p>Ambiguity is not kindness. Being clear about where someone stands — even when it's uncomfortable — is the most respectful gift a leader can give. People suffer more from uncertainty than from hard truths.</p>
-      <span class="source-tag">Session 1 · Rob Cohen</span>
-    </div>
-
-    <div class="card principle-card reveal" data-searchable="Listening > Talking|The best salespeople talk less than half the time. The best leaders listen even more. Your voice gains power when you've first truly heard the other person. Curiosity disarms anger and builds trust.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="icon-badge" style="background:var(--accent2-soft);color:var(--accent2);">👂</div>
-      <h3>Listening > Talking</h3>
-      <p>The best salespeople talk less than half the time. The best leaders listen even more. Your voice gains power when you've first truly heard the other person. Curiosity disarms anger and builds trust.</p>
-      <span class="source-tag">Session 1 & 7 · Tony</span>
-    </div>
-
-    <div class="card principle-card reveal" data-searchable="Preparation Is Everything|What does good look like? Before every conversation, envision the ideal outcome. Think through every question you might ask and every answer you might get. Role play the emotion out of it if needed.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="icon-badge" style="background:var(--accent3-soft);color:var(--accent3);">📋</div>
-      <h3>Preparation Is Everything</h3>
-      <p>"What does good look like?" Before every conversation, envision the ideal outcome. Think through every question you might ask and every answer you might get. Role play the emotion out of it if needed.</p>
-      <span class="source-tag">Every session · Tony's mantra</span>
-    </div>
-
-    <div class="card principle-card reveal" data-searchable="Trust-Based Relationships|Leadership is built on trust. You build trust slowly over time, you can't fake it, and you can disrupt it in an instant. If people believe you truly care about them, they'll follow you anywhere.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="icon-badge" style="background:var(--accent4-soft);color:var(--accent4);">🤝</div>
-      <h3>Trust-Based Relationships</h3>
-      <p>Leadership is built on trust. You build trust slowly over time, you can't fake it, and you can disrupt it in an instant. If people believe you truly care about them, they'll follow you anywhere.</p>
-      <span class="source-tag">Foundation · Tony</span>
-    </div>
-
-    <div class="card principle-card reveal" data-searchable="Fewer Words, More Power|Like Brad Pitt's father in A River Runs Through It: write it, then cut it in half, then half again. The clearer and more concise you are, the more formed your thoughts and the easier for others to receive them.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="icon-badge" style="background:var(--accent5-soft);color:var(--accent5);">✂️</div>
-      <h3>Fewer Words, More Power</h3>
-      <p>Like Brad Pitt's father in A River Runs Through It: write it, then cut it in half, then half again. The clearer and more concise you are, the more formed your thoughts and the easier for others to receive them.</p>
-      <span class="source-tag">Session 1 · Tony</span>
-    </div>
-
-    <div class="card principle-card reveal" data-searchable="Facts, Not Judgments|When communicating in sensitive situations, share facts, not conclusions. If the person being discussed were sitting in the room listening, would you be comfortable with what you said?">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="icon-badge" style="background:var(--accent6-soft);color:var(--accent6);">🔍</div>
-      <h3>Facts, Not Judgments</h3>
-      <p>When communicating in sensitive situations, share facts, not conclusions. If the person being discussed were sitting in the room listening, would you be comfortable with what you said?</p>
-      <span class="source-tag">Session 4 · Lisa Yao case</span>
-    </div>
-
-    <div class="card principle-card reveal" data-searchable="What Role Did I Play?|Before blaming a subordinate's failure, always ask: what role did I as the leader play in this outcome? Josie failed to supervise Tristan properly. The manager failed to be clear with Rob. Own your part first.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="icon-badge" style="background:var(--accent4-soft);color:var(--accent4);">🪞</div>
-      <h3>What Role Did I Play?</h3>
-      <p>Before blaming a subordinate's failure, always ask: what role did I as the leader play in this outcome? Josie failed to supervise Tristan properly. The manager failed to be clear with Rob. Own your part first.</p>
-      <span class="source-tag">Session 3 · Lighthouse case</span>
-    </div>
-
-    <div class="card principle-card reveal" data-searchable="Negotiation Is a Dance|Don't think of difficult conversations as a tug of war — think of them as a dance. Get on the same side of the table. Lead the other person to where you want to go, don't push them.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="icon-badge" style="background:var(--accent2-soft);color:var(--accent2);">💃</div>
-      <h3>Negotiation Is a Dance</h3>
-      <p>Don't think of difficult conversations as a tug of war — think of them as a dance. Get on the same side of the table. Lead the other person to where you want to go, don't push them.</p>
-      <span class="source-tag">Session 7 · Convenient MD</span>
-    </div>
-
-    <div class="card principle-card reveal" data-searchable="Silence Is Strength|When someone is angry or aggressive, silence conveys confidence. You don't have to immediately respond. Just because you allow someone to be angry doesn't mean you can't fight back — it means you have the judgment to know now isn't the time.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="icon-badge" style="background:var(--accent3-soft);color:var(--accent3);">🤫</div>
-      <h3>Silence Is Strength</h3>
-      <p>When someone is angry or aggressive, silence conveys confidence. You don't have to immediately respond. Just because you allow someone to be angry doesn't mean you can't fight back — it means you have the judgment to know now isn't the time.</p>
-      <span class="source-tag">Session 7 · George Vincent</span>
-    </div>
-
-    <div class="card principle-card reveal" data-searchable="Crisis Demands Action|When the situation is acute, act decisively. Suspend the bad actor, bring in legal counsel, communicate the plan to employees, and contact departed team members. Empowerment without accountability is useless.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="icon-badge" style="background:var(--accent1-soft);color:var(--accent1);">⚡</div>
-      <h3>Crisis Demands Action</h3>
-      <p>When the situation is acute, act decisively. Suspend the bad actor, bring in legal counsel, communicate the plan to employees, and contact departed team members. Empowerment without accountability is useless.</p>
-      <span class="source-tag">Final class · Jack Swain</span>
-    </div>
-
-    <div class="card principle-card reveal" data-searchable="Culture = How We Speak|Culture is how we talk to people and how we talk about people in the workplace. When you see a culture puncture, address it immediately. No sweeping under the rug. Remove impunity.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="icon-badge" style="background:var(--accent5-soft);color:var(--accent5);">🏗️</div>
-      <h3>Culture = How We Speak</h3>
-      <p>Culture is how we talk to people and how we talk about people in the workplace. When you see a culture puncture, address it immediately. No sweeping under the rug. Remove impunity.</p>
-      <span class="source-tag">Session 7 · Irv on management</span>
-    </div>
-
-    <div class="card principle-card reveal" data-searchable="It's OK to Reverse a Decision|Vulnerability is powerful. Admitting I made a mistake — I should do Y instead of X sounds weak but is actually the opposite. Nobody wants to work for someone who can never be wrong.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="icon-badge" style="background:var(--accent6-soft);color:var(--accent6);">🔄</div>
-      <h3>It's OK to Reverse a Decision</h3>
-      <p>Vulnerability is powerful. Admitting "I made a mistake — I should do Y instead of X" sounds weak but is actually the opposite. Nobody wants to work for someone who can never be wrong.</p>
-      <span class="source-tag">Session 4 · Irv on Tristan</span>
-    </div>
-
-  </div>
-</div>
-
-
-<!-- FRAMEWORKS -->
-<div class="section" id="frameworks">
-  <h2 class="section-title">Key Frameworks</h2>
-  <p class="section-desc">Mental models and decision tools taught across the course.</p>
-
-  <div class="framework-container">
-
-    <div class="framework-box card reveal" style="border-top:3px solid var(--accent2);" data-searchable="What Does Good Look Like?|Tony's master preparation question">
-      <h3 style="color:var(--accent2);">"What Does Good Look Like?"</h3>
-      <p class="fw-subtitle">Tony's master preparation question</p>
-      <ul>
-        <li><span class="fw-num" style="background:var(--accent2-soft);color:var(--accent2);">1</span> Before a conversation, envision the ideal end state</li>
-        <li><span class="fw-num" style="background:var(--accent2-soft);color:var(--accent2);">2</span> Map every question you'll ask and answers you might get</li>
-        <li><span class="fw-num" style="background:var(--accent2-soft);color:var(--accent2);">3</span> Never ask a question you don't already have a good idea of the answer to</li>
-        <li><span class="fw-num" style="background:var(--accent2-soft);color:var(--accent2);">4</span> Avoid painting yourself into a corner</li>
-      </ul>
-    </div>
-
-    <div class="framework-box card reveal" style="border-top:3px solid var(--accent3);" data-searchable="The A-B-C of Management|Irv's irreducible formula">
-      <h3 style="color:var(--accent3);">The A-B-C of Management</h3>
-      <p class="fw-subtitle">Irv's irreducible formula</p>
-      <ul>
-        <li><span class="fw-num" style="background:var(--accent3-soft);color:var(--accent3);">A</span> <strong>A-players in key seats.</strong> Scarce talent is your most important asset. Invest disproportionately in retaining them.</li>
-        <li><span class="fw-num" style="background:var(--accent3-soft);color:var(--accent3);">B</span> <strong>Care for them.</strong> Thanks and praise (specific, authentic), seek their advice, share special information, teach and coach, give regular informal feedback.</li>
-        <li><span class="fw-num" style="background:var(--accent3-soft);color:var(--accent3);">C</span> <strong>Keep the culture.</strong> Culture is how we talk to and about people. Address every culture puncture immediately.</li>
-      </ul>
-    </div>
-
-    <div class="framework-box card reveal" style="border-top:3px solid var(--accent1);" data-searchable="The Bolded Box|Media & crisis communication">
-      <h3 style="color:var(--accent1);">The Bolded Box</h3>
-      <p class="fw-subtitle">Media &amp; crisis communication</p>
-      <ul>
-        <li><span class="fw-num" style="background:var(--accent1-soft);color:var(--accent1);">▪</span> Decide exactly what you will say, and put it in a mental "bolded box"</li>
-        <li><span class="fw-num" style="background:var(--accent1-soft);color:var(--accent1);">▪</span> Never go outside the box, no matter what questions come</li>
-        <li><span class="fw-num" style="background:var(--accent1-soft);color:var(--accent1);">▪</span> Repeat your prepared statements; don't be drawn into extending</li>
-        <li><span class="fw-num" style="background:var(--accent1-soft);color:var(--accent1);">▪</span> Like Kissinger: "Do you have any questions for my answers?"</li>
-      </ul>
-    </div>
-
-    <div class="framework-box card reveal" style="border-top:3px solid var(--accent4);" data-searchable="De-escalation Playbook|When someone comes at you with fire">
-      <h3 style="color:var(--accent4);">De-escalation Playbook</h3>
-      <p class="fw-subtitle">When someone comes at you with fire</p>
-      <ul>
-        <li><span class="fw-num" style="background:var(--accent4-soft);color:var(--accent4);">1</span> Don't meet fire with fire — meet them where they are</li>
-        <li><span class="fw-num" style="background:var(--accent4-soft);color:var(--accent4);">2</span> Show genuine curiosity about their position</li>
-        <li><span class="fw-num" style="background:var(--accent4-soft);color:var(--accent4);">3</span> Acknowledge what's valid in their concern</li>
-        <li><span class="fw-num" style="background:var(--accent4-soft);color:var(--accent4);">4</span> Use silence — it shows confidence and lets them exhaust their anger</li>
-        <li><span class="fw-num" style="background:var(--accent4-soft);color:var(--accent4);">5</span> Save your best arguments for when they can rationally hear them</li>
-      </ul>
-    </div>
-
-    <div class="framework-box card reveal" style="border-top:3px solid var(--accent5);" data-searchable="Navigating Ambiguity|Peter Thorburn / Phyllis Rosier approach">
-      <h3 style="color:var(--accent5);">Navigating Ambiguity</h3>
-      <p class="fw-subtitle">Peter Thorburn / Phyllis Rosier approach</p>
-      <ul>
-        <li><span class="fw-num" style="background:var(--accent5-soft);color:var(--accent5);">▪</span> Want the asset until you don't — pursue it fully until information tells you to stop</li>
-        <li><span class="fw-num" style="background:var(--accent5-soft);color:var(--accent5);">▪</span> Ask questions that yield information without cornering yourself</li>
-        <li><span class="fw-num" style="background:var(--accent5-soft);color:var(--accent5);">▪</span> Avoid questions you know will end the deal</li>
-        <li><span class="fw-num" style="background:var(--accent5-soft);color:var(--accent5);">▪</span> Use references, factual questions, and indirect assessment</li>
-      </ul>
-    </div>
-
-    <div class="framework-box card reveal" style="border-top:3px solid var(--accent6);" data-searchable="Showing Emotions at Work|Rachel's framework from the RCAA session">
-      <h3 style="color:var(--accent6);">Showing Emotions at Work</h3>
-      <p class="fw-subtitle">Rachel's framework from the RCAA session</p>
-      <ul>
-        <li><span class="fw-num" style="background:var(--accent6-soft);color:var(--accent6);">▪</span> It's context-dependent: time, place, purpose, and audience all matter</li>
-        <li><span class="fw-num" style="background:var(--accent6-soft);color:var(--accent6);">▪</span> Appropriate with trust-based relationships; can diminish in negotiations</li>
-        <li><span class="fw-num" style="background:var(--accent6-soft);color:var(--accent6);">▪</span> Role-play the emotion out of high-stakes conversations beforehand</li>
-        <li><span class="fw-num" style="background:var(--accent6-soft);color:var(--accent6);">▪</span> It's OK to pause: "I need five minutes before I can be productive here"</li>
-      </ul>
-    </div>
-
-  </div>
-</div>
-
-
-<!-- CASES -->
-<div class="section" id="cases">
-  <h2 class="section-title">Case Studies &amp; Role Plays</h2>
-  <p class="section-desc">Tap any case to reveal the full situation, the hard conversations involved, and best practices. Every scenario you'll face as a leader is here.</p>
-
-  <div style="margin-bottom: 24px;">
-    <label style="font-size: 0.9rem; color: var(--text-muted);">
-      <input type="checkbox" id="bookmarkFilterCases" onchange="filterBookmarks('cases')">
-      Show only bookmarked items
-    </label>
-  </div>
-
-  <div class="case-grid">
-
-    <div class="card case-card reveal" onclick="this.classList.toggle('expanded')" data-searchable="Rob Cohen|Underperforming sales rep, 5% below quota after multiple conversations">
-      <button class="bookmark-btn" onclick="event.stopPropagation(); toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="case-header">
-        <div>
-          <h3>Rob Cohen</h3>
-          <div class="case-context">Underperforming sales rep, 5% below quota after multiple conversations</div>
+        <div class="stat-item">
+            <div class="stat-number">23</div>
+            <div class="stat-label">Sessions</div>
         </div>
-        <span class="case-label" style="background:var(--accent1-soft);color:var(--accent1);">Session 1</span>
-      </div>
-      <ul class="takeaways">
-        <li>Ambiguity lets the person leave without understanding the severity</li>
-        <li>Be direct about where they stand — their job may be at risk</li>
-        <li>Directness is a form of generosity, not cruelty</li>
-      </ul>
-      <div class="expand-hint"><span class="arrow">&#9654;</span> Tap for full case details</div>
-      <div class="case-detail"><div class="case-detail-inner">
-        <div class="detail-section">
-          <h4 style="color:var(--accent1);">The Situation</h4>
-          <p>Rob is a sales rep who's been at the company for several years. He's 5% below quota. You've had prior conversations with him about performance, but nothing has changed. Now you need to have the conversation that actually lands — one where Rob walks away understanding the gravity of the situation.</p>
+        <div class="stat-item">
+            <div class="stat-number">105+</div>
+            <div class="stat-label">Flashcards</div>
         </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent4);">The Hard Conversations</h4>
-          <ul class="convo-list">
-            <li>Telling Rob directly that his job is at risk if performance doesn't improve</li>
-            <li>Acknowledging your own role: "Maybe I wasn't clear enough in our previous conversations"</li>
-            <li>Setting a concrete timeline and measurable expectations</li>
-            <li>Navigating Rob's emotional response without retreating into vagueness</li>
-          </ul>
+        <div class="stat-item">
+            <div class="stat-number">52</div>
+            <div class="stat-label">Key Principles</div>
         </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent3);">Good Practices</h4>
-          <ul class="practice-list">
-            <li style="color:var(--accent3);">Be direct about where they stand. Don't let ambiguity be mistaken for compassion — it's actually unkind to let someone think things are fine when they're not.</li>
-            <li style="color:var(--accent3);">Take partial ownership: "I may not have been clear enough before, and I want to fix that now."</li>
-            <li style="color:var(--accent3);">Ask yourself: after this conversation, will Rob know exactly where he stands? If the answer is no, you haven't been direct enough.</li>
-            <li style="color:var(--accent3);">Avoid the "sandwich" of burying bad news between compliments — it dilutes the message.</li>
-            <li style="color:var(--accent3);">Tell Rob his job may be at risk. As Kira said in class: ambiguity is the antagonist of joy.</li>
-          </ul>
+    </section>
+
+    <!-- Class Modules Section -->
+    <section class="modules-section container">
+        <div class="section-header">
+            <span class="label">Curriculum</span>
+            <h2>Class Modules</h2>
         </div>
-      </div></div>
-    </div>
 
-    <div class="card case-card reveal" onclick="this.classList.toggle('expanded')" data-searchable="Steve Miller / Sally King|Delivering bad news — experienced employee passed over for promotion">
-      <button class="bookmark-btn" onclick="event.stopPropagation(); toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="case-header">
-        <div>
-          <h3>Steve Miller / Sally King</h3>
-          <div class="case-context">Delivering bad news — experienced employee passed over for promotion</div>
+        <div class="modules-grid">
+            <!-- CIM Module -->
+            <a href="CIM_Dashboard.html" class="module-card">
+                <div class="module-card-accent"></div>
+                <div class="module-card-content">
+                    <div class="module-meta">
+                        <span class="module-code">STRAMGT 510</span>
+                        <span class="module-badge">Complete</span>
+                    </div>
+                    <h3 class="module-title">Difficult Conversations in Management</h3>
+                    <div class="module-instructors">Irv Grousbeck & Tony</div>
+                    <div class="module-quarter">Spring 2025</div>
+                    <p class="module-description">Master the art of having difficult conversations. Learn frameworks for navigating conflict, giving feedback, and building trust across teams.</p>
+                    <div class="module-stats">
+                        <span class="stat-chip">12 Cases</span>
+                        <span class="stat-chip">6 Frameworks</span>
+                        <span class="stat-chip">15 Lessons</span>
+                    </div>
+                    <button class="module-button">
+                        Open Dashboard
+                        <span>→</span>
+                    </button>
+                </div>
+            </a>
+
+            <!-- Winning Writing Module -->
+            <a href="winning-writing-dashboard.html" class="module-card">
+                <div class="module-card-accent writing"></div>
+                <div class="module-card-content">
+                    <div class="module-meta">
+                        <span class="module-code writing">GSB Writing</span>
+                        <span class="module-badge">Complete</span>
+                    </div>
+                    <h3 class="module-title">Winning Writing</h3>
+                    <div class="module-instructors">Glenn Kramon</div>
+                    <div class="module-quarter">Winter 2025</div>
+                    <p class="module-description">Frameworks for powerful professional writing — from cold emails and storytelling to pitching, speeches, and media strategy. Features guest speakers from TechCrunch, NYT, and Signal Fire.</p>
+                    <div class="module-stats">
+                        <span class="stat-chip">6 Sessions</span>
+                        <span class="stat-chip">16 Life Lessons</span>
+                        <span class="stat-chip">72+ Flashcards</span>
+                    </div>
+                    <button class="module-button">
+                        Open Dashboard
+                        <span>→</span>
+                    </button>
+                </div>
+            </a>
+
+            <!-- PMF Module -->
+            <a href="pmf-dashboard.html" class="module-card">
+                <div class="module-card-accent pmf"></div>
+                <div class="module-card-content">
+                    <div class="module-meta">
+                        <span class="module-code pmf">S514</span>
+                        <span class="module-badge">Complete</span>
+                    </div>
+                    <h3 class="module-title">Product-Market Fit</h3>
+                    <div class="module-instructors">Andy Rachleff</div>
+                    <div class="module-quarter">Winter 2025</div>
+                    <p class="module-description">Andy Rachleff's definitive course on finding product-market fit. Covers the value hypothesis framework, customer development, and the 8-step validation process. Listen for "surprise" as the key signal.</p>
+                    <div class="module-stats">
+                        <span class="stat-chip">8 Classes</span>
+                        <span class="stat-chip">21 Principles</span>
+                        <span class="stat-chip">8-Step Process</span>
+                    </div>
+                    <button class="module-button">
+                        Open Dashboard
+                        <span>→</span>
+                    </button>
+                </div>
+            </a>
+
+            <!-- Coming Soon Placeholder -->
+            <div class="module-card coming-soon">
+                <div class="coming-soon-content">
+                    <div class="coming-soon-icon">+</div>
+                    <p class="coming-soon-text">Add your next class module</p>
+                </div>
+            </div>
         </div>
-        <span class="case-label" style="background:var(--accent2-soft);color:var(--accent2);">Session 1</span>
-      </div>
-      <ul class="takeaways">
-        <li>When delivering hard news, lead with the decision, then explain</li>
-        <li>Separate logic from emotion — address both</li>
-        <li>Show you value the relationship even when the answer is no</li>
-      </ul>
-      <div class="expand-hint"><span class="arrow">&#9654;</span> Tap for full case details</div>
-      <div class="case-detail"><div class="case-detail-inner">
-        <div class="detail-section">
-          <h4 style="color:var(--accent1);">The Situation</h4>
-          <p>Steve Miller (41, highly experienced, long tenure) expected a promotion. Instead, it was given to Sally King (late 20s, 16 months at the company). Jonathan, Steve's boss, must deliver this news. Steve has a prior relationship with Jonathan and is emotionally invested in the outcome. He has a family depending on the raise.</p>
+    </section>
+
+    <!-- Quick Reference Section -->
+    <section class="quick-reference">
+        <div class="container">
+            <div class="section-header">
+                <span class="label">Essential Knowledge</span>
+                <h2>Quick Reference</h2>
+            </div>
+
+            <div class="quick-reference-grid">
+                <a href="CIM_Dashboard.html#frameworks" class="concept-card">
+                    <h4 class="concept-title">What Does Good Look Like?</h4>
+                    <p class="concept-description">Tony's preparation framework for difficult conversations</p>
+                </a>
+
+                <a href="CIM_Dashboard.html#frameworks" class="concept-card">
+                    <h4 class="concept-title">A-B-C of Management</h4>
+                    <p class="concept-description">Irv's leadership formula for effective management</p>
+                </a>
+
+                <a href="CIM_Dashboard.html#frameworks" class="concept-card">
+                    <h4 class="concept-title">The Bolded Box</h4>
+                    <p class="concept-description">Crisis communication technique for clear messaging</p>
+                </a>
+
+                <a href="CIM_Dashboard.html#frameworks" class="concept-card">
+                    <h4 class="concept-title">Directness Is Respect</h4>
+                    <p class="concept-description">Clarity over ambiguity in all communications</p>
+                </a>
+
+                <a href="CIM_Dashboard.html#frameworks" class="concept-card">
+                    <h4 class="concept-title">Negotiation as a Dance</h4>
+                    <p class="concept-description">Collaborative approach, not adversarial</p>
+                </a>
+
+                <a href="CIM_Dashboard.html#frameworks" class="concept-card">
+                    <h4 class="concept-title">Silence Is Strength</h4>
+                    <p class="concept-description">De-escalation through patience and listening</p>
+                </a>
+
+                <a href="winning-writing-dashboard.html" class="concept-card">
+                    <h4 class="concept-title">Write It, Then Cut It in Half</h4>
+                    <p class="concept-description">Concise writing is powerful writing — fewer words, more impact</p>
+                </a>
+
+                <a href="winning-writing-dashboard.html" class="concept-card">
+                    <h4 class="concept-title">Cold-Call Rules</h4>
+                    <p class="concept-description">Frameworks for outreach emails that actually get responses</p>
+                </a>
+
+                <a href="winning-writing-dashboard.html" class="concept-card">
+                    <h4 class="concept-title">Cinematic Storytelling</h4>
+                    <p class="concept-description">Show, don't tell — use scenes, details, and dialogue to persuade</p>
+                </a>
+
+                <a href="pmf-dashboard.html" class="concept-card">
+                    <h4 class="concept-title">The Value Hypothesis</h4>
+                    <p class="concept-description">Rachleff's framework for discovering product-market fit</p>
+                </a>
+
+                <a href="pmf-dashboard.html" class="concept-card">
+                    <h4 class="concept-title">Listen for Surprise</h4>
+                    <p class="concept-description">The key signal that you've found something customers truly want</p>
+                </a>
+
+                <a href="pmf-dashboard.html" class="concept-card">
+                    <h4 class="concept-title">8-Step Validation Process</h4>
+                    <p class="concept-description">From source ideas through post-MVP — a systematic path to PMF</p>
+                </a>
+            </div>
         </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent4);">The Hard Conversations</h4>
-          <ul class="convo-list">
-            <li>Telling a loyal, experienced employee that a much younger, newer person got the job</li>
-            <li>Managing Steve's emotional shock, hurt, and potential accusations of unfairness</li>
-            <li>Avoiding comparisons like "be more like Sally" that feel demeaning</li>
-            <li>Addressing the question: "Is there a path for me here, and what does it look like?"</li>
-            <li>Handling allegations that the process was unfair or suspicious</li>
-          </ul>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-line">Stanford GSB · 2024-2025</div>
+            <div class="footer-built">Built with care by Doca</div>
         </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent3);">Good Practices</h4>
-          <ul class="practice-list">
-            <li style="color:var(--accent3);">Lead with the decision. Don't bury it in a preamble. State the news, then explain.</li>
-            <li style="color:var(--accent3);">Anticipate emotional response. You're delivering logic to someone feeling emotion — those don't connect. Plan for how the person will feel, not just what they need to hear.</li>
-            <li style="color:var(--accent3);">Don't read through a prepared script robotically. Be present and responsive to the emotion in the room.</li>
-            <li style="color:var(--accent3);">Avoid comparing to the chosen candidate ("be more like Sally") — it's jarring and demeaning.</li>
-            <li style="color:var(--accent3);">Have a concrete plan for their future — don't offer vague platitudes. "The one- to two-year range" with no specifics feels hollow.</li>
-            <li style="color:var(--accent3);">Show you recognize what they bring — tenure, mentorship, relationships — even as you explain the decision.</li>
-          </ul>
-        </div>
-      </div></div>
-    </div>
-
-    <div class="card case-card reveal" onclick="this.classList.toggle('expanded')" data-searchable="CEO's Problems|Young new CEO navigating authority with older, experienced team">
-      <button class="bookmark-btn" onclick="event.stopPropagation(); toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="case-header">
-        <div>
-          <h3>CEO's Problems</h3>
-          <div class="case-context">Young new CEO navigating authority with older, experienced team</div>
-        </div>
-        <span class="case-label" style="background:var(--accent3-soft);color:var(--accent3);">Session 1</span>
-      </div>
-      <ul class="takeaways">
-        <li>Imposter syndrome is common — don't let it paralyze you</li>
-        <li>Set clear boundaries early in new leadership roles</li>
-        <li>Lead through questions and collaboration, not just authority</li>
-      </ul>
-      <div class="expand-hint"><span class="arrow">&#9654;</span> Tap for full case details</div>
-      <div class="case-detail"><div class="case-detail-inner">
-        <div class="detail-section">
-          <h4 style="color:var(--accent1);">The Situation</h4>
-          <p>A young GSB graduate (based on a real person named Chase) is sent by Alpine to take over as CEO of a SaaS company in Southern California just weeks after being hired. The existing VP team is older, more experienced, and one VP immediately pushes for a raise, claims the VP of Ops is a "slacker," and questions the new CEO's authority.</p>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent4);">The Hard Conversations</h4>
-          <ul class="convo-list">
-            <li>An aggressive VP demanding a raise and pushing to test the new CEO's boundaries</li>
-            <li>Being asked to make commitments (raises, personnel judgments) before you have full information</li>
-            <li>Handling gossip and characterizations of other team members ("the VP of Ops is shady")</li>
-            <li>Establishing authority without alienating a team that was there before you</li>
-          </ul>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent3);">Good Practices</h4>
-          <ul class="practice-list">
-            <li style="color:var(--accent3);">Don't make promises you can't keep. "I don't have full details yet" is a perfectly valid answer.</li>
-            <li style="color:var(--accent3);">Don't accept characterizations of other employees at face value — as Irv noted, "if the VP of Ops came to you and said the same things about this person, you wouldn't immediately act on it."</li>
-            <li style="color:var(--accent3);">Acknowledge their contributions and concerns while maintaining your process. You need time to assess the organization on your own terms.</li>
-            <li style="color:var(--accent3);">Be who you are. Don't try to act like a seasoned veteran. The team knows you're new — authenticity builds more trust than pretending.</li>
-            <li style="color:var(--accent3);">Schedule one-on-one meetings across all business units to build your own understanding.</li>
-          </ul>
-        </div>
-      </div></div>
-    </div>
-
-
-    <div class="card case-card reveal" onclick="this.classList.toggle('expanded')" data-searchable="Lighthouse / Tristan|Star salesperson repeatedly violating gift and entertainment policies">
-      <button class="bookmark-btn" onclick="event.stopPropagation(); toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="case-header">
-        <div>
-          <h3>Lighthouse / Tristan</h3>
-          <div class="case-context">Star salesperson repeatedly violating gift and entertainment policies</div>
-        </div>
-        <span class="case-label" style="background:var(--accent4-soft);color:var(--accent4);">Session 3</span>
-      </div>
-      <ul class="takeaways">
-        <li>Frame as "how can I have both?" — ethics AND productivity</li>
-        <li>Great salespeople are scarce — invest in them, don't just dictate</li>
-        <li>It's OK to reverse a bad decision — vulnerability is strength</li>
-      </ul>
-      <div class="expand-hint"><span class="arrow">&#9654;</span> Tap for full case details</div>
-      <div class="case-detail"><div class="case-detail-inner">
-        <div class="detail-section">
-          <h4 style="color:var(--accent1);">The Situation</h4>
-          <p>Tristan is a top-performing salesperson at Lighthouse who repeatedly pushes or breaks the company's gift and entertainment policies. His supervisor Josie failed to catch it. The issue is material enough to bring to the board. The question: do you fire the star, bend the rules, or find a third path?</p>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent4);">The Hard Conversations</h4>
-          <ul class="convo-list">
-            <li>Confronting Tristan about policy violations without losing him as a top performer</li>
-            <li>Holding Josie (Tristan's supervisor) accountable — what role did she play in this?</li>
-            <li>Informing the board about a material compliance issue</li>
-            <li>Deciding whether to fire, warn, or work collaboratively with Tristan</li>
-            <li>Communicating a team member's departure to the rest of the organization</li>
-          </ul>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent3);">Good Practices</h4>
-          <ul class="practice-list">
-            <li style="color:var(--accent3);">Frame it as "the genius of AND" — how can I have both compliance and this person's productivity? Don't default to either/or.</li>
-            <li style="color:var(--accent3);">Work with the person, not against them. Sit beside them and say: "Here's the issue. Let's find a way forward together."</li>
-            <li style="color:var(--accent3);">Ask yourself: "What role did I (or the supervisor) play in this?" Before blaming Tristan, recognize the oversight.</li>
-            <li style="color:var(--accent3);">Bring problems to your board early. Don't wait until they're crises. The board should hear it from you first.</li>
-            <li style="color:var(--accent3);">If you realize you made the wrong call, reverse it. Admitting mistakes shows judgment, not weakness.</li>
-            <li style="color:var(--accent3);">Great salespeople are the scarcest resource. Invest disproportionately in retaining them (but not at the cost of values).</li>
-          </ul>
-        </div>
-      </div></div>
-    </div>
-
-    <div class="card case-card reveal" onclick="this.classList.toggle('expanded')" data-searchable="Lisa Yao / Matt Larkin|Investor discovers entrepreneur falsified parts of their resume">
-      <button class="bookmark-btn" onclick="event.stopPropagation(); toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="case-header">
-        <div>
-          <h3>Lisa Yao / Matt Larkin</h3>
-          <div class="case-context">Investor discovers entrepreneur falsified parts of their resume</div>
-        </div>
-        <span class="case-label" style="background:var(--accent5-soft);color:var(--accent5);">Session 4</span>
-      </div>
-      <ul class="takeaways">
-        <li>Stick with facts, not judgments, when communicating</li>
-        <li>The "overhearing test" — would you be OK if they heard what you said?</li>
-        <li>Balance transparency to co-investors with protecting the person</li>
-      </ul>
-      <div class="expand-hint"><span class="arrow">&#9654;</span> Tap for full case details</div>
-      <div class="case-detail"><div class="case-detail-inner">
-        <div class="detail-section">
-          <h4 style="color:var(--accent1);">The Situation</h4>
-          <p>Lisa Yao is an investor who discovers that Matt Larkin, the entrepreneur she backed, falsified parts of his resume. She now must decide what to do: confront Matt, inform her co-investors, and navigate the tension between transparency and protecting an individual. Trust has been broken at a foundational level.</p>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent4);">The Hard Conversations</h4>
-          <ul class="convo-list">
-            <li>Confronting Matt directly about the falsification — without destroying him as a person</li>
-            <li>Communicating to co-investors what happened, while being fair to Matt</li>
-            <li>Deciding whether to remove Matt or give him a chance to explain</li>
-            <li>Managing your own emotional response (betrayal, anger) to stay factual</li>
-          </ul>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent3);">Good Practices</h4>
-          <ul class="practice-list">
-            <li style="color:var(--accent3);">Share facts, not judgments. Say "we discovered discrepancies in his resume" not "he's a liar."</li>
-            <li style="color:var(--accent3);">Apply the "overhearing test": if Matt were sitting in the room listening to what you tell co-investors, would you be comfortable with your words?</li>
-            <li style="color:var(--accent3);">Don't throw people under the bus. There's no need to trash someone to communicate a problem.</li>
-            <li style="color:var(--accent3);">Be transparent with co-investors — they need to know — but be proportional and factual in how you share it.</li>
-            <li style="color:var(--accent3);">Trust, once broken by falsification, is extremely hard to rebuild. Acknowledge this reality rather than glossing over it.</li>
-          </ul>
-        </div>
-      </div></div>
-    </div>
-
-    <div class="card case-card reveal" onclick="this.classList.toggle('expanded')" data-searchable="Seth Hedgefield / Darren Lowe|CEO with misconduct allegations, co-director with asymmetric information">
-      <button class="bookmark-btn" onclick="event.stopPropagation(); toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="case-header">
-        <div>
-          <h3>Seth Hedgefield / Darren Lowe</h3>
-          <div class="case-context">CEO with misconduct allegations, co-director with asymmetric information</div>
-        </div>
-        <span class="case-label" style="background:var(--accent6-soft);color:var(--accent6);">Session 4</span>
-      </div>
-      <ul class="takeaways">
-        <li>Share what you know first to invite reciprocity</li>
-        <li>Prioritize the most acute crisis first</li>
-        <li>Always run a proper hiring process — no shortcuts</li>
-      </ul>
-      <div class="expand-hint"><span class="arrow">&#9654;</span> Tap for full case details</div>
-      <div class="case-detail"><div class="case-detail-inner">
-        <div class="detail-section">
-          <h4 style="color:var(--accent1);">The Situation</h4>
-          <p>Seth Hedgefield is a CEO with misconduct allegations. Darren Lowe, a co-director, has some information but not the full picture. There's asymmetric information between board members. The root cause traces back to a hiring process that skipped best practices — no proper reference checks, no structured process.</p>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent4);">The Hard Conversations</h4>
-          <ul class="convo-list">
-            <li>Approaching a co-director when you each hold different pieces of the puzzle</li>
-            <li>Deciding whether to confront the CEO or build alignment with the board first</li>
-            <li>Communicating misconduct allegations with care and precision</li>
-            <li>Addressing the systemic failure — the hiring process was broken</li>
-          </ul>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent3);">Good Practices</h4>
-          <ul class="practice-list">
-            <li style="color:var(--accent3);">Share what you know first. Leading with openness invites reciprocity. If you come in like a detective, they'll clam up.</li>
-            <li style="color:var(--accent3);">Don't try to catch people in lies — that's adversarial, and it won't serve the outcome you need.</li>
-            <li style="color:var(--accent3);">Prioritize the most acute crisis. Multiple problems may exist; deal with the fire first.</li>
-            <li style="color:var(--accent3);">Always run a proper hiring process. Reference checks, structured interviews, background verification. Skipping them creates downstream disasters that are 10x harder to fix.</li>
-          </ul>
-        </div>
-      </div></div>
-    </div>
-
-    <div class="card case-card reveal" onclick="this.classList.toggle('expanded')" data-searchable="Sarah Cohen|Firing a well-liked coach who may have actually fixed the issue">
-      <button class="bookmark-btn" onclick="event.stopPropagation(); toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="case-header">
-        <div>
-          <h3>Sarah Cohen (Bernard Wisley)</h3>
-          <div class="case-context">Firing a well-liked coach who may have actually fixed the issue</div>
-        </div>
-        <span class="case-label" style="background:var(--accent1-soft);color:var(--accent1);">Session 6</span>
-      </div>
-      <ul class="takeaways">
-        <li>Never make personnel decisions with incomplete information</li>
-        <li>Once you say "you're fired," walking it back is very hard</li>
-        <li>Best decision > preserving your appearance of decisiveness</li>
-      </ul>
-      <div class="expand-hint"><span class="arrow">&#9654;</span> Tap for full case details</div>
-      <div class="case-detail"><div class="case-detail-inner">
-        <div class="detail-section">
-          <h4 style="color:var(--accent1);">The Situation</h4>
-          <p>Bernard Wisley (athletic director) is considering firing Sarah Cohen, a well-liked coach. The information he has suggests she's underperforming, but he hasn't verified through all channels. During the conversation, new information emerges that Sarah may have actually addressed the problem. Now Bernard faces the dilemma: fire her as planned, or absorb the new information mid-conversation?</p>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent4);">The Hard Conversations</h4>
-          <ul class="convo-list">
-            <li>Walking into a firing conversation that may be premature</li>
-            <li>Deciding in real-time whether to proceed or pause when new facts emerge</li>
-            <li>Balancing the desire to look decisive with the need to make the right call</li>
-            <li>Potentially reversing course mid-conversation without losing credibility</li>
-          </ul>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent3);">Good Practices</h4>
-          <ul class="practice-list">
-            <li style="color:var(--accent3);">Never make personnel decisions with incomplete information. Verify through all channels before you walk into that room.</li>
-            <li style="color:var(--accent3);">Preparation means checking every angle — not just the ones that confirm your initial hypothesis. Watch for confirmation bias.</li>
-            <li style="color:var(--accent3);">Stay open to new information, even mid-conversation. The best decision is always more important than looking decisive.</li>
-            <li style="color:var(--accent3);">Once you say "you're fired," walking it back is nearly impossible. Don't say it until you're certain.</li>
-            <li style="color:var(--accent3);">If you realize mid-conversation that you're wrong, pause: "I'm learning some things here that I want to think about. Can we continue this tomorrow?"</li>
-          </ul>
-        </div>
-      </div></div>
-    </div>
-
-
-    <div class="card case-card reveal" onclick="this.classList.toggle('expanded')" data-searchable="Tom Steele|Senior leader bad-mouthing the athletic director behind their back">
-      <button class="bookmark-btn" onclick="event.stopPropagation(); toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="case-header">
-        <div>
-          <h3>Tom Steele (Bernard Wisley)</h3>
-          <div class="case-context">Senior leader bad-mouthing the athletic director behind their back</div>
-        </div>
-        <span class="case-label" style="background:var(--accent2-soft);color:var(--accent2);">Session 6</span>
-      </div>
-      <ul class="takeaways">
-        <li>Address culture punctures immediately — no sweeping under the rug</li>
-        <li>Remove impunity: if tolerated, it spreads</li>
-        <li>Focus on behavior, not intent — you can only see behavior</li>
-      </ul>
-      <div class="expand-hint"><span class="arrow">&#9654;</span> Tap for full case details</div>
-      <div class="case-detail"><div class="case-detail-inner">
-        <div class="detail-section">
-          <h4 style="color:var(--accent1);">The Situation</h4>
-          <p>Tom Steele is a senior leader within the athletic department who has been bad-mouthing Bernard Wisley (the athletic director) behind his back. Tom was a losing candidate for Bernard's job, so it's tempting to assume the motivation — but as Irv teaches, we cannot see intent, only behavior. The behavior is undermining the organization's culture and must be addressed.</p>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent4);">The Hard Conversations</h4>
-          <ul class="convo-list">
-            <li>Confronting someone about gossip and back-channel negativity</li>
-            <li>Addressing behavior without assuming motivation ("you're bitter you didn't get the job")</li>
-            <li>Making it clear this behavior won't be tolerated while preserving the working relationship</li>
-          </ul>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent3);">Good Practices</h4>
-          <ul class="practice-list">
-            <li style="color:var(--accent3);">Address culture punctures immediately. The moment you tolerate bad behavior, you've set a new standard for the entire organization.</li>
-            <li style="color:var(--accent3);">Focus on behavior, not assumed intent. Don't say "I know you're upset because you didn't get the job." Say: "I've heard that you've been saying X about me. That behavior is standing in the way of where you want to go."</li>
-            <li style="color:var(--accent3);">Remove impunity. If talking badly about leadership is tolerated, it metastasizes.</li>
-            <li style="color:var(--accent3);">Use Irv's phrase: "Your behavior is standing in the way of getting where you want to go." It puts responsibility where it belongs without being judgmental.</li>
-          </ul>
-        </div>
-      </div></div>
-    </div>
-
-    <div class="card case-card reveal" onclick="this.classList.toggle('expanded')" data-searchable="George Vincent|Angry hospital administrator confronting a competing urgent care startup">
-      <button class="bookmark-btn" onclick="event.stopPropagation(); toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="case-header">
-        <div>
-          <h3>George Vincent — Convenient MD</h3>
-          <div class="case-context">Angry hospital administrator confronting a competing urgent care startup</div>
-        </div>
-        <span class="case-label" style="background:var(--accent3-soft);color:var(--accent3);">Session 7</span>
-      </div>
-      <ul class="takeaways">
-        <li>Don't meet fire with fire — be curious about their anger</li>
-        <li>Silence is confidence — let the angry person tire themselves out</li>
-        <li>When selling, you're better off listening than talking</li>
-      </ul>
-      <div class="expand-hint"><span class="arrow">&#9654;</span> Tap for full case details</div>
-      <div class="case-detail"><div class="case-detail-inner">
-        <div class="detail-section">
-          <h4 style="color:var(--accent1);">The Situation</h4>
-          <p>George Vincent is a hospital administrator who is furious about Convenient MD, an urgent care startup, opening locations near his hospital. He comes into the meeting hot — aggressive, accusatory, and adversarial. The Convenient MD team needs to de-escalate, find common ground, and potentially turn an adversary into a partner.</p>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent4);">The Hard Conversations</h4>
-          <ul class="convo-list">
-            <li>Sitting across from someone who is visibly angry and potentially threatening</li>
-            <li>Resisting the urge to defend yourself or match their energy</li>
-            <li>Finding a way to redirect the conversation from adversarial to collaborative</li>
-            <li>Knowing when to speak and when to stay silent</li>
-          </ul>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent3);">Good Practices</h4>
-          <ul class="practice-list">
-            <li style="color:var(--accent3);">Don't meet fire with fire. Meet them where they are with genuine curiosity: "I can see this is really frustrating. Help me understand your concerns."</li>
-            <li style="color:var(--accent3);">Silence conveys confidence. You don't have to fill every pause. Let the angry person exhaust their energy.</li>
-            <li style="color:var(--accent3);">Acknowledge what's valid. There's almost always something legitimate in their concern — find it and name it.</li>
-            <li style="color:var(--accent3);">Save your best arguments for when they can rationally hear them. Talking logic to pure emotion is useless.</li>
-            <li style="color:var(--accent3);">Think of negotiations as a dance, not a tug of war. Get on the same side of the table — literally or figuratively.</li>
-            <li style="color:var(--accent3);">Tony's mantra: "I can be as curious as you are angry — until you come down."</li>
-          </ul>
-        </div>
-      </div></div>
-    </div>
-
-    <div class="card case-card reveal" onclick="this.classList.toggle('expanded')" data-searchable="Peter Thorburn / Phyllis Rosier|Navigating ambiguous ethics in a real estate deal with possible kickbacks">
-      <button class="bookmark-btn" onclick="event.stopPropagation(); toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="case-header">
-        <div>
-          <h3>Peter Thorburn / Phyllis Rosier</h3>
-          <div class="case-context">Navigating ambiguous ethics in a real estate deal with possible kickbacks</div>
-        </div>
-        <span class="case-label" style="background:var(--accent4-soft);color:var(--accent4);">Session 7</span>
-      </div>
-      <ul class="takeaways">
-        <li>Want the asset until you don't — pursue fully until facts tell you to stop</li>
-        <li>Ask questions that yield information without cornering yourself</li>
-        <li>Never ask a question you don't already know the likely answer to</li>
-      </ul>
-      <div class="expand-hint"><span class="arrow">&#9654;</span> Tap for full case details</div>
-      <div class="case-detail"><div class="case-detail-inner">
-        <div class="detail-section">
-          <h4 style="color:var(--accent1);">The Situation</h4>
-          <p>Peter Thorburn is evaluating a real estate deal involving Phyllis Rosier. There are indications of possible kickbacks or unethical practices, but nothing is confirmed. The deal itself is attractive. Peter must navigate the ambiguity: pursue the deal aggressively while gathering information, without asking the one question that kills the deal prematurely.</p>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent4);">The Hard Conversations</h4>
-          <ul class="convo-list">
-            <li>Exploring potential ethical issues without making accusations</li>
-            <li>Gathering information through indirect questions and references</li>
-            <li>Deciding at what point the ethical risk outweighs the business opportunity</li>
-            <li>Walking away from a good deal because the ethics don't check out</li>
-          </ul>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent3);">Good Practices</h4>
-          <ul class="practice-list">
-            <li style="color:var(--accent3);">Want the asset until you don't. Pursue it fully — don't talk yourself out of it prematurely. Let facts, not assumptions, guide your decision.</li>
-            <li style="color:var(--accent3);">Ask questions that yield information without painting yourself into a corner. If you ask "are there kickbacks?" the deal dies whether or not there are any.</li>
-            <li style="color:var(--accent3);">Never ask a question you don't already have a good sense of the answer to. Use references, factual questions, and indirect assessment first.</li>
-            <li style="color:var(--accent3);">Know your ethical lines. Ambiguity + poor ethics = a marsh you don't want to walk in. When the information tells you to stop, stop.</li>
-          </ul>
-        </div>
-      </div></div>
-    </div>
-
-    <div class="card case-card reveal" onclick="this.classList.toggle('expanded')" data-searchable="RCAA / David Jacobs|Overly enthusiastic board chair overstepping into operations">
-      <button class="bookmark-btn" onclick="event.stopPropagation(); toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="case-header">
-        <div>
-          <h3>RCAA / David Jacobs</h3>
-          <div class="case-context">Overly enthusiastic board chair overstepping into operations</div>
-        </div>
-        <span class="case-label" style="background:var(--accent5-soft);color:var(--accent5);">RCAA Session</span>
-      </div>
-      <ul class="takeaways">
-        <li>Keep the conversation proportional — don't over-escalate</li>
-        <li>Seek to understand their energy before redirecting it</li>
-        <li>Set boundaries while honoring the relationship</li>
-      </ul>
-      <div class="expand-hint"><span class="arrow">&#9654;</span> Tap for full case details</div>
-      <div class="case-detail"><div class="case-detail-inner">
-        <div class="detail-section">
-          <h4 style="color:var(--accent1);">The Situation</h4>
-          <p>David Jacobs is the board chair of RCAA who is deeply engaged and enthusiastic — too enthusiastic. He shows up, gives assignments directly to staff (who treat them as top priority since he's the chairman), and walks into the CEO's office unannounced. His heart is in the right place, but his behavior is disrupting operations. The issues aren't catastrophic, but they need to be addressed.</p>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent4);">The Hard Conversations</h4>
-          <ul class="convo-list">
-            <li>Telling a well-meaning, powerful person that they're overstepping</li>
-            <li>Redirecting energy without killing engagement</li>
-            <li>Establishing an open-door policy that still has boundaries</li>
-            <li>Doing all of this without creating a turf war</li>
-          </ul>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent3);">Good Practices</h4>
-          <ul class="practice-list">
-            <li style="color:var(--accent3);">Start with "what does good look like?" — David walks away feeling valued and engaged, AND you have better coordination. Both things.</li>
-            <li style="color:var(--accent3);">Keep the conversation proportional. The issues are important but not catastrophic. Don't set up a formal meeting that raises the stakes.</li>
-            <li style="color:var(--accent3);">Tony's suggested approach: "David, I love how engaged you are. But when you give assignments directly to the team, they drop everything because you're the chairman. How about we coordinate so nothing falls through the cracks?"</li>
-            <li style="color:var(--accent3);">On the open-door policy: "My door is always open. When it's closed, it means I'm dealing with something private — check with my assistant."</li>
-            <li style="color:var(--accent3);">An alternative approach: don't talk to David at all. Just tell your team: "If David gives you an assignment, accept it, then come tell me, and we'll prioritize together."</li>
-            <li style="color:var(--accent3);">Preserving the relationship matters more than changing the behavior. He's clearly very valuable.</li>
-          </ul>
-        </div>
-      </div></div>
-    </div>
-
-    <div class="card case-card reveal" onclick="this.classList.toggle('expanded')" data-searchable="Jack Swain / Felisha / Judith|Crisis — top revenue producer about to quit, manager not acting">
-      <button class="bookmark-btn" onclick="event.stopPropagation(); toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="case-header">
-        <div>
-          <h3>Jack Swain / Felisha / Judith Fenton</h3>
-          <div class="case-context">Crisis — top revenue producer about to quit, manager not acting</div>
-        </div>
-        <span class="case-label" style="background:var(--accent6-soft);color:var(--accent6);">Final Class</span>
-      </div>
-      <ul class="takeaways">
-        <li>In crisis, act immediately — don't delegate and wait</li>
-        <li>Empowerment without accountability is useless</li>
-        <li>Be a coach and teacher, not just a boss on an org chart</li>
-      </ul>
-      <div class="expand-hint"><span class="arrow">&#9654;</span> Tap for full case details</div>
-      <div class="case-detail"><div class="case-detail-inner">
-        <div class="detail-section">
-          <h4 style="color:var(--accent1);">The Situation</h4>
-          <p>Judith Fenton is a top customer service producer whose sales have dropped dramatically. Jack Swain (CEO) discovers she's about to quit — she's polishing her resume and heading for the door. Her team of five (worth ~$15M in revenue, potentially $200M in enterprise value) will likely follow her. Felisha, her manager, hasn't noticed or acted. The video role play shows Felisha and Jack having a pleasant, deferential conversation that does nothing — it's a trap. This is a crisis that requires immediate, decisive leadership.</p>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent4);">The Hard Conversations</h4>
-          <ul class="convo-list">
-            <li>Telling Felisha directly: "We have a crisis. Judith is about to leave. We need to act today."</li>
-            <li>Working with Felisha on a specific plan for what to say to Judith, then following up</li>
-            <li>Speaking with Judith yourself — as CEO, because the stakes warrant it</li>
-            <li>Coaching Felisha on what she didn't see, without destroying her confidence</li>
-            <li>Contacting departed employees — they may return once the problem is addressed</li>
-          </ul>
-        </div>
-        <div class="detail-section">
-          <h4 style="color:var(--accent3);">Good Practices</h4>
-          <ul class="practice-list">
-            <li style="color:var(--accent3);">In crisis, ACT. This is the warehouse-on-fire analogy: you don't check the org chart. You grab a hose.</li>
-            <li style="color:var(--accent3);">Empowerment without accountability is useless. "I trust you to handle it" is not leadership when the building is burning. Set expectations AND inspect that they're being met.</li>
-            <li style="color:var(--accent3);">Be a coach and teacher, not just a delegator. Help Felisha figure out what to say. Work alongside her.</li>
-            <li style="color:var(--accent3);">Strive for full potential — the genius of AND. You want cost-cutting from Felisha AND the revenue Judith brings. Don't choose 80% of one and 30% of the other.</li>
-            <li style="color:var(--accent3);">Make smart exceptions for A-players. Giving Judith an assistant isn't favoritism — it's recognizing that different producers need different support.</li>
-            <li style="color:var(--accent3);">Your reaction in crisis defines who you are as a leader. People will take notice — and want to work for someone who acts.</li>
-          </ul>
-        </div>
-      </div></div>
-    </div>
-
-  </div>
-</div>
-
-
-<!-- SESSIONS -->
-<div class="section" id="sessions">
-  <h2 class="section-title">Session Timeline</h2>
-  <p class="section-desc">A chronological walkthrough of every class and what was covered.</p>
-
-  <div class="timeline">
-
-    <div class="timeline-item reveal">
-      <div class="session-num">Session 1</div>
-      <h3>Welcome &amp; First Role Plays</h3>
-      <p>Irv opens with Marianne Williamson's quote on fear. Tony introduces trust-based relationships as the foundation of leadership. First role plays: Rob Cohen (underperforming sales rep) and Steve Miller/Sally King (delivering bad news about a promotion).</p>
-      <div class="topics">
-        <span class="topic-chip">Ambiguity vs. Directness</span>
-        <span class="topic-chip">Asking vs. Telling</span>
-        <span class="topic-chip">Role of Listening</span>
-        <span class="topic-chip">The River Runs Through It Analogy</span>
-      </div>
-    </div>
-
-    <div class="timeline-item reveal">
-      <div class="session-num">Session 3</div>
-      <h3>Lighthouse &amp; Managing Star Performers</h3>
-      <p>The Tristan case: a brilliant salesperson who keeps pushing ethical boundaries. Irv shares the Bill Clancy story from his own career. Discussion of board communication, materiality, and media management ("the bolded box").</p>
-      <div class="topics">
-        <span class="topic-chip">Managing Top Talent</span>
-        <span class="topic-chip">Board Communication</span>
-        <span class="topic-chip">Reversing Decisions</span>
-        <span class="topic-chip">Kissinger's Press Conference</span>
-      </div>
-    </div>
-
-    <div class="timeline-item reveal">
-      <div class="session-num">Session 4</div>
-      <h3>Lisa Yao, Investor Trust &amp; Hiring Failures</h3>
-      <p>Guest speaker Sarah discusses Lisa Yao (falsified resume) and Seth Hedgefield (failed CEO hire). Career planning: envision your dream position 10 years out and plan the path. The root of "prestige" is "illusion."</p>
-      <div class="topics">
-        <span class="topic-chip">Facts vs. Judgments</span>
-        <span class="topic-chip">Co-Investor Communication</span>
-        <span class="topic-chip">Best Practices in Hiring</span>
-        <span class="topic-chip">Career Planning</span>
-      </div>
-    </div>
-
-    <div class="timeline-item reveal">
-      <div class="session-num">Session 6</div>
-      <h3>Bernard Wisley — Firing with Incomplete Information</h3>
-      <p>Bernard Wisley case: Sarah Cohen (firing decision gone wrong), Tom Steele (bad-mouthing). Irv shares the A-B-C of Management. Discussion of the power of thanks and praise, keeping culture, and selling through listening.</p>
-      <div class="topics">
-        <span class="topic-chip">Personnel Decisions</span>
-        <span class="topic-chip">Preparation Before Firing</span>
-        <span class="topic-chip">Culture Punctures</span>
-        <span class="topic-chip">A-B-C of Management</span>
-      </div>
-    </div>
-
-    <div class="timeline-item reveal">
-      <div class="session-num">Session 7</div>
-      <h3>Convenient MD — Anger, Ambiguity &amp; Selling</h3>
-      <p>Guest speaker Gareth from Convenient MD. George Vincent role play (angry hospital admin). Peter Thorburn/Phyllis Rosier (ambiguous ethics in real estate). Tony introduces de-escalation playbook and negotiation-as-dance metaphor.</p>
-      <div class="topics">
-        <span class="topic-chip">De-escalation</span>
-        <span class="topic-chip">Silence as Strength</span>
-        <span class="topic-chip">Navigating Ambiguity</span>
-        <span class="topic-chip">Keiretsu Networks</span>
-      </div>
-    </div>
-
-    <div class="timeline-item reveal">
-      <div class="session-num">RCAA Session</div>
-      <h3>Board Dynamics &amp; Showing Emotion</h3>
-      <p>Guest speaker Rachel (CEO, Teen Services Group). RCAA case: David Jacobs (overstepping board chair), Leo Farnin (stock donation). Discussion of showing emotions at work and managing board-CEO boundaries.</p>
-      <div class="topics">
-        <span class="topic-chip">Emotions at Work</span>
-        <span class="topic-chip">Board-CEO Relationship</span>
-        <span class="topic-chip">Keeping Conversations Proportional</span>
-        <span class="topic-chip">Role-Playing Emotion Out</span>
-      </div>
-    </div>
-
-    <div class="timeline-item reveal">
-      <div class="session-num">Final Session</div>
-      <h3>Crisis Leadership &amp; Closing Wisdom</h3>
-      <p>Jack Swain/Felisha/Judith crisis case. Tony delivers his "recipe" with 15 final lessons. Irv shares closing idle thoughts. The pizza-making analogy: you can learn ingredients, but you have to make the pizza yourself.</p>
-      <div class="topics">
-        <span class="topic-chip">Crisis Action Plan</span>
-        <span class="topic-chip">15 Final Lessons</span>
-        <span class="topic-chip">Pizza-Making Analogy</span>
-        <span class="topic-chip">Kindness &amp; Character</span>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- FINAL LESSONS -->
-<div class="section" id="final">
-  <h2 class="section-title">15 Final Lessons</h2>
-  <p class="section-desc">The "recipe" from the final class — the distilled wisdom of the entire course, delivered as closing guidance.</p>
-
-  <div style="margin-bottom: 24px;">
-    <label style="font-size: 0.9rem; color: var(--text-muted);">
-      <input type="checkbox" id="bookmarkFilterFinal" onchange="filterBookmarks('final')">
-      Show only bookmarked items
-    </label>
-  </div>
-
-  <div class="final-lessons" id="lessonsGrid">
-
-    <div class="card final-lesson reveal" data-searchable="Listen More Than You Talk|Your outward voice is the least important part of your leadership voice. Listening and preparation come first.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="lesson-num">1</div>
-      <div class="lesson-text"><strong>Listen More Than You Talk</strong>Your outward voice is the least important part of your leadership voice. Listening and preparation come first.</div>
-    </div>
-
-    <div class="card final-lesson reveal" data-searchable="Prepare Relentlessly|What does good look like? Role play it. Think through every question and answer. You can never be too prepared.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="lesson-num">2</div>
-      <div class="lesson-text"><strong>Prepare Relentlessly</strong>"What does good look like?" Role play it. Think through every question and answer. You can never be too prepared.</div>
-    </div>
-
-    <div class="card final-lesson reveal" data-searchable="Be Direct and Clear|Fewer words, more power. Half as many words, then half again. Ambiguity is not kindness — it's cruelty in disguise.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="lesson-num">3</div>
-      <div class="lesson-text"><strong>Be Direct and Clear</strong>Fewer words, more power. Half as many words, then half again. Ambiguity is not kindness — it's cruelty in disguise.</div>
-    </div>
-
-    <div class="card final-lesson reveal" data-searchable="Build Trust-Based Relationships|You can't fake care. Trust is built slowly and broken instantly. If people feel you truly care, they'll follow you.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="lesson-num">4</div>
-      <div class="lesson-text"><strong>Build Trust-Based Relationships</strong>You can't fake care. Trust is built slowly and broken instantly. If people feel you truly care, they'll follow you.</div>
-    </div>
-
-    <div class="card final-lesson reveal" data-searchable="Share Facts, Not Judgments|In sensitive situations, separate what you know from what you conclude. Stick to the facts.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="lesson-num">5</div>
-      <div class="lesson-text"><strong>Share Facts, Not Judgments</strong>In sensitive situations, separate what you know from what you conclude. Stick to the facts.</div>
-    </div>
-
-    <div class="card final-lesson reveal" data-searchable="Own Your Part|Before pointing at others, ask: what role did I play in this outcome? Great leaders reflect before they blame.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="lesson-num">6</div>
-      <div class="lesson-text"><strong>Own Your Part</strong>Before pointing at others, ask: what role did I play in this outcome? Great leaders reflect before they blame.</div>
-    </div>
-
-    <div class="card final-lesson reveal" data-searchable="Negotiate as a Dance|Get on the same side of the table. Lead people where you want them to go rather than fighting across a rope.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="lesson-num">7</div>
-      <div class="lesson-text"><strong>Negotiate as a Dance</strong>Get on the same side of the table. Lead people where you want them to go rather than fighting across a rope.</div>
-    </div>
-
-    <div class="card final-lesson reveal" data-searchable="Use Silence as Strength|You don't have to fill every pause. Silence conveys confidence and lets the other person process.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="lesson-num">8</div>
-      <div class="lesson-text"><strong>Use Silence as Strength</strong>You don't have to fill every pause. Silence conveys confidence and lets the other person process.</div>
-    </div>
-
-    <div class="card final-lesson reveal" data-searchable="Address Culture Punctures Immediately|Don't sweep things under the rug. The moment you tolerate bad behavior, you've set a new standard.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="lesson-num">9</div>
-      <div class="lesson-text"><strong>Address Culture Punctures Immediately</strong>Don't sweep things under the rug. The moment you tolerate bad behavior, you've set a new standard.</div>
-    </div>
-
-    <div class="card final-lesson reveal" data-searchable="Act Decisively in Crisis|When the building is on fire, act. Suspend, communicate, bring in experts. Empowerment without accountability is useless.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="lesson-num">10</div>
-      <div class="lesson-text"><strong>Act Decisively in Crisis</strong>When the building is on fire, act. Suspend, communicate, bring in experts. Empowerment without accountability is useless.</div>
-    </div>
-
-    <div class="card final-lesson reveal" data-searchable="Invest in A-Players|Great salespeople, great engineers, great leaders — they're scarce. Invest disproportionately in keeping them.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="lesson-num">11</div>
-      <div class="lesson-text"><strong>Invest in A-Players</strong>Great salespeople, great engineers, great leaders — they're scarce. Invest disproportionately in keeping them.</div>
-    </div>
-
-    <div class="card final-lesson reveal" data-searchable="Thanks and Praise Are Free|Specific, authentic recognition is the most powerful and underused leadership tool. Knock on their door and tell them.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="lesson-num">12</div>
-      <div class="lesson-text"><strong>Thanks and Praise Are Free</strong>Specific, authentic recognition is the most powerful and underused leadership tool. Knock on their door and tell them.</div>
-    </div>
-
-    <div class="card final-lesson reveal" data-searchable="It's OK to Be Wrong|Walking back a bad decision shows humility and good judgment, not weakness. The best decision wins, not your ego.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="lesson-num">13</div>
-      <div class="lesson-text"><strong>It's OK to Be Wrong</strong>Walking back a bad decision shows humility and good judgment, not weakness. The best decision wins, not your ego.</div>
-    </div>
-
-    <div class="card final-lesson reveal" data-searchable="Plan Your Career with Bifocal Focus|Stay focused on today's work AND your 10-year destination. Avoid shiny object planning. The root of prestige is illusion.">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="lesson-num">14</div>
-      <div class="lesson-text"><strong>Plan Your Career with Bifocal Focus</strong>Stay focused on today's work AND your 10-year destination. Avoid "shiny object" planning. The root of "prestige" is "illusion."</div>
-    </div>
-
-    <div class="card final-lesson reveal" data-searchable="Be Kind|At the end of the day, the only question that matters: what values did I stand for? Was I kind? Did I listen? Did I invest in people?">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="lesson-num">15</div>
-      <div class="lesson-text"><strong>Be Kind</strong>At the end of the day, the only question that matters: what values did I stand for? Was I kind? Did I listen? Did I invest in people?</div>
-    </div>
-
-  </div>
-
-  <div style="margin-top:40px;padding:28px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);border-left:4px solid var(--accent2);box-shadow:var(--shadow-sm);">
-    <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:12px;color:var(--accent2);">The Pizza-Making Analogy</h3>
-    <p style="font-size:0.92rem;color:var(--text-muted);line-height:1.7;">Tony's closing metaphor: We've given you the ingredients and the recipe. But you still have to make the pizza yourself. You learn by doing — by standing in the shoes of the characters, by practicing these conversations with a study partner, by taking eight swings instead of listening to one hour of instruction. That's the whole point of role playing. You don't learn to hammer by being told how — you learn by picking one up.</p>
-  </div>
-</div>
-
-<!-- QUOTES -->
-<div class="section" id="quotes">
-  <h2 class="section-title">Memorable Moments</h2>
-  <p class="section-desc">Words that stuck — from Irv, Tony, guests, and the class itself.</p>
-
-  <div class="quote-grid">
-
-    <div class="card quote-card reveal" style="border-left-color:var(--accent1);" data-searchable="Ambiguity is the antagonist of joy|Student (Kira), Session 1 discussion">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="quote-text">"Ambiguity is the antagonist of joy."</div>
-      <div class="quote-attr">— Student (Kira), Session 1 discussion</div>
-    </div>
-
-    <div class="card quote-card reveal" style="border-left-color:var(--accent2);" data-searchable="Our deepest fear is not that we are inadequate|Marianne Williamson, quoted by Irv in opening">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="quote-text">"Our deepest fear is not that we are inadequate. Our deepest fear is that we are powerful beyond measure."</div>
-      <div class="quote-attr">— Marianne Williamson, quoted by Irv in opening</div>
-    </div>
-
-    <div class="card quote-card reveal" style="border-left-color:var(--accent3);" data-searchable="People don't leave companies|Irv, on the power of caring for your people">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="quote-text">"People don't leave companies. They leave bosses."</div>
-      <div class="quote-attr">— Irv, on the power of caring for your people</div>
-    </div>
-
-    <div class="card quote-card reveal" style="border-left-color:var(--accent4);" data-searchable="Write it in half as many words|A River Runs Through It, Tony's analogy for clarity">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="quote-text">"Write it in half as many words. It's even better. Now half again."</div>
-      <div class="quote-attr">— A River Runs Through It, Tony's analogy for clarity</div>
-    </div>
-
-    <div class="card quote-card reveal" style="border-left-color:var(--accent5);" data-searchable="The root of the word prestige|Irv, on career planning and avoiding shiny objects">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="quote-text">"The root of the word 'prestige' in both French and Latin is 'illusion.'"</div>
-      <div class="quote-attr">— Irv, on career planning and avoiding shiny objects</div>
-    </div>
-
-    <div class="card quote-card reveal" style="border-left-color:var(--accent6);" data-searchable="Do you have any questions for my answers|Henry Kissinger, as told by Irv on media management">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="quote-text">"Good morning, ladies and gentlemen. Do you have any questions for my answers?"</div>
-      <div class="quote-attr">— Henry Kissinger, as told by Irv on media management</div>
-    </div>
-
-    <div class="card quote-card reveal" style="border-left-color:var(--accent1);" data-searchable="I can be as curious as you are angry|Tony, on the de-escalation approach">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="quote-text">"I can be as curious as you are angry — until you come down."</div>
-      <div class="quote-attr">— Tony, on the de-escalation approach</div>
-    </div>
-
-    <div class="card quote-card reveal" style="border-left-color:var(--accent2);" data-searchable="I work for my best salespeople|View from the Top speaker, quoted by Irv">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="quote-text">"I work for my best salespeople."</div>
-      <div class="quote-attr">— View from the Top speaker, quoted by Irv</div>
-    </div>
-
-    <div class="card quote-card reveal" style="border-left-color:var(--accent3);" data-searchable="What do you plan to do with your one wild and precious life|Mary Oliver, quoted by Irv in the opening">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="quote-text">"What do you plan to do with your one wild and precious life?"</div>
-      <div class="quote-attr">— Mary Oliver, quoted by Irv in the opening</div>
-    </div>
-
-    <div class="card quote-card reveal" style="border-left-color:var(--accent4);" data-searchable="They didn't ask a question|Tony's colleague, after 3,000 man-hours of preparation">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="quote-text">"They didn't ask a question I hadn't already thought they were going to ask."</div>
-      <div class="quote-attr">— Tony's colleague, after 3,000 man-hours of preparation</div>
-    </div>
-
-    <div class="card quote-card reveal" style="border-left-color:var(--accent5);" data-searchable="Silence doesn't mean I can't fight back|Tony, on using silence in confrontations">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="quote-text">"Silence doesn't mean I can't fight back. It means I have the judgment to know now is not the time."</div>
-      <div class="quote-attr">— Tony, on using silence in confrontations</div>
-    </div>
-
-    <div class="card quote-card reveal" style="border-left-color:var(--accent6);" data-searchable="Culture is how we talk|Irv, defining organizational culture">
-      <button class="bookmark-btn" onclick="toggleBookmark(this)" title="Bookmark">★</button>
-      <div class="quote-text">"Culture is how we talk to people and how we talk about people in the workplace."</div>
-      <div class="quote-attr">— Irv, defining organizational culture</div>
-    </div>
-
-  </div>
-</div>
-
-<!-- AI ADVISOR -->
-<div class="section" id="advisor">
-  <h2 class="section-title">AI Conversation Advisor</h2>
-  <p class="section-desc">Describe your difficult conversation and get advice grounded in the principles, frameworks, and case studies from this course. Powered by Claude (Anthropic API).</p>
-
-  <div class="advisor-container">
-
-    <div class="api-key-bar">
-      <input type="password" id="apiKeyInput" placeholder="Paste your Anthropic API key (sk-ant-...)" />
-      <span class="key-status" id="keyStatus" style="background:var(--surface2);color:var(--text-muted);">Not connected</span>
-    </div>
-
-    <div class="suggestion-chips" id="suggestions">
-      <div class="suggestion-chip" onclick="useSuggestion(this)">I need to fire someone but I'm not sure I have all the facts</div>
-      <div class="suggestion-chip" onclick="useSuggestion(this)">A team member is undermining me behind my back</div>
-      <div class="suggestion-chip" onclick="useSuggestion(this)">I have to deliver bad news about a promotion</div>
-      <div class="suggestion-chip" onclick="useSuggestion(this)">An angry stakeholder is coming at me aggressively</div>
-      <div class="suggestion-chip" onclick="useSuggestion(this)">My board chair keeps overstepping into operations</div>
-      <div class="suggestion-chip" onclick="useSuggestion(this)">I discovered an employee falsified their credentials</div>
-    </div>
-
-    <div class="chat-messages" id="chatMessages">
-      <div class="chat-msg ai">
-        <div class="msg-avatar">T</div>
-        <div class="msg-body">
-          <p>Welcome. I'm an AI advisor trained on all the principles from your Difficult Conversations course with Irv and Tony.</p>
-          <p>Describe the conversation you're facing — who's involved, what the situation is, and what makes it hard — and I'll help you prepare using the frameworks, case parallels, and good practices from the class.</p>
-          <p>To get started, enter your Anthropic API key above, then type your situation or tap one of the example prompts.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="chat-input-bar">
-      <textarea id="chatInput" placeholder="Describe your difficult conversation..." rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
-      <button onclick="sendMessage()" id="sendBtn">Send</button>
-    </div>
-
-  </div>
-</div>
-
-<!-- FOOTER -->
-<div style="text-align:center;padding:60px 40px 40px;color:var(--text-muted);font-size:0.8rem;">
-  <p style="margin-bottom:4px;">Stanford GSB · STRAMGT 510 · Difficult Conversations</p>
-  <p>Professors Irv Grousbeck &amp; Tony · Spring 2025</p>
-</div>
-
-<script>
-
-  // Dark mode toggle
-  const darkModeBtn = document.getElementById('darkModeBtn');
-  const htmlElement = document.documentElement;
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  
-  if (savedTheme === 'dark') {
-    htmlElement.setAttribute('data-theme', 'dark');
-    darkModeBtn.textContent = '☀️';
-  }
-
-  darkModeBtn.addEventListener('click', () => {
-    const currentTheme = htmlElement.getAttribute('data-theme') || 'light';
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    htmlElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    darkModeBtn.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-  });
-
-  // Tab navigation
-  const tabs = document.querySelectorAll('.nav-tab');
-  const sections = document.querySelectorAll('.section');
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      const target = tab.dataset.tab;
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      sections.forEach(s => {
-        s.classList.remove('active');
-        if (s.id === target) s.classList.add('active');
-      });
-    });
-  });
-
-  // Scroll reveal animation
-  const revealElements = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
-
-  revealElements.forEach(el => observer.observe(el));
-
-  // Bookmarking system
-  const bookmarks = {};
-  
-  function toggleBookmark(btn) {
-    btn.classList.toggle('active');
-    const card = btn.closest('.card');
-    card.classList.toggle('bookmarked');
-    
-    const cardId = Array.from(card.parentElement.children).indexOf(card);
-    const section = card.closest('.section').id;
-    const key = `${section}-${cardId}`;
-    
-    if (btn.classList.contains('active')) {
-      bookmarks[key] = true;
-    } else {
-      delete bookmarks[key];
-    }
-  }
-
-  function filterBookmarks(section) {
-    const checkbox = document.getElementById(`bookmarkFilter${section.charAt(0).toUpperCase() + section.slice(1)}`);
-    const grid = section === 'principles' ? document.getElementById('principlesGrid') : 
-                 section === 'cases' ? document.querySelectorAll('.case-grid')[0] :
-                 section === 'final' ? document.getElementById('lessonsGrid') : null;
-
-    if (!grid) return;
-
-    const cards = grid.querySelectorAll('.card');
-    cards.forEach((card, idx) => {
-      const key = `${section}-${idx}`;
-      if (checkbox.checked) {
-        card.style.display = bookmarks[key] ? '' : 'none';
-      } else {
-        card.style.display = '';
-      }
-    });
-  }
-
-  // Global search
-  const searchInput = document.getElementById('searchInput');
-  const searchResults = document.getElementById('searchResults');
-  let currentSearchIndex = 0;
-  let searchMatches = [];
-
-  const allContent = {
-    principles: Array.from(document.querySelectorAll('#principles .principle-card')).map(el => ({
-      title: el.querySelector('h3').textContent,
-      text: el.getAttribute('data-searchable') || '',
-      section: 'Core Principles',
-      element: el
-    })),
-    cases: Array.from(document.querySelectorAll('#cases .case-card')).map(el => ({
-      title: el.querySelector('h3').textContent,
-      text: el.getAttribute('data-searchable') || '',
-      section: 'Case Studies',
-      element: el
-    })),
-    frameworks: Array.from(document.querySelectorAll('#frameworks .framework-box')).map(el => ({
-      title: el.querySelector('h3').textContent,
-      text: el.getAttribute('data-searchable') || '',
-      section: 'Frameworks',
-      element: el
-    })),
-    final: Array.from(document.getElementById('lessonsGrid').querySelectorAll('.final-lesson')).map(el => ({
-      title: el.querySelector('strong').textContent,
-      text: el.getAttribute('data-searchable') || '',
-      section: 'Final Lessons',
-      element: el
-    })),
-    quotes: Array.from(document.querySelectorAll('#quotes .quote-card')).map(el => ({
-      title: el.querySelector('.quote-text').textContent,
-      text: el.getAttribute('data-searchable') || '',
-      section: 'Quotes',
-      element: el
-    }))
-  };
-
-  searchInput.addEventListener('input', (e) => {
-    const query = e.target.value.toLowerCase().trim();
-    
-    if (!query) {
-      searchResults.classList.remove('active');
-      return;
-    }
-
-    searchMatches = [];
-    
-    Object.values(allContent).forEach(items => {
-      items.forEach(item => {
-        if (item.title.toLowerCase().includes(query) || item.text.toLowerCase().includes(query)) {
-          const parts = item.text.split('|');
-          const fullText = parts.length > 1 ? parts[1] : parts[0];
-          searchMatches.push({
-            ...item,
-            fullText: fullText
-          });
-        }
-      });
-    });
-
-    if (searchMatches.length === 0) {
-      searchResults.innerHTML = '<div style="padding: 12px; color: var(--text-muted); text-align: center;">No results found</div>';
-      searchResults.classList.add('active');
-      return;
-    }
-
-    const html = searchMatches.slice(0, 8).map(match => {
-      const highlighted = match.fullText.replace(
-        new RegExp(`(${query})`, 'gi'),
-        '<span class="highlight">$1</span>'
-      );
-      return `
-        <div class="search-result" onclick="navigateToResult(this)">
-          <div class="search-result-title">${match.title}</div>
-          <div class="search-result-section">${match.section}</div>
-          <div class="search-result-text">${highlighted.substring(0, 100)}...</div>
-        </div>
-      `;
-    }).join('');
-
-    searchResults.innerHTML = html;
-    searchResults.classList.add('active');
-  });
-
-  function navigateToResult(resultEl) {
-    const title = resultEl.querySelector('.search-result-title').textContent;
-    
-    for (const category of Object.values(allContent)) {
-      const match = category.find(item => item.title === title);
-      if (match) {
-        tabs.forEach(t => t.classList.remove('active'));
-        const targetSection = match.section.toLowerCase().replace(/ /g, '');
-        const targetTab = Array.from(tabs).find(t => t.dataset.tab.includes(targetSection.split(' ')[0]));
-        if (targetTab) {
-          targetTab.click();
-          setTimeout(() => {
-            match.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            match.element.style.animation = 'pulse 1s ease';
-          }, 200);
-        }
-        break;
-      }
-    }
-    searchResults.classList.remove('active');
-    searchInput.value = '';
-  }
-
-  // Flashcard system
-  const flashcardData = [
-    ...allContent.principles.map(p => ({ front: p.title, back: p.text.split('|')[1] || p.text })),
-    ...allContent.final.map(l => ({ front: l.title, back: l.fullText })),
-    ...allContent.frameworks.map(f => ({ front: f.title, back: f.text.split('|')[1] || f.text }))
-  ];
-
-  let currentCard = 0;
-  let isFlipped = false;
-  let flashcards = [...flashcardData];
-
-  document.getElementById('flashcardBtn').addEventListener('click', () => {
-    document.getElementById('flashcardModal').classList.add('active');
-    currentCard = 0;
-    isFlipped = false;
-    updateFlashcard();
-  });
-
-  function closeFlashcards() {
-    document.getElementById('flashcardModal').classList.remove('active');
-  }
-
-  function updateFlashcard() {
-    const card = flashcards[currentCard];
-    document.getElementById('flashcardFront').textContent = card.front;
-    document.getElementById('flashcardBack').textContent = card.back;
-    document.getElementById('flashcard').classList.remove('flipped');
-    document.getElementById('flashcardProgress').textContent = `Card ${currentCard + 1} of ${flashcards.length}`;
-    isFlipped = false;
-  }
-
-  function toggleFlip() {
-    document.getElementById('flashcard').classList.toggle('flipped');
-    isFlipped = !isFlipped;
-  }
-
-  function nextCard() {
-    if (currentCard < flashcards.length - 1) {
-      currentCard++;
-      updateFlashcard();
-    }
-  }
-
-  function previousCard() {
-    if (currentCard > 0) {
-      currentCard--;
-      updateFlashcard();
-    }
-  }
-
-  function shuffleCards() {
-    for (let i = flashcards.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
-    }
-    currentCard = 0;
-    updateFlashcard();
-  }
-
-  document.addEventListener('keydown', (e) => {
-    if (document.getElementById('flashcardModal').classList.contains('active')) {
-      if (e.code === 'Space') {
-        e.preventDefault();
-        toggleFlip();
-      } else if (e.code === 'ArrowRight') {
-        nextCard();
-      } else if (e.code === 'ArrowLeft') {
-        previousCard();
-      }
-    }
-  });
-
-  // AI Advisor integration
-  const SYSTEM_PROMPT = `You are an AI advisor trained on the Stanford GSB course "Difficult Conversations" (STRAMGT 510), taught by professors Irv Grousbeck and Tony. Your role is to help people prepare for difficult conversations using the specific frameworks, principles, and case parallels from the course.
-
-CORE FRAMEWORKS YOU MUST USE:
-1. "What does good look like?" — Before every conversation, envision the ideal outcome.
-2. "What matters?" — Identify what's most important: the relationship, the behavior change, the business outcome?
-3. The A-B-C of Management: A-players in key seats, Care for them, Keep the culture.
-4. The De-escalation Playbook: Don't meet fire with fire. Be curious. Use silence.
-5. The Bolded Box: For high-stakes situations, decide exactly what you will say.
-6. Navigating Ambiguity: Want the asset until you don't. Ask questions carefully.
-
-KEY PRINCIPLES TO APPLY:
-- Directness is respect. Ambiguity is not kindness.
-- Listen more than you talk. Fewer words carry more power.
-- Separate facts from judgments. Share facts, not conclusions.
-- Focus on behavior, not assumed intent. You cannot see intent.
-- Own your part first: "What role did I play in this?"
-- Negotiations are a dance, not a tug of war. Get on the same side.
-- Silence conveys confidence. You don't have to fill every pause.
-- Trust-based relationships are the foundation. You can't fake care.
-- Crisis demands immediate action. Don't delegate and walk away.
-- It's OK to reverse a bad decision. Vulnerability is strength.
-- Address culture punctures immediately. Tolerance sets a new standard.
-- Role play the conversation beforehand to get the emotion out.
-
-RESPONSE FORMAT:
-1. Identify which course principles and cases are most relevant
-2. Help them envision "what does good look like" for their specific situation
-3. Identify the hard conversations they need to have
-4. Provide specific, practical advice on what to say and how to say it
-5. Suggest a brief role-play script they could practice
-6. Warn about common pitfalls (from the cases)
-
-Keep responses practical, warm, and direct — the way Tony would coach someone.`;
-
-  let conversationHistory = [];
-  let apiKey = '';
-
-  const apiKeyInput = document.getElementById('apiKeyInput');
-  const keyStatus = document.getElementById('keyStatus');
-
-  apiKeyInput.addEventListener('input', () => {
-    const val = apiKeyInput.value.trim();
-    if (val.startsWith('sk-ant-')) {
-      apiKey = val;
-      keyStatus.textContent = 'Connected';
-      keyStatus.style.background = 'rgba(5,150,105,0.1)';
-      keyStatus.style.color = '#059669';
-    } else if (val.length > 0) {
-      apiKey = '';
-      keyStatus.textContent = 'Invalid key';
-      keyStatus.style.background = 'rgba(219,39,119,0.1)';
-      keyStatus.style.color = '#db2777';
-    } else {
-      apiKey = '';
-      keyStatus.textContent = 'Not connected';
-      keyStatus.style.background = 'var(--surface2)';
-      keyStatus.style.color = 'var(--text-muted)';
-    }
-  });
-
-  function useSuggestion(el) {
-    document.getElementById('chatInput').value = el.textContent;
-    document.getElementById('suggestions').style.display = 'none';
-    sendMessage();
-  }
-
-  function addMessage(role, html) {
-    const container = document.getElementById('chatMessages');
-    const div = document.createElement('div');
-    div.className = `chat-msg ${role}`;
-    div.innerHTML = `
-      <div class="msg-avatar">${role === 'user' ? 'You' : 'T'}</div>
-      <div class="msg-body">${html}</div>
-    `;
-    container.appendChild(div);
-    container.scrollTop = container.scrollHeight;
-    return div;
-  }
-
-  function addTypingIndicator() {
-    const container = document.getElementById('chatMessages');
-    const div = document.createElement('div');
-    div.className = 'chat-msg ai';
-    div.id = 'typing';
-    div.innerHTML = `
-      <div class="msg-avatar">T</div>
-      <div class="msg-body"><div class="typing-indicator"><span></span><span></span><span></span></div></div>
-    `;
-    container.appendChild(div);
-    container.scrollTop = container.scrollHeight;
-  }
-
-  function removeTypingIndicator() {
-    const el = document.getElementById('typing');
-    if (el) el.remove();
-  }
-
-  function formatResponse(text) {
-    let html = text
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\n\n/g, '</p><p>')
-      .replace(/\n- /g, '</p><ul><li>')
-      .replace(/\n(\d+)\. /g, '</p><ol><li>');
-    html = '<p>' + html + '</p>';
-    html = html.replace(/<p><\/p>/g, '');
-    return html;
-  }
-
-  async function sendMessage() {
-    const input = document.getElementById('chatInput');
-    const msg = input.value.trim();
-    if (!msg) return;
-
-    if (!apiKey) {
-      addMessage('ai', '<p>Please enter your Anthropic API key above to get started. You can get one at <strong>console.anthropic.com</strong>.</p>');
-      return;
-    }
-
-    input.value = '';
-    document.getElementById('suggestions').style.display = 'none';
-    document.getElementById('sendBtn').disabled = true;
-
-    addMessage('user', `<p>${msg.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</p>`);
-    conversationHistory.push({ role: 'user', content: msg });
-
-    addTypingIndicator();
-
-    try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01'
-        },
-        body: JSON.stringify({
-          model: 'claude-opus-4-6-20250805',
-          max_tokens: 2048,
-          system: SYSTEM_PROMPT,
-          messages: conversationHistory
-        })
-      });
-
-      removeTypingIndicator();
-
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        throw new Error(err.error?.message || `API error ${response.status}`);
-      }
-
-      const data = await response.json();
-      const aiText = data.content[0].text;
-      conversationHistory.push({ role: 'assistant', content: aiText });
-
-      addMessage('ai', formatResponse(aiText));
-
-    } catch (err) {
-      removeTypingIndicator();
-      addMessage('ai', `<p style="color:var(--accent4);">Error: ${err.message}. Please check your API key and try again.</p>`);
-    }
-
-    document.getElementById('sendBtn').disabled = false;
-    input.focus();
-  }
-
-</script>
-
+    </footer>
+
+    <!-- Dark Mode Toggle -->
+    <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Toggle dark mode">☀️</button>
+
+    <script>
+        // Dark Mode Toggle
+        let isDarkMode = false;
+
+        const darkModeToggle = document.getElementById('darkModeToggle');
+
+        darkModeToggle.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                darkModeToggle.textContent = '🌙';
+            } else {
+                document.body.classList.remove('dark-mode');
+                darkModeToggle.textContent = '☀️';
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>

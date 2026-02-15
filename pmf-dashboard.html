@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product-Market Fit — Course Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --bg: #f5f6fa;
+    --surface: #ffffff;
+    --surface2: #f0f1f6;
+    --border: #e0e2eb;
+    --text: #1a1d2e;
+    --text-dim: #6b7189;
+    --accent: #6c5ce7;
+    --accent2: #5a4bd1;
+    --green: #00a89d;
+    --orange: #e8a817;
+    --pink: #e0558e;
+    --blue: #3a8fd6;
+    --red: #e05555;
+    --teal: #0fb5b5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    padding: 48px 40px 24px;
+    background: linear-gradient(135deg, #eae6ff 0%, #f5f6fa 50%, #e6f0fa 100%);
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -20%;
+    width: 60%; height: 200%;
+    background: radial-gradient(ellipse, rgba(108,92,231,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -50%; right: -10%;
+    width: 50%; height: 200%;
+    background: radial-gradient(ellipse, rgba(0,168,157,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    position: relative;
+  }
+  .hero h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #1a1d2e 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+  }
+  .hero .subtitle {
+    color: var(--text-dim);
+    font-size: 1.05rem;
+    font-weight: 300;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  /* MODE TABS */
+  .mode-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 4px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .mode-tab {
+    padding: 8px 20px;
+    border-radius: 7px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-family: inherit;
+  }
+  .mode-tab.active {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(108,92,231,0.25);
+  }
+  .mode-tab:not(.active):hover { background: var(--surface2); color: var(--text); }
+
+  /* SEARCH */
+  .search-bar {
+    position: relative;
+    max-width: 480px;
+    margin-bottom: 0;
+  }
+  .search-bar input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-family: inherit;
+    font-size: 0.88rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-bar input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(108,92,231,0.1);
+  }
+  .search-bar input::placeholder { color: #b0b4c4; }
+  .search-bar .search-icon {
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: #b0b4c4;
+    font-size: 0.9rem;
+    pointer-events: none;
+  }
+  .search-bar .clear-btn {
+    position: absolute;
+    right: 10px; top: 50%;
+    transform: translateY(-50%);
+    background: var(--surface2);
+    border: none;
+    border-radius: 50%;
+    width: 22px; height: 22px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    color: var(--text-dim);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+  }
+  .search-bar .clear-btn.visible { display: flex; }
+  .search-match { background: rgba(108,92,231,0.15); border-radius: 2px; padding: 0 2px; }
+
+  /* STATS ROW */
+  .stats-row {
+    display: flex;
+    gap: 16px;
+    padding: 0 40px 24px;
+    margin-top: -10px;
+    position: relative;
+    z-index: 2;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    flex: 1;
+    min-width: 140px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .stat-card .num { font-size: 2rem; font-weight: 700; margin-bottom: 4px; }
+  .stat-card .label { font-size: 0.78rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* MAIN GRID */
+  .main {
+    padding: 0 40px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .full-width { grid-column: 1 / -1; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .card:hover { border-color: var(--accent); box-shadow: 0 4px 12px rgba(108,92,231,0.08); }
+  .card.search-hidden { display: none; }
+  .card h2 {
+    font-size: 1.15rem; font-weight: 600; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card h2 .icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+  }
+
+  /* FRAMEWORK */
+  .framework { display: flex; gap: 16px; margin-bottom: 16px; }
+  .fw-col {
+    flex: 1; background: var(--surface2); border-radius: 12px;
+    padding: 20px; border-top: 3px solid var(--accent);
+  }
+  .fw-col.who { border-top-color: var(--green); }
+  .fw-col.how { border-top-color: var(--orange); }
+  .fw-col h3 { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+  .fw-col.what h3 { color: var(--accent2); }
+  .fw-col.who h3 { color: var(--green); }
+  .fw-col.how h3 { color: var(--orange); }
+  .fw-col ul { list-style: none; padding: 0; }
+  .fw-col li { font-size: 0.85rem; color: var(--text-dim); padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); line-height: 1.5; }
+  .fw-col li:last-child { border-bottom: none; }
+
+  /* CLASS CARDS */
+  .class-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .class-card {
+    background: var(--surface2); border-radius: 12px; padding: 18px;
+    cursor: pointer; transition: all 0.3s; border: 1px solid transparent;
+    position: relative; overflow: hidden;
+  }
+  .class-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 3px; border-radius: 12px 12px 0 0;
+  }
+  .class-card:nth-child(1)::before { background: var(--accent2); }
+  .class-card:nth-child(2)::before { background: var(--green); }
+  .class-card:nth-child(3)::before { background: var(--orange); }
+  .class-card:nth-child(4)::before { background: var(--pink); }
+  .class-card:nth-child(5)::before { background: var(--blue); }
+  .class-card:nth-child(6)::before { background: var(--teal); }
+  .class-card:nth-child(7)::before { background: var(--red); }
+  .class-card:nth-child(8)::before { background: var(--accent); }
+  .class-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .class-card .class-num { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 6px; }
+  .class-card .class-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; line-height: 1.3; }
+  .class-card .class-topics { font-size: 0.75rem; color: var(--text-dim); line-height: 1.6; }
+  .class-card .class-topics span { display: block; padding-left: 12px; position: relative; }
+  .class-card .class-topics span::before { content: '\203A'; position: absolute; left: 0; color: var(--accent2); }
+  .class-card .expand-hint { font-size: 0.68rem; color: var(--accent); margin-top: 10px; opacity: 0; transition: opacity 0.2s; }
+  .class-card:hover .expand-hint { opacity: 1; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(26,29,46,0.4); backdrop-filter: blur(4px);
+    z-index: 1000; align-items: center; justify-content: center;
+    padding: 40px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--surface); border-radius: 16px;
+    max-width: 720px; width: 100%; max-height: 80vh;
+    overflow-y: auto; padding: 32px; position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    border: 1px solid var(--border);
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--surface2); border: 1px solid var(--border);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; color: var(--text-dim); transition: all 0.2s;
+  }
+  .modal-close:hover { background: var(--red); color: #fff; border-color: var(--red); }
+  .modal h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; }
+  .modal .modal-subtitle { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 20px; }
+  .modal .note-section { margin-bottom: 16px; }
+  .modal .note-section h4 { font-size: 0.82rem; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+  .modal .note-item {
+    font-size: 0.84rem; color: var(--text-dim); padding: 5px 0 5px 14px;
+    border-left: 2px solid var(--border); margin-bottom: 4px; line-height: 1.5;
+  }
+
+  /* LIFECYCLE */
+  .lifecycle { display: flex; align-items: flex-end; justify-content: center; gap: 4px; height: 220px; padding: 20px 0; }
+  .lc-segment { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; cursor: default; }
+  .lc-bar { width: 100%; border-radius: 8px 8px 0 0; transition: transform 0.3s, filter 0.3s; }
+  .lc-segment:hover .lc-bar { transform: scaleY(1.05); filter: brightness(1.2); }
+  .lc-label { font-size: 0.72rem; font-weight: 600; text-align: center; color: var(--text-dim); }
+  .lc-pct { font-size: 0.7rem; color: var(--text-dim); margin-top: 2px; }
+  .chasm-indicator { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0 4px; align-self: stretch; justify-content: center; }
+  .chasm-line { width: 3px; flex: 1; background: repeating-linear-gradient(to bottom, var(--red) 0, var(--red) 6px, transparent 6px, transparent 12px); border-radius: 2px; }
+  .chasm-label { font-size: 0.65rem; color: var(--red); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; writing-mode: vertical-lr; transform: rotate(180deg); }
+
+  /* FUNNEL */
+  .funnel { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 0; }
+  .funnel-step { display: flex; align-items: center; justify-content: center; text-align: center; padding: 14px 20px; border-radius: 10px; font-size: 0.82rem; font-weight: 500; transition: transform 0.2s; cursor: default; }
+  .funnel-step:hover { transform: scale(1.02); }
+  .funnel-arrow { font-size: 1.2rem; color: var(--text-dim); opacity: 0.5; }
+  .funnel-label { font-size: 0.7rem; color: var(--text-dim); text-align: center; margin-top: -2px; }
+
+  /* DISRUPTION */
+  .disruption-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .disruption-type { background: var(--surface2); border-radius: 12px; padding: 20px; border-top: 3px solid; }
+  .disruption-type.new-market { border-top-color: var(--blue); }
+  .disruption-type.low-end { border-top-color: var(--pink); }
+  .disruption-type h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; }
+  .disruption-type p { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px; line-height: 1.5; }
+  .disruption-type .example { display: inline-block; background: rgba(0,0,0,0.04); padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; color: var(--text); margin-top: 6px; }
+
+  /* METRICS */
+  .metrics-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .metric-box { background: var(--surface2); border-radius: 12px; padding: 20px; text-align: center; }
+  .metric-box h4 { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .metric-box .metric-value { font-size: 1.6rem; font-weight: 700; margin-bottom: 6px; }
+  .metric-box .metric-desc { font-size: 0.78rem; color: var(--text-dim); line-height: 1.4; }
+
+  /* DISTRACTIONS */
+  .distractions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .distraction { background: var(--surface2); border-radius: 10px; padding: 16px; text-align: center; transition: all 0.3s; cursor: default; border: 1px solid transparent; }
+  .distraction:hover { border-color: var(--red); background: rgba(224,85,85,0.05); }
+  .distraction .d-icon { font-size: 1.4rem; margin-bottom: 8px; }
+  .distraction .d-name { font-size: 0.82rem; font-weight: 600; margin-bottom: 4px; }
+  .distraction .d-why { font-size: 0.72rem; color: var(--text-dim); line-height: 1.4; }
+
+  /* PROCESS */
+  .process-flow { display: flex; align-items: stretch; gap: 4px; overflow-x: auto; padding: 10px 0; }
+  .process-step { flex: 1; min-width: 110px; background: var(--surface2); border-radius: 10px; padding: 16px 12px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .process-step .ps-num { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .process-step .ps-title { font-size: 0.78rem; font-weight: 600; line-height: 1.3; }
+  .process-step .ps-detail { font-size: 0.7rem; color: var(--text-dim); line-height: 1.4; }
+  .process-arrow { display: flex; align-items: center; color: var(--text-dim); font-size: 1rem; opacity: 0.4; flex-shrink: 0; }
+
+  /* PRINCIPLES */
+  .principles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .principle { background: var(--surface2); border-radius: 10px; padding: 14px 16px; font-size: 0.82rem; line-height: 1.5; border-left: 3px solid var(--accent); transition: transform 0.2s, background 0.2s; cursor: default; }
+  .principle:hover { transform: translateX(4px); background: rgba(108,92,231,0.06); }
+  .principle:nth-child(4n+2) { border-left-color: var(--green); }
+  .principle:nth-child(4n+3) { border-left-color: var(--orange); }
+  .principle:nth-child(4n+4) { border-left-color: var(--pink); }
+
+  /* ===== FLASHCARD MODE ===== */
+  .flashcard-view { display: none; padding: 40px; }
+  .flashcard-view.active { display: block; }
+  .dashboard-view.hidden { display: none; }
+
+  .fc-header { text-align: center; margin-bottom: 30px; }
+  .fc-header h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+  .fc-header p { font-size: 0.85rem; color: var(--text-dim); }
+
+  .fc-progress {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    margin-bottom: 24px;
+  }
+  .fc-progress-bar {
+    width: 200px; height: 6px; background: var(--surface2);
+    border-radius: 3px; overflow: hidden;
+  }
+  .fc-progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.3s; }
+  .fc-progress-text { font-size: 0.78rem; color: var(--text-dim); font-weight: 600; }
+
+  .fc-container {
+    display: flex; align-items: center; justify-content: center; gap: 20px;
+    min-height: 340px;
+  }
+  .fc-nav-btn {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--surface); border: 1px solid var(--border);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; color: var(--text-dim); transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); flex-shrink: 0;
+  }
+  .fc-nav-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .fc-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .fc-nav-btn:disabled:hover { background: var(--surface); color: var(--text-dim); border-color: var(--border); }
+
+  .fc-card-wrapper {
+    perspective: 1000px;
+    width: 100%; max-width: 560px; height: 300px;
+    cursor: pointer;
+  }
+  .fc-card {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+  }
+  .fc-card.flipped { transform: rotateY(180deg); }
+  .fc-card-face {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px; padding: 32px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  .fc-front {
+    background: var(--surface);
+  }
+  .fc-back {
+    background: linear-gradient(135deg, #f8f7ff, #f0f4ff);
+    transform: rotateY(180deg);
+  }
+  .fc-category {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px;
+    font-weight: 700; margin-bottom: 16px; padding: 4px 12px;
+    border-radius: 20px; background: rgba(108,92,231,0.1); color: var(--accent);
+  }
+  .fc-question { font-size: 1.2rem; font-weight: 600; line-height: 1.5; max-width: 440px; }
+  .fc-answer { font-size: 0.92rem; color: var(--text-dim); line-height: 1.7; max-width: 460px; }
+  .fc-answer strong { color: var(--text); }
+  .fc-flip-hint { font-size: 0.72rem; color: #c0c4d4; margin-top: 16px; }
+
+  .fc-controls {
+    display: flex; justify-content: center; gap: 10px; margin-top: 24px;
+  }
+  .fc-shuffle-btn {
+    padding: 8px 20px; border-radius: 8px; font-size: 0.8rem; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--border); background: var(--surface);
+    color: var(--text-dim); transition: all 0.2s; font-family: inherit;
+  }
+  .fc-shuffle-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .main { grid-template-columns: 1fr; }
+    .hero { padding: 32px 20px 20px; }
+    .hero h1 { font-size: 2rem; }
+    .hero-top { flex-direction: column; }
+    .stats-row { padding: 0 20px 20px; }
+    .main { padding: 0 20px 40px; }
+    .framework { flex-direction: column; }
+    .class-grid { grid-template-columns: 1fr 1fr; }
+    .principles { grid-template-columns: 1fr; }
+    .distractions { grid-template-columns: 1fr 1fr; }
+    .disruption-grid { grid-template-columns: 1fr; }
+    .flashcard-view { padding: 20px; }
+    .fc-card-wrapper { height: 260px; }
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface2); }
+  ::-webkit-scrollbar-thumb { background: #cccede; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-top">
+    <div>
+      <h1>Product-Market Fit</h1>
+      <p class="subtitle">Stanford S514 — Andy Rachleff — Winter 2025 — Key Learnings Dashboard</p>
+    </div>
+    <div class="mode-tabs">
+      <button class="mode-tab active" onclick="switchMode('dashboard')">Dashboard</button>
+      <button class="mode-tab" onclick="switchMode('flashcards')">Flashcards</button>
+    </div>
+  </div>
+  <div class="search-bar" id="searchBar">
+    <span class="search-icon">&#x1F50D;</span>
+    <input type="text" id="searchInput" placeholder="Search concepts, principles, classes..." oninput="handleSearch(this.value)">
+    <button class="clear-btn" id="clearBtn" onclick="clearSearch()">&#x2715;</button>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD VIEW ===== -->
+<div class="dashboard-view" id="dashboardView">
+
+<!-- STATS -->
+<div class="stats-row">
+  <div class="stat-card"><div class="num" style="color:var(--accent2)">8</div><div class="label">Classes</div></div>
+  <div class="stat-card"><div class="num" style="color:var(--green)">33</div><div class="label">Key Principles</div></div>
+  <div class="stat-card"><div class="num" style="color:var(--orange)">3</div><div class="label">Value Hypothesis Elements</div></div>
+  <div class="stat-card"><div class="num" style="color:var(--pink)">4</div><div class="label">Key Texts</div></div>
+  <div class="stat-card"><div class="num" style="color:var(--blue)">6</div><div class="label">Pre-PMF Distractions</div></div>
+</div>
+
+<div class="main">
+
+  <!-- VALUE HYPOTHESIS FRAMEWORK -->
+  <div class="card full-width" data-searchable>
+    <h2><span class="icon" style="background:rgba(108,92,231,0.15);color:var(--accent2)">&#x25C6;</span> The Value Hypothesis Framework</h2>
+    <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:20px;">Product-market fit = a proven value hypothesis = customers who are <strong style="color:var(--text)">desperate</strong> for your product. The value hypothesis has three components:</p>
+    <div class="framework">
+      <div class="fw-col what">
+        <h3>What</h3>
+        <ul>
+          <li>Build based on a unique insight, ideally from a technology inflection point</li>
+          <li>Must be non-consensus — not everyone should like your idea</li>
+          <li>MVP = minimum functionality to test your leap-of-faith assumption</li>
+          <li>More than one primary benefit is a negative</li>
+          <li>Reduce scope, don't add features to find fit</li>
+          <li><strong style="color:var(--text)">Never pivot on the What</strong> — that's a restart, not a pivot</li>
+        </ul>
+      </div>
+      <div class="fw-col who">
+        <h3>Who</h3>
+        <ul>
+          <li>Find the most <em>desperate</em> customers — need is irrelevant, only desperation matters</li>
+          <li>Define your niche as narrowly as possible</li>
+          <li>A market = buyers who reference each other</li>
+          <li>Iterate on the Who until you find a surprise</li>
+          <li>Ensure adjacent markets exist (bowling pin strategy)</li>
+          <li>Start small to get big — to dominate your initial segment</li>
+        </ul>
+      </div>
+      <div class="fw-col how">
+        <h3>How</h3>
+        <ul>
+          <li>Business model should reinforce the product's value</li>
+          <li>Aim for a disruptive business model — create an Innovator's Dilemma</li>
+          <li>Disruption = simpler, cheaper, more convenient (not better, faster, cheaper)</li>
+          <li>Three internet business models: Advertising, Subscription, Transaction fees</li>
+          <li>Revenue is more valuable as a signal than as cash</li>
+          <li>If customers won't pay for the MVP, they never will</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLASS-BY-CLASS -->
+  <div class="card full-width" data-searchable>
+    <h2><span class="icon" style="background:rgba(0,206,201,0.15);color:var(--green)">&#x25C7;</span> Course Map — Click any class to expand</h2>
+    <div class="class-grid">
+      <div class="class-card" onclick="openClassModal(0)">
+        <div class="class-num">Class 1</div><div class="class-title">PMF Foundations</div>
+        <div class="class-topics"><span>Value vs. Growth hypothesis</span><span>Lean startup = scientific method for business</span><span>Pivot on Who/How, never the What</span><span>Built to learn, not execute</span></div>
+        <div class="expand-hint">Click to expand full notes &rarr;</div>
+      </div>
+      <div class="class-card" onclick="openClassModal(1)">
+        <div class="class-num">Class 2</div><div class="class-title">Insights &amp; MVPs</div>
+        <div class="class-topics"><span>Technology inflection points</span><span>Solution in search of a problem</span><span>Great ideas find you</span><span>MVP scope &amp; definitions</span></div>
+        <div class="expand-hint">Click to expand full notes &rarr;</div>
+      </div>
+      <div class="class-card" onclick="openClassModal(2)">
+        <div class="class-num">Class 3</div><div class="class-title">Adoption Lifecycle</div>
+        <div class="class-topics"><span>Moore's Technology Adoption Lifecycle</span><span>Crossing the Chasm</span><span>Whole Product concept</span><span>Bowling pin strategy</span></div>
+        <div class="expand-hint">Click to expand full notes &rarr;</div>
+      </div>
+      <div class="class-card" onclick="openClassModal(3)">
+        <div class="class-num">Class 4</div><div class="class-title">Disruption</div>
+        <div class="class-topics"><span>New Market vs. Low-End disruption</span><span>Innovator's Dilemma</span><span>Salesforce case study</span><span>Whack-a-mole pricing strategy</span></div>
+        <div class="expand-hint">Click to expand full notes &rarr;</div>
+      </div>
+      <div class="class-card" onclick="openClassModal(4)">
+        <div class="class-num">Class 5</div><div class="class-title">Evaluating Hypotheses</div>
+        <div class="class-topics"><span>What/Who/How evaluation questions</span><span>Common pitfalls in hypotheses</span><span>Desperation vs. need</span><span>Market segmentation rigor</span></div>
+        <div class="expand-hint">Click to expand full notes &rarr;</div>
+      </div>
+      <div class="class-card" onclick="openClassModal(5)">
+        <div class="class-num">Class 6</div><div class="class-title">Validation Methods</div>
+        <div class="class-topics"><span>Concept &rarr; Implementation &rarr; MVP</span><span>Design sprints &amp; 5 Whys</span><span>Behavior &gt; Intent metrics</span><span>When to pivot</span></div>
+        <div class="expand-hint">Click to expand full notes &rarr;</div>
+      </div>
+      <div class="class-card" onclick="openClassModal(6)">
+        <div class="class-num">Class 7</div><div class="class-title">Savor the Surprise</div>
+        <div class="class-topics"><span>Double down on the good</span><span>Don't fix the bad</span><span>Don't judge decisions by outcomes</span><span>Do things that don't scale</span></div>
+        <div class="expand-hint">Click to expand full notes &rarr;</div>
+      </div>
+      <div class="class-card" onclick="openClassModal(7)">
+        <div class="class-num">Class 8</div><div class="class-title">Focus &amp; Distractions</div>
+        <div class="class-topics"><span>Pre-PMF execution traps</span><span>Why OKRs hurt PMF search</span><span>Culture follows CEO behavior</span><span>Avoid partnerships pre-PMF</span></div>
+        <div class="expand-hint">Click to expand full notes &rarr;</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADOPTION LIFECYCLE -->
+  <div class="card" data-searchable>
+    <h2><span class="icon" style="background:rgba(116,185,255,0.15);color:var(--blue)">&#x25CE;</span> Technology Adoption Lifecycle</h2>
+    <div class="lifecycle">
+      <div class="lc-segment">
+        <div class="lc-bar" style="height:45px;background:linear-gradient(to top,rgba(108,92,231,0.25),rgba(108,92,231,0.55))"></div>
+        <div class="lc-label">Innovators</div><div class="lc-pct">2.5%</div>
+        <div style="font-size:0.68rem;color:var(--text-dim);margin-top:4px">Tech enthusiasts. Don't target — they don't influence others.</div>
+      </div>
+      <div class="lc-segment">
+        <div class="lc-bar" style="height:90px;background:linear-gradient(to top,rgba(0,168,157,0.3),rgba(0,168,157,0.6))"></div>
+        <div class="lc-label">Early Adopters</div><div class="lc-pct">13.5%</div>
+        <div style="font-size:0.68rem;color:var(--text-dim);margin-top:4px">Visionaries. Want breakthroughs. Don't need references. <strong style="color:var(--green)">Start here!</strong></div>
+      </div>
+      <div class="chasm-indicator"><div class="chasm-line"></div><div class="chasm-label">The Chasm</div></div>
+      <div class="lc-segment">
+        <div class="lc-bar" style="height:150px;background:linear-gradient(to top,rgba(232,168,23,0.25),rgba(232,168,23,0.55))"></div>
+        <div class="lc-label">Early Majority</div><div class="lc-pct">34%</div>
+        <div style="font-size:0.68rem;color:var(--text-dim);margin-top:4px">Pragmatists. Buy on references. Need the <em>whole product</em>.</div>
+      </div>
+      <div class="lc-segment">
+        <div class="lc-bar" style="height:130px;background:linear-gradient(to top,rgba(224,85,142,0.2),rgba(224,85,142,0.45))"></div>
+        <div class="lc-label">Late Majority</div><div class="lc-pct">34%</div>
+        <div style="font-size:0.68rem;color:var(--text-dim);margin-top:4px">Conservatives. Buy once it's the standard.</div>
+      </div>
+      <div class="lc-segment">
+        <div class="lc-bar" style="height:30px;background:linear-gradient(to top,rgba(0,0,0,0.06),rgba(0,0,0,0.12))"></div>
+        <div class="lc-label">Laggards</div><div class="lc-pct">16%</div>
+        <div style="font-size:0.68rem;color:var(--text-dim);margin-top:4px">Never buy.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VALIDATION JOURNEY -->
+  <div class="card" data-searchable>
+    <h2><span class="icon" style="background:rgba(253,203,110,0.15);color:var(--orange)">&#x25B2;</span> Validation Journey</h2>
+    <div class="funnel">
+      <div class="funnel-step" style="width:95%;background:linear-gradient(135deg,rgba(108,92,231,0.12),rgba(108,92,231,0.04));color:var(--accent2)"><strong>1. Validate Concept</strong>&nbsp;&nbsp;—&nbsp;&nbsp;Concierge · Video · Smoke test · Kickstarter</div>
+      <div class="funnel-arrow">&#x25BC;</div>
+      <div class="funnel-label">Fail fast &amp; cheap — don't waste time on bad concepts</div>
+      <div class="funnel-arrow" style="margin-top:-4px">&#x25BC;</div>
+      <div class="funnel-step" style="width:80%;background:linear-gradient(135deg,rgba(0,168,157,0.12),rgba(0,168,157,0.04));color:var(--green)"><strong>2. Validate Implementation</strong>&nbsp;&nbsp;—&nbsp;&nbsp;Design sprint · 5 Whys · Attempt to sell</div>
+      <div class="funnel-arrow">&#x25BC;</div>
+      <div class="funnel-label">Is your target audience <em>desperate</em>?</div>
+      <div class="funnel-arrow" style="margin-top:-4px">&#x25BC;</div>
+      <div class="funnel-step" style="width:65%;background:linear-gradient(135deg,rgba(232,168,23,0.12),rgba(232,168,23,0.04));color:var(--orange)"><strong>3. Validate MVP</strong>&nbsp;&nbsp;—&nbsp;&nbsp;Word of mouth · Retention · Organic growth</div>
+      <div class="funnel-arrow">&#x25BC;</div>
+      <div class="funnel-step" style="width:50%;background:linear-gradient(135deg,rgba(224,85,142,0.15),rgba(224,85,142,0.05));color:var(--pink);font-weight:700">&#x2726; Product-Market Fit Achieved &#x2726;</div>
+    </div>
+  </div>
+
+  <!-- DISRUPTION -->
+  <div class="card" data-searchable>
+    <h2><span class="icon" style="background:rgba(253,121,168,0.15);color:var(--pink)">&#x26A1;</span> Two Types of Disruption</h2>
+    <div class="disruption-grid">
+      <div class="disruption-type new-market">
+        <h4 style="color:var(--blue)">New Market Disruption</h4>
+        <p>Serves non-consumers — people who couldn't access the incumbent's product</p>
+        <p>More common. Often evolves into low-end disruption through business model advantage.</p>
+        <span class="example">Example: Airbnb</span><span class="example" style="margin-left:4px">Example: Salesforce</span>
+      </div>
+      <div class="disruption-type low-end">
+        <h4 style="color:var(--pink)">Low-End Disruption</h4>
+        <p>Serves the overserved — customers paying for features they don't need</p>
+        <p>Requires more trust and is harder to pull off. Lower $ margins but higher asset turnover.</p>
+        <span class="example">Example: Dell</span>
+      </div>
+    </div>
+    <div style="margin-top:16px;padding:16px;background:rgba(232,168,23,0.06);border-radius:10px;border-left:3px solid var(--orange)">
+      <p style="font-size:0.82rem;color:var(--text-dim);line-height:1.6"><strong style="color:var(--orange)">The Innovator's Dilemma:</strong> Competing with the disruptor hurts your economics, but not competing leaves you open to being disrupted. A disruptive business model requires a much lower cost structure — possible for startups because they start with a clean sheet of paper.</p>
+    </div>
+  </div>
+
+  <!-- PMF METRICS -->
+  <div class="card" data-searchable>
+    <h2><span class="icon" style="background:rgba(129,236,236,0.15);color:var(--teal)">&#x25C9;</span> How to Measure PMF</h2>
+    <p style="font-size:0.82rem;color:var(--text-dim);margin-bottom:16px">Behavior-based metrics beat intent-based metrics. Surveys and NPS are of little value. Look for these signals:</p>
+    <div class="metrics-row">
+      <div class="metric-box" style="border-top:3px solid var(--green)">
+        <h4>Consumer</h4>
+        <div class="metric-value" style="color:var(--green)">Exponential Organic Growth</div>
+        <div class="metric-desc">Delight leads to virality. Word of mouth is the #1 signal. Once exponential growth starts, it seldom stops for a while.</div>
+      </div>
+      <div class="metric-box" style="border-top:3px solid var(--blue)">
+        <h4>Enterprise</h4>
+        <div class="metric-value" style="color:var(--blue)">Sales Yield &gt; 1</div>
+        <div class="metric-desc">Sales yield of 1 is proof of value hypothesis — it's an inflection point. Once you exceed 1, you typically grow to &gt; 2.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISTRACTIONS -->
+  <div class="card full-width" data-searchable>
+    <h2><span class="icon" style="background:rgba(255,118,117,0.15);color:var(--red)">&#x2715;</span> Pre-PMF Distractions — What NOT to Do</h2>
+    <p style="font-size:0.82rem;color:var(--text-dim);margin-bottom:16px">These execution-oriented activities don't help you find PMF and should be avoided until after you've proven your value hypothesis:</p>
+    <div class="distractions">
+      <div class="distraction"><div class="d-icon">&#x1F50D;</div><div class="d-name">Tracking Competition</div><div class="d-why">Can't win by copying. Violates "what do you uniquely offer that people desperately want."</div></div>
+      <div class="distraction"><div class="d-icon">&#x1F3AF;</div><div class="d-name">OKRs</div><div class="d-why">Drive execution, not learning. They disincentivize veering from the course — the enemy of finding PMF.</div></div>
+      <div class="distraction"><div class="d-icon">&#x2728;</div><div class="d-name">Brand Building</div><div class="d-why">Brand = the job you hire a product for. It's built through product excellence, not marketing.</div></div>
+      <div class="distraction"><div class="d-icon">&#x1F92B;</div><div class="d-name">Stealth Mode</div><div class="d-why">Doesn't help validate hypotheses. If you need stealth for advantage, how lasting is that advantage?</div></div>
+      <div class="distraction"><div class="d-icon">&#x1F91D;</div><div class="d-name">Corporate Partners</div><div class="d-why">Partners want an "option on a space" — they'll push you to adapt to their needs, not yours.</div></div>
+      <div class="distraction"><div class="d-icon">&#x1F3DB;&#xFE0F;</div><div class="d-name">Culture Building</div><div class="d-why">Culture follows CEO behavior. Be conscious of how you behave — employees copy the CEO.</div></div>
+    </div>
+  </div>
+
+  <!-- PRODUCT PROCESS -->
+  <div class="card full-width" data-searchable>
+    <h2><span class="icon" style="background:rgba(162,155,254,0.15);color:var(--accent2)">&#x27D0;</span> Product Development Process</h2>
+    <div class="process-flow">
+      <div class="process-step"><div class="ps-num">1</div><div class="ps-title">Source Ideas</div><div class="ps-detail">Surprises, client service, engineers, hackathons</div></div>
+      <div class="process-arrow">&rarr;</div>
+      <div class="process-step"><div class="ps-num">2</div><div class="ps-title">Smoke Tests</div><div class="ps-detail">Product smoke tests, ad tests, surveys</div></div>
+      <div class="process-arrow">&rarr;</div>
+      <div class="process-step"><div class="ps-num">3</div><div class="ps-title">Blog Post</div><div class="ps-detail">State value hypothesis, make compelling case</div></div>
+      <div class="process-arrow">&rarr;</div>
+      <div class="process-step"><div class="ps-num">4</div><div class="ps-title">Customer Dev</div><div class="ps-detail">Design sprints, interviews, five whys</div></div>
+      <div class="process-arrow">&rarr;</div>
+      <div class="process-step"><div class="ps-num">5</div><div class="ps-title">Founder Review</div><div class="ps-detail">Feedback from experienced advisors</div></div>
+      <div class="process-arrow">&rarr;</div>
+      <div class="process-step"><div class="ps-num">6</div><div class="ps-title">Build MVP</div><div class="ps-detail">Usable product to test the hypothesis</div></div>
+      <div class="process-arrow">&rarr;</div>
+      <div class="process-step"><div class="ps-num">7</div><div class="ps-title">User Testing</div><div class="ps-detail">Ensure UX is right</div></div>
+      <div class="process-arrow">&rarr;</div>
+      <div class="process-step"><div class="ps-num" style="background:var(--green)">8</div><div class="ps-title">Post-MVP</div><div class="ps-detail">Listen for surprise, check for exponential organic growth</div></div>
+    </div>
+  </div>
+
+  <!-- 33 PRINCIPLES -->
+  <div class="card full-width" data-searchable>
+    <h2><span class="icon" style="background:rgba(253,203,110,0.15);color:var(--orange)">&#x2605;</span> 33 Debated Principles</h2>
+    <div class="principles" id="principlesGrid">
+      <div class="principle">Everyone shouldn't like your idea</div>
+      <div class="principle">Appealing to everyone appeals to no one</div>
+      <div class="principle">Without change there is seldom opportunity</div>
+      <div class="principle">Authenticity is required to recognize inflection points early</div>
+      <div class="principle">The only thing that matters is finding desperate customers</div>
+      <div class="principle">Bootstrap ideas that solve your own problems</div>
+      <div class="principle">To get big you have to start small</div>
+      <div class="principle">All the value lies in the surprises</div>
+      <div class="principle">Pivot on the Who and How, restart on the What</div>
+      <div class="principle">Double down on the good, don't fix the bad</div>
+      <div class="principle">Fail fast &amp; cheap</div>
+      <div class="principle">Stealth doesn't matter</div>
+      <div class="principle">Revenue is more valuable as a signal than a source of cash</div>
+      <div class="principle">It's not first to market, but first to product/market fit</div>
+      <div class="principle">Don't pursue growth until you confirm your value hypothesis</div>
+      <div class="principle">Brand building is irrelevant for tech startups</div>
+      <div class="principle">Having more than one benefit is a negative</div>
+      <div class="principle">Market research is of little value</div>
+      <div class="principle">Each adjacent market requires its own whole product</div>
+      <div class="principle">Succeed with an application before you pursue a platform</div>
+      <div class="principle">Disruption is a business model concept, not a technology concept</div>
+      <div class="principle">Markets = buyers who reference one another</div>
+      <div class="principle">Don't pay attention to your competition</div>
+      <div class="principle">Corporate partners impede discovering PMF</div>
+      <div class="principle">Disruption is relative</div>
+      <div class="principle">Don't hit the accelerator until you are successful</div>
+      <div class="principle">Don't judge decisions by their outcomes</div>
+      <div class="principle">Built to learn is preferable to built to execute</div>
+      <div class="principle">You only find the answer if you make someone uncomfortable</div>
+      <div class="principle">Formal experiments are only good for growth hypotheses</div>
+      <div class="principle">Great ideas find you, not the other way around</div>
+      <div class="principle">Only sell if your market isn't happening or you get a ridiculous offer</div>
+      <div class="principle">Need is irrelevant — only desperation matters</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ===== FLASHCARD VIEW ===== -->
+<div class="flashcard-view" id="flashcardView">
+  <div class="fc-header">
+    <h2>Flashcard Study Mode</h2>
+    <p>Click the card to flip. Use arrow keys or buttons to navigate.</p>
+  </div>
+  <div class="fc-progress">
+    <div class="fc-progress-bar"><div class="fc-progress-fill" id="fcProgressFill"></div></div>
+    <div class="fc-progress-text" id="fcProgressText">1 / 33</div>
+  </div>
+  <div class="fc-container">
+    <button class="fc-nav-btn" id="fcPrev" onclick="fcNav(-1)">&#x2190;</button>
+    <div class="fc-card-wrapper" onclick="fcFlip()">
+      <div class="fc-card" id="fcCard">
+        <div class="fc-card-face fc-front">
+          <div class="fc-category" id="fcCategory">Principle</div>
+          <div class="fc-question" id="fcQuestion">Loading...</div>
+          <div class="fc-flip-hint">Click to reveal answer</div>
+        </div>
+        <div class="fc-card-face fc-back">
+          <div class="fc-category" id="fcCategoryBack">Explanation</div>
+          <div class="fc-answer" id="fcAnswer">Loading...</div>
+          <div class="fc-flip-hint">Click to return</div>
+        </div>
+      </div>
+    </div>
+    <button class="fc-nav-btn" id="fcNext" onclick="fcNav(1)">&#x2192;</button>
+  </div>
+  <div class="fc-controls">
+    <button class="fc-shuffle-btn" onclick="fcShuffle()">&#x1F500; Shuffle</button>
+    <button class="fc-shuffle-btn" onclick="fcReset()">&#x21BA; Reset Order</button>
+  </div>
+</div>
+
+<!-- CLASS MODAL -->
+<div class="modal-overlay" id="classModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">&#x2715;</button>
+    <h3 id="modalTitle">Class Title</h3>
+    <div class="modal-subtitle" id="modalSubtitle">Class X</div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+// ===== CLASS DATA =====
+const classData = [
+  {
+    num: "Class 1", title: "PMF Foundations",
+    sections: [
+      { heading: "Value Hypothesis", items: [
+        "Every tech company should start with a unique insight, ideally based on a technology inflection point",
+        "The lean startup methodology = the first application of the scientific method to business",
+        "Value hypothesis tests whether you deliver value — consists of a What, Who, and How",
+        "Your leap of faith assumption informs the value hypothesis you test through an MVP"
+      ]},
+      { heading: "Iterate on the Who, Not the What", items: [
+        "Keep iterating on your market (the Who) until you find a surprise, then savor it",
+        "Don't iterate on the What — changing it obsoletes your insight and gives you no advantage",
+        "Pivoting on the What is a restart, not a pivot — restarts are much harder",
+        "Success is most a function of finding desperate customers, not adding features"
+      ]},
+      { heading: "Growth Hypothesis", items: [
+        "Only once you confirm your value hypothesis should you create a growth hypothesis",
+        "Trying to grow before customers love your product is a waste of time",
+        "The best investors look for exponential organic growth (word of mouth), not paid growth",
+        "Paid growth can be gamed — word of mouth cannot"
+      ]},
+      { heading: "Built to Learn", items: [
+        "Build your team to learn rather than execute",
+        "Evolve to execution only after proving value and growth hypotheses",
+        "It's hard to run a company with two cultures (learning vs. executing)"
+      ]}
+    ]
+  },
+  {
+    num: "Class 2", title: "Insights & MVPs",
+    sections: [
+      { heading: "Technology Inflection Points", items: [
+        "Great tech companies start with recognizing an inflection point in technology",
+        "Without change, there is seldom opportunity",
+        "You build a solution in search of a problem — find people who want the new idea you offer",
+        "Authenticity is required to observe inflection points early — great ideas find you"
+      ]},
+      { heading: "Solving Your Own Problem", items: [
+        "Many founders succeed by solving their own problem (AirBNB, Facebook, Atlassian)",
+        "The risk: how do you know others have the same problem?",
+        "Best to start as a hobby/bootstrap and see if it takes off",
+        "Open source projects are great examples of this approach"
+      ]},
+      { heading: "Non-Consensus Ideas", items: [
+        "If your idea is non-consensus, by definition not everyone should like it",
+        "0 yeses could be positive if prospects don't believe you can deliver what you said",
+        "The only thing that matters is whether you learned something from the process",
+        "The vast majority of people only like products they've been conditioned to like"
+      ]},
+      { heading: "MVP Definition", items: [
+        "Reis: minimum functionality to prove leap of faith assumptions",
+        "Blank: smallest feature set that gets a customer to pay",
+        "Rachleff: a usable product that lets you prove your assumption or get a customer to pay",
+        "Reduce, not add, scope to find fit — having many benefits is a negative"
+      ]}
+    ]
+  },
+  {
+    num: "Class 3", title: "Adoption Lifecycle",
+    sections: [
+      { heading: "Moore's Technology Adoption Lifecycle", items: [
+        "Innovators (2.5%): Tech enthusiasts — don't target them, they don't influence others",
+        "Early Adopters (13.5%): Visionaries who want breakthroughs — START HERE",
+        "Early Majority (34%): Pragmatists who buy on references — need the whole product",
+        "Late Majority (34%): Conservatives who buy once it's the standard",
+        "Laggards (16%): Never buy"
+      ]},
+      { heading: "Crossing the Chasm", items: [
+        "Biggest mistake: wanting to go after the big market (pragmatists) first",
+        "Pragmatists won't buy until you have references — this creates The Chasm",
+        "Only with the whole product can you collect references to cross the chasm",
+        "Whole product = necessary components for a complete solution (system integration, training, support)"
+      ]},
+      { heading: "Bowling Pin Strategy", items: [
+        "Start with any pin — customers must be desperate and adjacent markets must exist",
+        "A market = a group of customers who reference each other",
+        "Adjacent markets don't reference each other — each needs its own whole product",
+        "Must apply the Technology Adoption Lifecycle to each new pin"
+      ]},
+      { heading: "Consumer vs. Enterprise", items: [
+        "Consumer innovators are willing to pay (unlike enterprise innovators)",
+        "Applies equally to consumer — same requirements per category",
+        "Marketplaces require the lifecycle even more — must prove PMF on both sides"
+      ]}
+    ]
+  },
+  {
+    num: "Class 4", title: "Disruption",
+    sections: [
+      { heading: "Business Model as Value Hypothesis Element", items: [
+        "The 'How' = business model / economic logic of the business",
+        "An ideal business model enhances the value of your product for the customer",
+        "Three basic internet business models: Advertising, Subscription, Transaction fees",
+        "If customers won't pay for an MVP, they will likely never pay — they're not desperate"
+      ]},
+      { heading: "Disruption Basics", items: [
+        "Compete on simpler, cheaper, more convenient — NOT better, cheaper, faster",
+        "Disruption is a business model concept, not a technology concept",
+        "A true disruption is uneconomic for the incumbent to address",
+        "Disrupters have lower $ margins but higher asset turnovers"
+      ]},
+      { heading: "Two Types of Disruption", items: [
+        "New Market: serves non-consumers (e.g., Airbnb, Salesforce) — more common",
+        "Low End: serves the overserved (e.g., Dell) — requires more trust, harder to pull off",
+        "Many successful companies start as new market and become low-end through business model",
+        "Disruption is relative — can't be disruptive if there are no alternatives"
+      ]},
+      { heading: "Salesforce Case Study", items: [
+        "Classic new market disruption — served companies too small for Siebel",
+        "Avg 19 users × $65/mo × 12 = $14,820/yr — can't afford direct sales on that",
+        "Siebel avg invoice: $500K–$1M — would lose money at Salesforce prices",
+        "Innovator's Dilemma: almost impossible for Siebel to overcome"
+      ]}
+    ]
+  },
+  {
+    num: "Class 5", title: "Evaluating Hypotheses",
+    sections: [
+      { heading: "What — Key Questions", items: [
+        "How does it leverage an inflection point? Is there a unique insight?",
+        "Is there a non-consensus element?",
+        "Is the MVP the absolute minimum? Is there more than one primary benefit?",
+        "Is there enough functionality to delight? Can it be copied easily?"
+      ]},
+      { heading: "Who — Key Questions", items: [
+        "Is the niche narrowly defined? Is this the best market to start with?",
+        "Why are they among the most desperate? Why is the target market not served?",
+        "Have they tried to build it themselves? Willing to pay?",
+        "Do they reference each other? Are there adjacent markets?"
+      ]},
+      { heading: "How — Key Questions", items: [
+        "Does the business model reinforce the value?",
+        "Is there an opportunity to create advantage through business model?",
+        "Is it disruptive? Could it be? Could the unit economics work?",
+        "Do you need partners to distribute?"
+      ]},
+      { heading: "Common Pitfalls", items: [
+        "More than one primary benefit",
+        "The niche was not narrowly enough defined",
+        "Initial markets were chosen based on need, not desperation"
+      ]}
+    ]
+  },
+  {
+    num: "Class 6", title: "Validation Methods",
+    sections: [
+      { heading: "Fail Fast & Cheap", items: [
+        "Validate concept first, then implementation, then actual product",
+        "Maximizes capital efficiency — don't waste time on bad ideas",
+        "Can only apply formal experiments (A/B tests) to growth, not value hypothesis"
+      ]},
+      { heading: "Concept Validation", items: [
+        "Concierge, Video (like Dropbox), Smoke test, Kickstarter, Follow me home",
+        "Search results can indicate demand",
+        "Don't waste time on implementation if buyers don't like the concept"
+      ]},
+      { heading: "Implementation Validation", items: [
+        "Most important: determine if target audience is desperate",
+        "Design sprints — attempt to sell, don't just ask what customers want",
+        "Use the 5 Whys to overcome confirmation bias and desirability bias",
+        "Don't test multiple Whats at once — can't learn as quickly"
+      ]},
+      { heading: "PMF Signals", items: [
+        "Word of mouth — by far the most important signal",
+        "Retention — necessary but not sufficient",
+        "Consumer: exponential organic growth; Enterprise: sales yield > 1",
+        "Intent-based metrics (NPS, surveys) are much less valuable than behavior-based",
+        "When to pivot: it either works right away or it doesn't"
+      ]}
+    ]
+  },
+  {
+    num: "Class 7", title: "Savor the Surprise",
+    sections: [
+      { heading: "Core Principle", items: [
+        "Look for the good in your business and double down on it",
+        "Fixing the bad seldom leads to increased growth",
+        "Find surprises through behavioral data, customer interviews, and follow-me-homes"
+      ]},
+      { heading: "Experiments & Decisions", items: [
+        "Good experiments are judged by learning outcome, not success outcome",
+        "Don't judge decision quality by outcome — outcomes = skill + information advantage + luck",
+        "Sometimes it's necessary to do things that don't scale to test your value hypothesis"
+      ]}
+    ]
+  },
+  {
+    num: "Class 8", title: "Focus & Distractions",
+    sections: [
+      { heading: "Core Message", items: [
+        "Finding PMF requires complete, undivided attention — build to learn, not execute",
+        "Once you find PMF, you can shift to execution — but new product teams must learn again"
+      ]},
+      { heading: "Pre-PMF Distractions", items: [
+        "Competition tracking: can't win by copying — violates unique offering principle",
+        "OKRs: drive execution, not learning — the enemy of finding PMF",
+        "Brand building: brand = job you hire a product for — built through excellence, not marketing",
+        "Stealth mode: doesn't help validate hypotheses — and the advantage is fleeting",
+        "Corporate partners: want an 'option on a space' — push you to adapt to their needs",
+        "Culture building: culture follows CEO behavior — model the values you want"
+      ]},
+      { heading: "Operating Philosophy", items: [
+        "Corporate values: put client interests first, information that empowers, fresh perspectives, endurance",
+        "Operating principles: show respect, make decisions, disagree but commit, ask don't assume, show urgency"
+      ]}
+    ]
+  }
+];
+
+// ===== FLASHCARD DATA =====
+const flashcards = [
+  { cat: "Principle #1", q: "Everyone shouldn't like your idea", a: "If your idea is <strong>non-consensus</strong>, by definition not everyone should like it when you start. The vast majority of people only like ideas they've been conditioned to like. Having universal approval is a warning sign, not a positive." },
+  { cat: "Principle #2", q: "Appealing to everyone appeals to no one", a: "Trying to serve the mainstream market first means you need more resources and time. It's the same trap as iterating on the What. <strong>Start narrow</strong> — dominate a niche of desperate customers." },
+  { cat: "Principle #3", q: "Without change there is seldom opportunity", a: "Great tech companies recognize an <strong>inflection point in technology</strong> that enables a new type of product. The inflection point should be around technology, not behavioral or regulatory change — it's more durable." },
+  { cat: "Principle #5", q: "The only thing that matters is finding desperate customers", a: "Need is irrelevant — only <strong>desperation</strong> matters. A desperate customer reaches across the table to get it from you, has tried to build it themselves, and is willing to pay with little proof." },
+  { cat: "Principle #7", q: "To get big you have to start small", a: "You must dominate a narrow niche first. Moore's bowling pin strategy: start with one pin (desperate customers), build the whole product, collect references, then expand to <strong>adjacent markets</strong>." },
+  { cat: "Principle #8", q: "All the value lies in the surprises", a: "Iterate on the Who until you find a surprise — that tells you you've hit a nerve. Then <strong>savor that surprise</strong> by focusing solely on it. Don't fix the bad; double down on the good." },
+  { cat: "Principle #9", q: "Pivot on the Who and How, restart on the What", a: "Changing the What obsoletes your original insight, gives you no advantage over others, and introduces too many variables. Pivoting the Who or How preserves your <strong>authentic technology insight</strong>." },
+  { cat: "Principle #10", q: "Double down on the good, don't fix the bad", a: "Fixing the bad seldom accelerates growth. Investing more in <strong>what's already working</strong> usually does. Find what's working through behavioral data, customer interviews, and follow-me-homes." },
+  { cat: "Principle #11", q: "Fail fast & cheap", a: "Validate concept → implementation → MVP. Each stage filters out bad ideas before you invest more. If you're going to fail, do it <strong>fast and cheap</strong> to maximize capital efficiency and the number of hypotheses you can test." },
+  { cat: "Principle #13", q: "Revenue is more valuable as a signal than cash", a: "If customers won't pay for your MVP, they'll likely never pay — you haven't addressed a big enough pain point. Revenue <strong>signals product-market fit</strong>; cash flow comes later." },
+  { cat: "Principle #14", q: "It's not first to market, but first to product/market fit", a: "Speed to market means nothing if you haven't found desperate customers. The winner is whoever proves their <strong>value hypothesis</strong> first and achieves word-of-mouth-driven growth." },
+  { cat: "Principle #17", q: "Having more than one benefit is a negative", a: "Counterintuitively, multiple benefits dilute your message and make it harder to identify who is truly desperate for your core offering. <strong>Reduce scope</strong>, don't add features to find fit." },
+  { cat: "Principle #21", q: "Disruption is a business model concept, not technology", a: "The key to determining disruption is the <strong>business model</strong>. Disrupters compete on simpler, cheaper, more convenient — with a cost structure that makes it uneconomic for the incumbent to respond." },
+  { cat: "Principle #27", q: "Don't judge decisions by their outcomes", a: "Outcomes are a function of <strong>skill + information advantage + luck</strong>. Good experiments should be judged by learning outcome, not success outcome. A good decision can still have a bad result." },
+  { cat: "Principle #28", q: "Built to learn is preferable to built to execute", a: "Pre-PMF, your team must be <strong>built to learn</strong>. OKRs, competition tracking, brand building — these drive execution, not learning. Shift to execution only after proving your value hypothesis." },
+  { cat: "Principle #33", q: "Need is irrelevant — only desperation matters", a: "Customers who merely need your product have alternatives. <strong>Desperate customers</strong> have no satisfactory alternative, have tried to solve it themselves, and will pay immediately with little proof." },
+  { cat: "Concept — Class 3", q: "What is 'The Chasm' and how do you cross it?", a: "The gap between Early Adopters and Early Majority. Pragmatists buy on <strong>references</strong>, but you don't have them yet. Cross it by building the <strong>whole product</strong> (complete solution with integration, support, etc.) and dominating your initial niche." },
+  { cat: "Concept — Class 3", q: "What is the Whole Product?", a: "All the <strong>necessary components for a complete solution</strong>: generic product + system integration + additional hardware/software + training + support + standards. Very difficult to build alone — attract partners by dominating your market." },
+  { cat: "Concept — Class 4", q: "What is the Innovator's Dilemma?", a: "Competing with the disruptor <strong>hurts your economics</strong>, but not competing leaves you open to being disrupted. It's almost impossible for incumbents to overcome — their only options are: cede, co-opt defensively, or co-opt for growth." },
+  { cat: "Concept — Class 6", q: "What are the best PMF metrics?", a: "<strong>Consumer:</strong> exponential organic growth (delight → virality). <strong>Enterprise:</strong> sales yield > 1. Both are behavior-based. Intent metrics (NPS, surveys) are far less valuable than observing actual behavior." },
+  { cat: "Concept — Class 6", q: "What is the 5 Whys technique?", a: "A method to overcome <strong>confirmation and desirability bias</strong> during customer feedback. Customers don't like giving negative feedback, so you must dig deeper by repeatedly asking 'why' to uncover the real truth." },
+  { cat: "Concept — Class 2", q: "Why build a 'solution in search of a problem'?", a: "In tech, starting with a market and finding a problem seldom leads to great success — anyone can do that. Instead, start with a <strong>technology inflection point</strong> that enables something new, then find who desperately wants it." },
+  { cat: "Concept — Class 1", q: "Value Hypothesis vs. Growth Hypothesis", a: "<strong>Value hypothesis:</strong> tests whether you deliver value (What + Who + How). Prove this FIRST. <strong>Growth hypothesis:</strong> tests how to grow cost-effectively. Only pursue after confirming customers love your product." },
+  { cat: "Concept — Class 4", q: "Whack-a-Mole pricing strategy", a: "Replace visible fees with hidden ones to reduce friction. Examples: replace one-time charge with subscription, replace transaction fee with advertising, replace commission with PFOF. <strong>Consumers prefer free with hidden fees.</strong>" },
+  { cat: "Concept — Class 3", q: "Bowling Pin Strategy for market expansion", a: "Start with any pin of <strong>desperate customers</strong>, dominate it, then expand to adjacent markets. Each adjacent market needs its own MVP and whole product. Adjacent markets don't reference each other — if they did, they'd be the same market." },
+];
+
+let fcOrder = flashcards.map((_, i) => i);
+let fcIndex = 0;
+
+function fcRender() {
+  const card = flashcards[fcOrder[fcIndex]];
+  document.getElementById('fcCategory').textContent = card.cat;
+  document.getElementById('fcCategoryBack').textContent = card.cat;
+  document.getElementById('fcQuestion').textContent = card.q;
+  document.getElementById('fcAnswer').innerHTML = card.a;
+  document.getElementById('fcCard').classList.remove('flipped');
+  document.getElementById('fcProgressText').textContent = (fcIndex + 1) + ' / ' + fcOrder.length;
+  document.getElementById('fcProgressFill').style.width = ((fcIndex + 1) / fcOrder.length * 100) + '%';
+  document.getElementById('fcPrev').disabled = fcIndex === 0;
+  document.getElementById('fcNext').disabled = fcIndex === fcOrder.length - 1;
+}
+
+function fcFlip() { document.getElementById('fcCard').classList.toggle('flipped'); }
+
+function fcNav(dir) {
+  fcIndex = Math.max(0, Math.min(fcOrder.length - 1, fcIndex + dir));
+  fcRender();
+}
+
+function fcShuffle() {
+  for (let i = fcOrder.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [fcOrder[i], fcOrder[j]] = [fcOrder[j], fcOrder[i]];
+  }
+  fcIndex = 0;
+  fcRender();
+}
+
+function fcReset() {
+  fcOrder = flashcards.map((_, i) => i);
+  fcIndex = 0;
+  fcRender();
+}
+
+// ===== MODE SWITCHING =====
+function switchMode(mode) {
+  document.querySelectorAll('.mode-tab').forEach((t, i) => {
+    t.classList.toggle('active', (mode === 'dashboard' && i === 0) || (mode === 'flashcards' && i === 1));
+  });
+  const dv = document.getElementById('dashboardView');
+  const fv = document.getElementById('flashcardView');
+  const sb = document.getElementById('searchBar');
+  if (mode === 'flashcards') {
+    dv.classList.add('hidden');
+    fv.classList.add('active');
+    sb.style.display = 'none';
+    fcRender();
+  } else {
+    dv.classList.remove('hidden');
+    fv.classList.remove('active');
+    sb.style.display = 'block';
+  }
+}
+
+// ===== SEARCH =====
+function handleSearch(query) {
+  const btn = document.getElementById('clearBtn');
+  btn.classList.toggle('visible', query.length > 0);
+  const cards = document.querySelectorAll('.card[data-searchable]');
+  const q = query.toLowerCase().trim();
+
+  // Remove previous highlights
+  document.querySelectorAll('.search-match').forEach(el => {
+    el.replaceWith(el.textContent);
+  });
+
+  if (!q) {
+    cards.forEach(c => c.classList.remove('search-hidden'));
+    document.querySelectorAll('.principle').forEach(p => p.style.display = '');
+    return;
+  }
+
+  cards.forEach(card => {
+    const text = card.textContent.toLowerCase();
+    if (text.includes(q)) {
+      card.classList.remove('search-hidden');
+      highlightMatches(card, q);
+    } else {
+      card.classList.add('search-hidden');
+    }
+  });
+
+  // Also filter principles individually
+  document.querySelectorAll('.principle').forEach(p => {
+    if (p.textContent.toLowerCase().includes(q)) {
+      p.style.display = '';
+    } else {
+      p.style.display = 'none';
+    }
+  });
+}
+
+function highlightMatches(container, query) {
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
+  const textNodes = [];
+  while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+  textNodes.forEach(node => {
+    const text = node.textContent;
+    const lower = text.toLowerCase();
+    const idx = lower.indexOf(query);
+    if (idx === -1) return;
+    const before = text.slice(0, idx);
+    const match = text.slice(idx, idx + query.length);
+    const after = text.slice(idx + query.length);
+    const span = document.createElement('span');
+    span.className = 'search-match';
+    span.textContent = match;
+    const parent = node.parentNode;
+    const frag = document.createDocumentFragment();
+    if (before) frag.appendChild(document.createTextNode(before));
+    frag.appendChild(span);
+    if (after) frag.appendChild(document.createTextNode(after));
+    parent.replaceChild(frag, node);
+  });
+}
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  handleSearch('');
+}
+
+// ===== MODAL =====
+function openClassModal(idx) {
+  const cls = classData[idx];
+  document.getElementById('modalTitle').textContent = cls.title;
+  document.getElementById('modalSubtitle').textContent = cls.num;
+  let html = '';
+  cls.sections.forEach(s => {
+    html += '<div class="note-section"><h4>' + s.heading + '</h4>';
+    s.items.forEach(item => {
+      html += '<div class="note-item">' + item + '</div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('classModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('classModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+  if (document.getElementById('flashcardView').classList.contains('active')) {
+    if (e.key === 'ArrowLeft') fcNav(-1);
+    if (e.key === 'ArrowRight') fcNav(1);
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); fcFlip(); }
+  }
+});
+
+// Init
+fcRender();
+</script>
+
+</body>
+</html>
