@@ -4,8 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Building a Sales Organization — Learning Dashboard</title>
+<meta name="description" content="Interactive study dashboard for Stanford GSB STRAMGT 351: Building a Sales Organization with Josh Goldberg. Sales frameworks, case studies, compensation design, and forecasting.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
 
   :root {
     --bg: #f8f9fb;
@@ -804,6 +807,7 @@
 <!-- Navigation Bar -->
 <div class="nav-bar">
   <div class="nav-tabs-container">
+    <a href="index.html" class="nav-tab" style="text-decoration:none;color:var(--accent1);font-weight:600;">← Home</a>
     <div class="nav-tab active" data-tab="overview">Overview</div>
     <div class="nav-tab" data-tab="frameworks">Frameworks</div>
     <div class="nav-tab" data-tab="cases">Case Studies</div>
@@ -1685,12 +1689,20 @@
     });
   });
 
-  // Dark mode toggle
+  // Dark mode toggle — persist preference and respect system setting
   const darkModeToggle = document.getElementById('dark-mode-toggle');
   const html = document.documentElement;
+  const savedTheme = localStorage.getItem('theme') ||
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  if (savedTheme === 'dark') {
+    html.setAttribute('data-theme', 'dark');
+    darkModeToggle.textContent = '☀️';
+  }
   darkModeToggle.addEventListener('click', () => {
     const isDark = html.getAttribute('data-theme') === 'dark';
-    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    const next = isDark ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
     darkModeToggle.textContent = isDark ? '🌙' : '☀️';
   });
 

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GSB Class Dashboard</title>
+    <meta name="description" content="Stanford GSB class dashboard — frameworks, flashcards, and leadership lessons from Difficult Conversations, Winning Writing, Product-Market Fit, and Building a Sales Organization.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -31,7 +32,7 @@
         }
 
         /* Dark Mode */
-        body.dark-mode {
+        [data-theme="dark"] {
             --bg-primary: #141211;
             --bg-surface: #1E1C1A;
             --text-primary: #E7E5E0;
@@ -582,10 +583,29 @@
                 height: 48px;
             }
         }
+        /* Skip-to-content link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -100%;
+            left: 1rem;
+            z-index: 200;
+            padding: 0.75rem 1.5rem;
+            background: var(--accent-cardinal);
+            color: white;
+            border-radius: 0 0 8px 8px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
     </style>
 </head>
 <body>
+    <a href="#modules" class="skip-link">Skip to content</a>
+
     <!-- Hero Section -->
+    <main>
     <section class="hero container">
         <h1>GSB Class Dashboard</h1>
         <div class="hero-divider">
@@ -617,7 +637,7 @@
     </section>
 
     <!-- Class Modules Section -->
-    <section class="modules-section container">
+    <section class="modules-section container" id="modules">
         <div class="section-header">
             <span class="label">Curriculum</span>
             <h2>Class Modules</h2>
@@ -641,10 +661,10 @@
                         <span class="stat-chip">6 Frameworks</span>
                         <span class="stat-chip">15 Lessons</span>
                     </div>
-                    <button class="module-button">
+                    <span class="module-button">
                         Open Dashboard
                         <span>→</span>
-                    </button>
+                    </span>
                 </div>
             </a>
 
@@ -665,10 +685,10 @@
                         <span class="stat-chip">16 Life Lessons</span>
                         <span class="stat-chip">72+ Flashcards</span>
                     </div>
-                    <button class="module-button">
+                    <span class="module-button">
                         Open Dashboard
                         <span>→</span>
-                    </button>
+                    </span>
                 </div>
             </a>
 
@@ -689,10 +709,10 @@
                         <span class="stat-chip">21 Principles</span>
                         <span class="stat-chip">8-Step Process</span>
                     </div>
-                    <button class="module-button">
+                    <span class="module-button">
                         Open Dashboard
                         <span>→</span>
-                    </button>
+                    </span>
                 </div>
             </a>
 
@@ -713,10 +733,10 @@
                         <span class="stat-chip">10+ Cases</span>
                         <span class="stat-chip">25 Principles</span>
                     </div>
-                    <button class="module-button">
+                    <span class="module-button">
                         Open Dashboard
                         <span>→</span>
-                    </button>
+                    </span>
                 </div>
             </a>
 
@@ -817,6 +837,8 @@
         </div>
     </section>
 
+    </main>
+
     <!-- Footer -->
     <footer>
         <div class="footer-content">
@@ -826,24 +848,26 @@
     </footer>
 
     <!-- Dark Mode Toggle -->
-    <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Toggle dark mode">☀️</button>
+    <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Toggle dark mode">🌙</button>
 
     <script>
-        // Dark Mode Toggle
-        let isDarkMode = false;
-
+        // Dark Mode Toggle — uses same localStorage key as dashboard pages
         const darkModeToggle = document.getElementById('darkModeToggle');
+        const htmlElement = document.documentElement;
+        const savedTheme = localStorage.getItem('theme') ||
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+        if (savedTheme === 'dark') {
+            htmlElement.setAttribute('data-theme', 'dark');
+            darkModeToggle.textContent = '☀️';
+        }
 
         darkModeToggle.addEventListener('click', () => {
-            isDarkMode = !isDarkMode;
-
-            if (isDarkMode) {
-                document.body.classList.add('dark-mode');
-                darkModeToggle.textContent = '🌙';
-            } else {
-                document.body.classList.remove('dark-mode');
-                darkModeToggle.textContent = '☀️';
-            }
+            const current = htmlElement.getAttribute('data-theme') || 'light';
+            const next = current === 'light' ? 'dark' : 'light';
+            htmlElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            darkModeToggle.textContent = next === 'dark' ? '☀️' : '🌙';
         });
 
         // Smooth scroll for anchor links

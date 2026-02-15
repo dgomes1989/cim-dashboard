@@ -4,8 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Difficult Conversations — Learning Dashboard v2</title>
+<meta name="description" content="Interactive study dashboard for Stanford GSB STRAMGT 510: Difficult Conversations in Management with Irv Grousbeck. Frameworks, case studies, flashcards, and AI advisor.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
 
   :root {
     --bg: #f8f9fb;
@@ -1222,6 +1225,7 @@
 <!-- NAV -->
 <div class="nav-bar">
   <div class="nav-tabs-container">
+    <a href="index.html" class="nav-tab" style="text-decoration:none;color:var(--accent1);font-weight:600;">← Home</a>
     <div class="nav-tab active" data-tab="overview">Overview</div>
     <div class="nav-tab" data-tab="principles">Core Principles</div>
     <div class="nav-tab" data-tab="frameworks">Frameworks</div>
@@ -2385,8 +2389,9 @@
   // Dark mode toggle
   const darkModeBtn = document.getElementById('darkModeBtn');
   const htmlElement = document.documentElement;
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  
+  const savedTheme = localStorage.getItem('theme') ||
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
   if (savedTheme === 'dark') {
     htmlElement.setAttribute('data-theme', 'dark');
     darkModeBtn.textContent = '☀️';
