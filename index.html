@@ -101,7 +101,7 @@
             color: var(--text-secondary);
             max-width: 600px;
             line-height: 1.7;
-            margin-bottom: 1rem;
+            margin: 0 auto 1rem;
         }
 
         .label {
@@ -150,37 +150,6 @@
         .divider-icon {
             font-size: 1.5rem;
             color: var(--accent-cardinal);
-        }
-
-        /* Stats Bar */
-        .stats-bar {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 2rem;
-            padding: 3rem 2rem;
-            max-width: 1000px;
-            margin: 0 auto 2rem;
-            animation: fadeUp 0.8s ease 0.2s both;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-family: 'DM Serif Display', Georgia, serif;
-            font-size: 2.5rem;
-            color: var(--accent-gold);
-            font-weight: 400;
-            line-height: 1;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
         }
 
         /* Class Modules Section */
@@ -512,12 +481,6 @@
                 font-size: 2rem;
             }
 
-            .stats-bar {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1.5rem;
-                padding: 2rem;
-            }
-
             .modules-section,
             .quick-reference {
                 padding: 2.5rem 2rem;
@@ -563,16 +526,6 @@
 
             .divider-line {
                 max-width: 60px;
-            }
-
-            .stats-bar {
-                grid-template-columns: 1fr;
-                gap: 1.25rem;
-                padding: 1.5rem 1.5rem;
-            }
-
-            .stat-number {
-                font-size: 2rem;
             }
 
             .modules-section,
@@ -621,7 +574,6 @@
         </div>
         <p class="subtitle">My favorite classes, key frameworks, and leadership lessons — all in one place.</p>
     </section>
-
 
     <!-- Class Modules Section -->
     <section class="modules-section container" id="modules">
